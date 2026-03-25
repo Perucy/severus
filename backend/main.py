@@ -23,6 +23,7 @@ app.add_middleware(
         os.getenv("FRONTEND_URL", "http://localhost:5173"),
         "http://localhost:5173",
         "http://localhost:3000",
+        "https://severus-xi.vercel.app",
         "https://severusafrica.vercel.app",
         "https://*.vercel.app",
     ],
