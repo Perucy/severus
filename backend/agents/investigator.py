@@ -1,0 +1,134 @@
+"""The Investigator Agent — traces connections and accountability"""
+
+import json
+import anthropic
+from utils import create_with_retry
+from tools.external_apis import search_slavevoyages
+from tools.knowledge_base import search_knowledge_base, get_connections
+
+SYSTEM = """You are The Investigator for the Severus African History Platform.
+Trace hidden connections — follow the money, lineage, and accountability chains.
+Name institutions that still exist today. Connect historical events to the present.
+Cite sources: UCL Slave Ownership Database, SlaveVoyages.org, National Archives."""
+
+TOOLS = [
+    {
+        "name": "search_slavevoyages",
+        "description": "Query the SlaveVoyages.org Trans-Atlantic Slave Trade Database.",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "query": {"type": "string"},
+                "ship_name": {"type": "string"},
+                "year_from": {"type": "integer"},
+                "year_to": {"type": "integer"},
+            },
+            "required": [],
+        },
+    },
+    {
+        "name": "search_severus_kb",
+        "description": "Search Severus knowledge base for connections and accountability records.",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "query": {"type": "string"},
+                "category": {"type": "string", "enum": ["all","locations","people","events"]}
+            },
+            "required": ["query"],
+        },
+    },
+    {
+        "name": "get_node_connections",
+        "description": "Trace all connections for a historical entity. Node IDs: mali, egypt, kush, benin, rac, lloyds, ouidah, berlin, leopold, caribbean, usa, brazil.",
+        "input_schema": {
+            "type": "object",
+            "properties": {"node_id": {"type": "string"}},
+            "required": ["node_id"],
+        },
+    },
+]
+
+async def _run_tool(name: str, inputs: dict) -> str:
+    try:
+        if name == "search_slavevoyages":
+            result = await search_slavevoyages(
+                query=inputs.get("query"),
+                ship_name=inputs.get("ship_name"),
+                year_from=inputs.get("year_from"),
+                year_to=inputs.get("year_to"),
+            )
+        elif name == "search_severus_kb":
+            result = search_knowledge_base(inputs.get("query",""), inputs.get("category","all"))
+        elif name == "get_node_connections":
+            result = get_connections(inputs.get("node_id",""))
+        else:
+            result = {"error": f"Unknown tool: {name}"}
+        return json.dumps(result, default=str)
+    except Exception as e:
+        return json.dumps({"error": str(e)})
+
+async def run_investigator(state: dict) -> dict:
+    client = anthropic.Anthropic()
+    events = []
+    question    = state["question"]
+    historian   = state.get("historian_output","")
+
+    events.append({"agent":"investigator","type":"thinking",
+        "content":"Tracing connections — following money, lineage, and accountability chains...",
+        "tool_name":None,"tool_input":None})
+
+    messages = [{"role":"user","content":(
+        f"Original question: {question}\n\n"
+        f"The Historian found:\n{historian[:2000]}\n\n"
+        "Now trace the deeper connections. What institutions profited? "
+        "What are modern-day consequences? Use the SlaveVoyages database and connection graph."
+    )}]
+
+    final_output = ""
+
+    for _ in range(8):
+        resp = create_with_retry(client, 
+            model="claude-sonnet-4-20250514",
+            max_tokens=2000,
+            system=SYSTEM,
+            tools=TOOLS,
+            messages=messages,
+        )
+        messages.append({"role":"assistant","content":resp.content})
+
+        tool_uses = [b for b in resp.content if b.type == "tool_use"]
+        texts     = [b for b in resp.content if hasattr(b,"text")]
+
+        if resp.stop_reason == "end_turn" or not tool_uses:
+            if texts:
+                final_output = texts[0].text
+            break
+
+        tool_results = []
+        for block in tool_uses:
+            events.append({"agent":"investigator","type":"tool_call",
+                "content":f"Calling {block.name}: {json.dumps(block.input)[:80]}",
+                "tool_name":block.name,"tool_input":block.input})
+
+            content = await _run_tool(block.name, block.input)
+
+            events.append({"agent":"investigator","type":"tool_result",
+                "content":content[:500],"tool_name":block.name,"tool_input":None})
+
+            tool_results.append({
+                "type":"tool_result",
+                "tool_use_id":block.id,
+                "content":content[:2000],
+            })
+
+        messages.append({"role":"user","content":tool_results})
+
+    if not final_output:
+        final_output = "Investigation complete — connections mapped."
+
+    events.append({"agent":"investigator","type":"output",
+        "content":final_output[:400]+"..." if len(final_output)>400 else final_output,
+        "tool_name":None,"tool_input":None})
+
+    return {"investigator_output":final_output,"events":events,"current_agent":"visualizer"}
