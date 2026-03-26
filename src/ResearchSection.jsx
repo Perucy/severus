@@ -259,26 +259,28 @@ function parseConnectionsForBoard(toolCalls, question) {
 }
 
 // ── Main Research Section ─────────────────────────────────────
-export default function ResearchSection({ T, onPushToBoard, onNavigate }) {
-  const [question,       setQuestion]       = useState("");
-  const [depth,          setDepth]          = useState("teaser");
-  const [showReasoning,  setShowReasoning]  = useState(false);
+export default function ResearchSection({ T, onPushToBoard, onNavigate, savedState, onSaveState }) {
+  const [question,       setQuestion]       = useState(savedState?.question      || "");
+  const [depth,          setDepth]          = useState(savedState?.depth         || "teaser");
+  const [showReasoning,  setShowReasoning]  = useState(savedState?.showReasoning || false);
   const [running,        setRunning]        = useState(false);
-  const [hasRun,         setHasRun]         = useState(false);
-
-  // Per-agent state
-  const [agentStatuses,  setAgentStatuses]  = useState({ historian:"pending", investigator:"pending", visualizer:"pending", guide:"pending" });
-  const [agentOutputs,   setAgentOutputs]   = useState({ historian:"", investigator:"", visualizer:"", guide:"" });
-  const [agentToolCalls, setAgentToolCalls] = useState({ historian:[], investigator:[], visualizer:[] });
-
-  // Media
-  const [images,    setImages]    = useState([]);
-  const [videos,    setVideos]    = useState([]);
-  const [narrative, setNarrative] = useState(null);
+  const [hasRun,         setHasRun]         = useState(savedState?.hasRun        || false);
+  const [agentStatuses,  setAgentStatuses]  = useState(savedState?.agentStatuses || { historian:"pending", investigator:"pending", visualizer:"pending", guide:"pending" });
+  const [agentOutputs,   setAgentOutputs]   = useState(savedState?.agentOutputs  || { historian:"", investigator:"", visualizer:"", guide:"" });
+  const [agentToolCalls, setAgentToolCalls] = useState(savedState?.agentToolCalls|| { historian:[], investigator:[], visualizer:[] });
+  const [images,    setImages]    = useState(savedState?.images    || []);
+  const [videos,    setVideos]    = useState(savedState?.videos    || []);
+  const [narrative, setNarrative] = useState(savedState?.narrative || null);
   const [error,     setError]     = useState(null);
 
-  const bottomRef   = useRef(null);
+  const bottomRef    = useRef(null);
   const currentAgent = useRef(null);
+
+  // Save state to parent whenever key values change
+  useEffect(() => {
+    if (!onSaveState) return;
+    onSaveState({ question, depth, showReasoning, hasRun, agentStatuses, agentOutputs, agentToolCalls, images, videos, narrative });
+  }, [agentOutputs, images, videos, narrative, hasRun]);
 
   useEffect(()=>{ bottomRef.current?.scrollIntoView({behavior:"smooth"}); }, [agentOutputs, images, narrative]);
 
@@ -311,81 +313,85 @@ export default function ResearchSection({ T, onPushToBoard, onNavigate }) {
       const reader  = response.body.getReader();
       const decoder = new TextDecoder();
       let buffer = "";
-      let lastEventType = "";
+      let pendingEventType = "";
+
+      const processEvent = (eventType, rawData) => {
+        if (!rawData.trim()) return;
+        try {
+          const data = JSON.parse(rawData);
+
+          // Route by explicit event type first, then by content
+          const et = eventType || "";
+
+          if (et === "image_generated" || (!et && data.image_b64)) {
+            if (data.image_b64) {
+              setImages(prev => [...prev, {
+                image_b64:   data.image_b64,
+                mime_type:   data.mime_type || "image/png",
+                prompt_used: data.prompt || data.prompt_used || "",
+                model:       data.model || "Imagen 4 Fast",
+              }]);
+              setAgentStatuses(prev => ({ ...prev, visualizer: "done" }));
+            }
+            return;
+          }
+
+          if (et === "video_prompt" || (!et && data.video_prompt)) {
+            if (data.video_prompt) setVideos(prev => [...prev, data]);
+            return;
+          }
+
+          if (et === "narrative" || (!et && data.narrative)) {
+            if (data.narrative) {
+              setNarrative(data.narrative);
+              setAgentStatuses(prev => ({ ...prev, guide: "done" }));
+            }
+            return;
+          }
+
+          if (et === "error" || (!et && data.error && !data.agent)) {
+            if (data.error) setError(data.error);
+            return;
+          }
+
+          // Agent events
+          if (data.agent && data.type) {
+            const ag = data.agent;
+            if (data.type === "thinking") {
+              setAgentStatuses(prev => ({ ...prev, [ag]: "active" }));
+              currentAgent.current = ag;
+            }
+            if (data.type === "output") {
+              setAgentOutputs(prev => ({ ...prev, [ag]: data.content }));
+              setAgentStatuses(prev => ({ ...prev, [ag]: "done" }));
+            }
+            if (data.type === "tool_call" || data.type === "tool_result") {
+              setAgentToolCalls(prev => ({
+                ...prev,
+                [ag]: [...(prev[ag] || []), data],
+              }));
+            }
+          }
+        } catch {}
+      };
 
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
 
         buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split("\n");
-        buffer = lines.pop() || "";
+        // Split on double newline (SSE event separator)
+        const events = buffer.split(/\n\n/);
+        buffer = events.pop() || ""; // keep incomplete last chunk
 
-        for (const line of lines) {
-          if (line.startsWith("event: ")) {
-            lastEventType = line.slice(7).trim();
-            continue;
+        for (const eventBlock of events) {
+          let eventType = "";
+          let dataLine  = "";
+          for (const line of eventBlock.split("\n")) {
+            if (line.startsWith("event: ")) eventType = line.slice(7).trim();
+            if (line.startsWith("data: "))  dataLine  = line.slice(6).trim();
           }
-          if (!line.startsWith("data: ")) continue;
-
-          try {
-            const data = JSON.parse(line.slice(6));
-
-            // Agent event
-            if (data.agent && data.type) {
-              const ag = data.agent;
-
-              if (data.type === "thinking") {
-                setAgentStatuses(prev => ({ ...prev, [ag]: "active" }));
-                currentAgent.current = ag;
-              }
-
-              if (data.type === "output") {
-                setAgentOutputs(prev => ({ ...prev, [ag]: data.content }));
-                setAgentStatuses(prev => ({ ...prev, [ag]: "done" }));
-              }
-
-              if (data.type === "tool_call" || data.type === "tool_result") {
-                setAgentToolCalls(prev => ({
-                  ...prev,
-                  [ag]: [...(prev[ag]||[]), data],
-                }));
-              }
-            }
-
-            // Image generated — check event type OR content
-            if (lastEventType === "image_generated" || data.image_b64) {
-              if (data.image_b64) {
-                setImages(prev => [...prev, data]);
-                setAgentStatuses(prev => ({ ...prev, visualizer: "done" }));
-              }
-              lastEventType = "";
-              continue;
-            }
-
-            // Video prompt
-            if (lastEventType === "video_prompt" || data.video_prompt) {
-              if (data.video_prompt) setVideos(prev => [...prev, data]);
-              lastEventType = "";
-              continue;
-            }
-
-            // Final narrative
-            if (lastEventType === "narrative" || data.narrative) {
-              if (data.narrative) {
-                setNarrative(data.narrative);
-                setAgentStatuses(prev => ({ ...prev, guide: "done" }));
-              }
-              lastEventType = "";
-              continue;
-            }
-
-            // Error
-            if (data.error && !data.agent) {
-              setError(data.error);
-            }
-
-          } catch {}
+          if (dataLine) processEvent(eventType, dataLine);
         }
       }
     } catch (e) {

@@ -786,6 +786,116 @@ function ReckonSection({ T }) {
 }
 
 
+// ── NODE DETAIL PANEL ─────────────────────────────────────────
+function NodeDetailPanel({ node, edges, nodes, T, onClose, onConnect, onDelete, onUpdateNote }) {
+  const [note,    setNote]    = useState(node.note || "");
+  const [wikiImg, setWikiImg] = useState(null);
+  const [wikiSum, setWikiSum] = useState("");
+  const [loading, setLoading] = useState(false);
+  const meta = NODE_TYPES[node.type] || NODE_TYPES.person;
+
+  // Fetch Wikipedia on node select
+  useEffect(() => {
+    setNote(node.note || "");
+    setWikiImg(null);
+    setWikiSum("");
+    setLoading(true);
+    const query = encodeURIComponent(node.label);
+    fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${query}`)
+      .then(r => r.ok ? r.json() : null)
+      .then(d => {
+        if (d?.thumbnail?.source) setWikiImg(d.thumbnail.source.replace(/\/\d+px-/, "/320px-"));
+        if (d?.extract) setWikiSum(d.extract.slice(0, 280));
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, [node.id]);
+
+  const nodeEdges = edges.filter(e => e.from === node.id || e.to === node.id);
+
+  return (
+    <div style={{ flex:1, overflowY:"auto", padding:0, display:"flex", flexDirection:"column" }}>
+      {/* Header image */}
+      <div style={{ height:120, background:`linear-gradient(135deg,${meta.color}30,${meta.color}10)`, position:"relative", flexShrink:0, overflow:"hidden" }}>
+        {wikiImg && <img src={wikiImg} alt="" style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"center top", filter:"brightness(0.85)" }}/>}
+        <div style={{ position:"absolute", inset:0, background:"linear-gradient(to top,rgba(0,0,0,0.7),transparent 55%)" }}/>
+        <button onClick={onClose} style={{ position:"absolute", top:8, right:8, width:22, height:22, borderRadius:"50%", background:"rgba(0,0,0,0.5)", border:"1px solid rgba(255,255,255,0.2)", color:"rgba(255,255,255,0.7)", fontSize:10, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center" }}>✕</button>
+        <div style={{ position:"absolute", bottom:8, left:10 }}>
+          <span style={{ fontSize:18 }}>{meta.icon}</span>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div style={{ padding:"12px 14px", flex:1, overflowY:"auto" }}>
+        {/* Title */}
+        <div style={{ marginBottom:10 }}>
+          <h3 style={{ fontFamily:"'Playfair Display',serif", fontSize:15, fontWeight:700, color:T.ink, margin:"0 0 3px" }}>{node.label}</h3>
+          <div style={{ display:"inline-block", padding:"2px 8px", borderRadius:20, background:meta.color+"22", border:`1px solid ${meta.color}50` }}>
+            <span style={{ fontFamily:"'DM Sans',sans-serif", fontSize:8, fontWeight:700, color:meta.color, textTransform:"uppercase", letterSpacing:"0.08em" }}>{meta.label}</span>
+          </div>
+        </div>
+
+        {/* Wikipedia summary */}
+        {loading && <p style={{ fontFamily:"'DM Sans',sans-serif", fontSize:11, color:T.inkFaint, fontStyle:"italic" }}>Loading Wikipedia…</p>}
+        {wikiSum && !loading && (
+          <div style={{ marginBottom:10 }}>
+            <div style={{ fontFamily:"'DM Sans',sans-serif", fontSize:9, letterSpacing:"0.1em", textTransform:"uppercase", color:T.inkFaint, marginBottom:5, fontWeight:600 }}>Wikipedia</div>
+            <p style={{ fontFamily:"'DM Sans',sans-serif", fontSize:11, color:T.inkMid, lineHeight:1.65, margin:0 }}>{wikiSum}…</p>
+          </div>
+        )}
+
+        {/* Connections */}
+        <div style={{ fontFamily:"'DM Sans',sans-serif", fontSize:9, letterSpacing:"0.1em", textTransform:"uppercase", color:T.inkFaint, marginBottom:6, fontWeight:600 }}>
+          Connections ({nodeEdges.length})
+        </div>
+        {nodeEdges.length === 0
+          ? <p style={{ fontFamily:"'DM Sans',sans-serif", fontSize:11, color:T.inkLight, marginBottom:10 }}>None yet</p>
+          : <div style={{ marginBottom:10 }}>
+            {nodeEdges.map((edge, i) => {
+              const otherId = edge.from === node.id ? edge.to : edge.from;
+              const other   = nodes.find(n => n.id === otherId);
+              const dir     = edge.from === node.id ? "→" : "←";
+              if (!other) return null;
+              return (
+                <div key={i} style={{ display:"flex", alignItems:"center", gap:6, padding:"6px 8px", background:T.card, border:`1px solid ${T.border}`, borderRadius:7, marginBottom:5 }}>
+                  <span style={{ fontSize:12 }}>{NODE_TYPES[other.type]?.icon}</span>
+                  <div style={{ flex:1, minWidth:0 }}>
+                    <div style={{ fontFamily:"'DM Sans',sans-serif", fontSize:10, fontWeight:600, color:T.ink, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{dir} {other.label}</div>
+                    <div style={{ fontFamily:"'DM Sans',sans-serif", fontSize:9, color:T.inkLight, fontStyle:"italic" }}>{edge.label}</div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        }
+
+        {/* Notes */}
+        <div style={{ fontFamily:"'DM Sans',sans-serif", fontSize:9, letterSpacing:"0.1em", textTransform:"uppercase", color:T.inkFaint, marginBottom:5, fontWeight:600 }}>Investigation Notes</div>
+        <textarea
+          value={note}
+          onChange={e => setNote(e.target.value)}
+          onBlur={() => onUpdateNote(note)}
+          placeholder="Add your investigation notes…"
+          rows={3}
+          style={{ width:"100%", padding:"8px 10px", background:T.card, border:`1px solid ${T.border}`, borderRadius:7, fontFamily:"'DM Sans',sans-serif", fontSize:11, color:T.ink, resize:"vertical", outline:"none", caretColor:T.accent, lineHeight:1.6, boxSizing:"border-box" }}
+        />
+
+        {/* Actions */}
+        <div style={{ display:"flex", flexDirection:"column", gap:7, marginTop:10 }}>
+          <button onClick={onConnect}
+            style={{ padding:"7px", background:T.info+"18", border:`1px solid ${T.info}40`, borderRadius:7, color:T.info, fontFamily:"'DM Sans',sans-serif", fontSize:11, fontWeight:600, cursor:"pointer", textTransform:"uppercase", letterSpacing:"0.04em" }}>
+            🔗 Connect from here
+          </button>
+          <button onClick={onDelete}
+            style={{ padding:"7px", background:"transparent", border:`1px solid ${T.border}`, borderRadius:7, color:T.danger, fontFamily:"'DM Sans',sans-serif", fontSize:11, fontWeight:600, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", gap:5 }}>
+            <Ic n="trash" s={12} c={T.danger}/> Delete node
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── INVESTIGATE (PI BOARD) ────────────────────────────────────
 const NODE_TYPES = {
   person:      { icon:"👤", color:"#009AD8", label:"Person"      },
@@ -1144,55 +1254,18 @@ function InvestigateSection({ T, nodes: propNodes, edges: propEdges, setNodes: s
 
         {/* ── Detail sidebar ──────────────────────────────────────── */}
         <div style={{width:220,borderLeft:`1px solid ${T.border}`,background:T.surface,display:"flex",flexDirection:"column",flexShrink:0,overflow:"hidden"}}>
-          {/* Node detail */}
+          {/* Node detail — rich panel */}
           {selNodeData && (
-            <div style={{flex:1,overflowY:"auto",padding:"14px"}}>
-              <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:12}}>
-                <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.1em",textTransform:"uppercase",color:T.inkFaint,fontWeight:600}}>Selected Node</span>
-                <button onClick={()=>setSelNode(null)} style={{background:"transparent",border:"none",color:T.inkLight,cursor:"pointer",fontSize:14,lineHeight:1}}>✕</button>
-              </div>
-              {/* Node card preview */}
-              <div style={{display:"flex",alignItems:"center",gap:10,padding:"10px 12px",background:NODE_TYPES[selNodeData.type]?.color+"18",border:`1.5px solid ${NODE_TYPES[selNodeData.type]?.color}`,borderRadius:10,marginBottom:12}}>
-                <span style={{fontSize:20}}>{NODE_TYPES[selNodeData.type]?.icon}</span>
-                <div>
-                  <div style={{fontFamily:"'Playfair Display',serif",fontSize:13,fontWeight:700,color:T.ink}}>{selNodeData.label}</div>
-                  <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,color:NODE_TYPES[selNodeData.type]?.color,textTransform:"uppercase",letterSpacing:"0.08em",fontWeight:600}}>{NODE_TYPES[selNodeData.type]?.label}</div>
-                </div>
-              </div>
-
-              {/* Connections */}
-              <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.1em",textTransform:"uppercase",color:T.inkFaint,marginBottom:8,fontWeight:600}}>Connections</div>
-              {edges.filter(e=>e.from===selNodeData.id||e.to===selNodeData.id).length === 0
-                ? <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.inkLight}}>No connections yet</p>
-                : edges.filter(e=>e.from===selNodeData.id||e.to===selNodeData.id).map((edge,i) => {
-                  const otherId = edge.from===selNodeData.id?edge.to:edge.from;
-                  const other   = nodes.find(n=>n.id===otherId);
-                  const dir     = edge.from===selNodeData.id?"→":"←";
-                  if (!other) return null;
-                  return (
-                    <div key={i} style={{display:"flex",alignItems:"center",gap:6,padding:"6px 8px",background:T.card,border:`1px solid ${T.border}`,borderRadius:7,marginBottom:6}}>
-                      <span style={{fontSize:12}}>{NODE_TYPES[other.type]?.icon}</span>
-                      <div style={{flex:1,minWidth:0}}>
-                        <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,fontWeight:600,color:T.ink,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{dir} {other.label}</div>
-                        <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,color:T.inkLight,fontStyle:"italic"}}>{edge.label}</div>
-                      </div>
-                    </div>
-                  );
-                })
-              }
-
-              {/* Actions */}
-              <div style={{marginTop:12,display:"flex",flexDirection:"column",gap:7}}>
-                <button onClick={()=>{setConnecting(selNodeData.id);}}
-                  style={{padding:"7px",background:T.info+"18",border:`1px solid ${T.info}40`,borderRadius:7,color:T.info,fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:600,cursor:"pointer",textTransform:"uppercase",letterSpacing:"0.04em"}}>
-                  🔗 Connect from here
-                </button>
-                <button onClick={()=>deleteNode(selNodeData.id)}
-                  style={{padding:"7px",background:"transparent",border:`1px solid ${T.border}`,borderRadius:7,color:T.danger,fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:600,cursor:"pointer",textTransform:"uppercase",letterSpacing:"0.04em",display:"flex",alignItems:"center",justifyContent:"center",gap:5}}>
-                  <Ic n="trash" s={12} c={T.danger}/> Delete node
-                </button>
-              </div>
-            </div>
+            <NodeDetailPanel
+              node={selNodeData}
+              edges={edges}
+              nodes={nodes}
+              T={T}
+              onClose={()=>setSelNode(null)}
+              onConnect={()=>setConnecting(selNodeData.id)}
+              onDelete={()=>deleteNode(selNodeData.id)}
+              onUpdateNote={(note)=>setNodes(prev=>prev.map(n=>n.id===selNodeData.id?{...n,note}:n))}
+            />
           )}
 
           {/* Edge detail */}
@@ -1428,21 +1501,29 @@ export default function App() {
   const [theme,    setTheme]    = useState("dark");
   const T = theme==="dark" ? DARK : LIGHT;
 
-  // ── Shared PI board state (lifted so Research can push to Investigate) ──
+  // ── Shared PI board state ──────────────────────────────────
   const [piNodes,    setPiNodes]    = useState(DEFAULT_NODES);
   const [piEdges,    setPiEdges]    = useState(DEFAULT_EDGES);
-  const [piNewCount, setPiNewCount] = useState(0); // badge counter
+  const [piNewCount, setPiNewCount] = useState(0);
+
+  // ── Persistent research state (survives tab switches) ──────
+  const [researchState, setResearchState] = useState(null);
 
   const pushToBoard = (newNodes, newEdges) => {
+    // Replace placeholder defaults entirely on first push from Research
     setPiNodes(prev => {
-      const existingLabels = new Set(prev.map(n => n.label.toLowerCase()));
+      const isDefault = prev.length === DEFAULT_NODES.length &&
+        prev.every(n => DEFAULT_NODES.some(d => d.id === n.id));
+      const base = isDefault ? [] : prev;
+      const existingLabels = new Set(base.map(n => n.label.toLowerCase()));
       const toAdd = newNodes.filter(n => !existingLabels.has(n.label.toLowerCase()));
-      return [...prev, ...toAdd];
+      return [...base, ...toAdd];
     });
     setPiEdges(prev => {
-      const existingPairs = new Set(prev.map(e => `${e.from}-${e.to}`));
-      const toAdd = newEdges.filter(e => !existingPairs.has(`${e.from}-${e.to}`));
-      return [...prev, ...toAdd];
+      const isDefault = prev.length === DEFAULT_EDGES.length &&
+        prev.every(e => DEFAULT_EDGES.some(d => d.id === e.id));
+      const base = isDefault ? [] : prev;
+      return [...base, ...newEdges];
     });
     setPiNewCount(c => c + newNodes.length);
   };
@@ -1474,7 +1555,7 @@ export default function App() {
             {active==="learn"       && <LearnSection       T={T}/>}
             {active==="reckon"      && <ReckonSection      T={T}/>}
             {active==="investigate" && <InvestigateSection T={T} nodes={piNodes} edges={piEdges} setNodes={setPiNodes} setEdges={setPiEdges}/>}
-            {active==="research"    && <ResearchSection    T={T} onPushToBoard={pushToBoard} onNavigate={setActive}/>}
+            {active==="research"    && <ResearchSection    T={T} onPushToBoard={pushToBoard} onNavigate={setActive} savedState={researchState} onSaveState={setResearchState}/>}
           </div>
         </div>
       </div>
