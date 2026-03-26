@@ -819,10 +819,28 @@ const DEFAULT_EDGES = [
   { id:5, from:5, to:3, label:"Hosted"     },
 ];
 
-function InvestigateSection({ T }) {
+function InvestigateSection({ T, nodes: propNodes, edges: propEdges, setNodes: setPropNodes, setEdges: setPropEdges }) {
   const svgRef      = useRef(null);
-  const [nodes,     setNodes]     = useState(DEFAULT_NODES);
-  const [edges,     setEdges]     = useState(DEFAULT_EDGES);
+  const [nodes,     setNodesLocal]  = useState(propNodes || DEFAULT_NODES);
+  const [edges,     setEdgesLocal]  = useState(propEdges || DEFAULT_EDGES);
+
+  // Sync with shared state if provided
+  const setNodes = (val) => {
+    setNodesLocal(val);
+    if (setPropNodes) setPropNodes(val);
+  };
+  const setEdges = (val) => {
+    setEdgesLocal(val);
+    if (setPropEdges) setPropEdges(val);
+  };
+
+  // Sync in when props change (e.g. Research pushes new nodes)
+  useEffect(() => {
+    if (propNodes) setNodesLocal(propNodes);
+  }, [propNodes]);
+  useEffect(() => {
+    if (propEdges) setEdgesLocal(propEdges);
+  }, [propEdges]);
   const [dragging,  setDragging]  = useState(null);
   const [selNode,   setSelNode]   = useState(null);
   const [selEdge,   setSelEdge]   = useState(null);
@@ -1085,7 +1103,7 @@ function InvestigateSection({ T }) {
                   stroke={meta.color} strokeWidth={isSel?2:1.5}/>
 
                 {/* Icon box */}
-                <rect x={0} y={0} width={38} height={H} rx={`${rx} 0 0 ${rx}`}
+                <rect x={0} y={0} width={38} height={H} rx={rx}
                   fill={`${meta.color}30`}/>
                 <text x={19} y={H/2+6} textAnchor="middle"
                   style={{fontSize:16,pointerEvents:"none",userSelect:"none"}}>
@@ -1340,7 +1358,7 @@ function Home({ T, onNavigate }) {
 }
 
 // ── SIDEBAR ───────────────────────────────────────────────────
-function Sidebar({ active, onNavigate, open, T }) {
+function Sidebar({ active, onNavigate, open, T, piNewCount=0 }) {
   return (
     <div style={{width:open?228:60,background:T.surface,borderRight:`1px solid ${T.border}`,display:"flex",flexDirection:"column",transition:"width 0.28s cubic-bezier(0.4,0,0.2,1)",flexShrink:0,zIndex:30,overflow:"hidden"}}>
       <div style={{padding:open?"20px 18px 16px":"20px 0 16px",borderBottom:`1px solid ${T.border}`,display:"flex",alignItems:"center",gap:12,justifyContent:open?"flex-start":"center",flexShrink:0}}>
@@ -1354,6 +1372,7 @@ function Sidebar({ active, onNavigate, open, T }) {
         {open&&<div style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.12em",textTransform:"uppercase",color:T.inkFaint,padding:"4px 10px 8px",fontWeight:600}}>Navigation</div>}
         {SECTIONS.map(s=>{
           const isActive=active===s.id,c=colOf(T,s.colorKey);
+          const showBadge = s.id==="investigate" && piNewCount>0;
           return (
             <div key={s.id} onClick={()=>onNavigate(s.id)} title={!open?s.label:""}
               style={{display:"flex",alignItems:"center",gap:10,padding:open?"9px 10px":"9px 0",justifyContent:open?"flex-start":"center",borderRadius:8,cursor:"pointer",marginBottom:2,background:isActive?c+"18":"transparent",borderLeft:open&&isActive?`2px solid ${c}`:"2px solid transparent",transition:"all 0.15s",whiteSpace:"nowrap",overflow:"hidden",position:"relative"}}
@@ -1362,7 +1381,13 @@ function Sidebar({ active, onNavigate, open, T }) {
             >
               <Ic n={s.icon} s={16} c={isActive?c:T.inkLight}/>
               {open&&<span style={{fontFamily:"'DM Sans',sans-serif",fontSize:13,fontWeight:isActive?600:400,color:isActive?c:T.inkMid,flex:1}}>{s.label}</span>}
+              {open && showBadge && (
+                <div style={{minWidth:18,height:18,borderRadius:9,background:T.accent,display:"flex",alignItems:"center",justifyContent:"center",padding:"0 5px"}}>
+                  <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,fontWeight:700,color:"#fff"}}>{piNewCount}</span>
+                </div>
+              )}
               {!open&&isActive&&<div style={{position:"absolute",left:0,top:"25%",bottom:"25%",width:2,background:c,borderRadius:"0 2px 2px 0"}}/>}
+              {!open&&showBadge&&<div style={{position:"absolute",top:6,right:6,width:7,height:7,borderRadius:"50%",background:T.accent}}/>}
             </div>
           );
         })}
@@ -1403,6 +1428,27 @@ export default function App() {
   const [theme,    setTheme]    = useState("dark");
   const T = theme==="dark" ? DARK : LIGHT;
 
+  // ── Shared PI board state (lifted so Research can push to Investigate) ──
+  const [piNodes,    setPiNodes]    = useState(DEFAULT_NODES);
+  const [piEdges,    setPiEdges]    = useState(DEFAULT_EDGES);
+  const [piNewCount, setPiNewCount] = useState(0); // badge counter
+
+  const pushToBoard = (newNodes, newEdges) => {
+    setPiNodes(prev => {
+      const existingLabels = new Set(prev.map(n => n.label.toLowerCase()));
+      const toAdd = newNodes.filter(n => !existingLabels.has(n.label.toLowerCase()));
+      return [...prev, ...toAdd];
+    });
+    setPiEdges(prev => {
+      const existingPairs = new Set(prev.map(e => `${e.from}-${e.to}`));
+      const toAdd = newEdges.filter(e => !existingPairs.has(`${e.from}-${e.to}`));
+      return [...prev, ...toAdd];
+    });
+    setPiNewCount(c => c + newNodes.length);
+  };
+
+  const clearBadge = () => setPiNewCount(0);
+
   return (
     <>
       <style>{`
@@ -1418,7 +1464,7 @@ export default function App() {
         select option{background:${T.card};color:${T.ink};}
       `}</style>
       <div style={{display:"flex",height:"100vh",background:T.bg,overflow:"hidden",transition:"background 0.3s"}}>
-        <Sidebar active={active} onNavigate={setActive} open={sideOpen} T={T}/>
+        <Sidebar active={active} onNavigate={(id)=>{setActive(id);if(id==="investigate")clearBadge();}} open={sideOpen} T={T} piNewCount={piNewCount}/>
         <div style={{flex:1,display:"flex",flexDirection:"column",minWidth:0,overflow:"hidden"}}>
           <TopBar active={active} onNavigate={setActive} onToggle={()=>setSideOpen(v=>!v)} theme={theme} onToggleTheme={()=>setTheme(t=>t==="dark"?"light":"dark")} T={T}/>
           <div style={{flex:1,overflow:"hidden"}}>
@@ -1427,8 +1473,8 @@ export default function App() {
             {active==="timeline"    && <TimelineSection    T={T}/>}
             {active==="learn"       && <LearnSection       T={T}/>}
             {active==="reckon"      && <ReckonSection      T={T}/>}
-            {active==="investigate" && <InvestigateSection T={T}/>}
-            {active==="research"    && <ResearchSection    T={T}/>}
+            {active==="investigate" && <InvestigateSection T={T} nodes={piNodes} edges={piEdges} setNodes={setPiNodes} setEdges={setPiEdges}/>}
+            {active==="research"    && <ResearchSection    T={T} onPushToBoard={pushToBoard} onNavigate={setActive}/>}
           </div>
         </div>
       </div>

@@ -115,10 +115,10 @@ function ImageCard({ image, index, T }) {
         <div style={{ cursor:"pointer" }} onClick={()=>setEnlarged(true)}>
           <img src={src} alt={`Generated scene ${index+1}`} style={{ width:"100%", maxHeight:320, objectFit:"cover", display:"block" }}/>
         </div>
-        {image.prompt_used && (
+        {(image.prompt_used || image.prompt) && (
           <div style={{ padding:"8px 14px", borderTop:`1px solid ${T.border}` }}>
             <p style={{ fontFamily:"'DM Sans',sans-serif", fontSize:10, color:T.inkLight, margin:0, fontStyle:"italic", lineHeight:1.5 }}>
-              {image.prompt_used.slice(0,160)}…
+              {(image.prompt_used || image.prompt || "").slice(0,160)}…
             </p>
           </div>
         )}
@@ -182,8 +182,84 @@ function NarrativeCard({ narrative, depth, T }) {
   );
 }
 
+// ── Parse investigator tool results into PI board nodes/edges ─
+function parseConnectionsForBoard(toolCalls, question) {
+  const nodeMap = new Map();   // label → node
+  const edges   = [];
+  let nextId    = Date.now();
+
+  const typeGuess = (name, nodeType) => {
+    if (nodeType === "accountability") return "institution";
+    if (nodeType === "diaspora")       return "place";
+    if (nodeType === "civilization")   return "place";
+    if (nodeType === "origin")         return "place";
+    if (nodeType === "indigenous")     return "person";
+    const n = name.toLowerCase();
+    if (n.includes("company") || n.includes("bank") || n.includes("lloyd") || n.includes("university")) return "institution";
+    if (n.includes("ship") || n.includes("clotilda") || n.includes("zong") || n.includes("brooks")) return "ship";
+    if (n.includes("conference") || n.includes("revolution") || n.includes("war") || n.includes("act")) return "event";
+    if (n.includes("trade") || n.includes("route") || n.includes("passage")) return "trade";
+    return "place";
+  };
+
+  const addNode = (id, name, ntype) => {
+    if (!nodeMap.has(id)) {
+      nodeMap.set(id, {
+        id: id,
+        label: name,
+        type: typeGuess(name, ntype),
+        x: 150 + (nodeMap.size % 5) * 200 + Math.random() * 60,
+        y: 120 + Math.floor(nodeMap.size / 5) * 180 + Math.random() * 40,
+      });
+    }
+    return nodeMap.get(id);
+  };
+
+  // Walk through tool results from the investigator
+  for (const tc of toolCalls) {
+    if (tc.type !== "tool_result") continue;
+    try {
+      const parsed = JSON.parse(tc.content?.replace(/\.\.\.$/,"") || "{}");
+
+      // get_node_connections result
+      if (parsed.node && parsed.connections) {
+        const root = addNode(parsed.node.id, parsed.node.name, "");
+        for (const conn of parsed.connections) {
+          const child = addNode(conn.id, conn.name, conn.type);
+          const pairKey = [root.id, child.id].sort().join("-");
+          if (!edges.find(e => [e.from, e.to].sort().join("-") === pairKey)) {
+            edges.push({
+              id: nextId++,
+              from: root.id,
+              to: child.id,
+              label: conn.type === "accountability" ? "Implicated" : conn.type === "diaspora" ? "Connected to" : "Linked to",
+            });
+          }
+        }
+      }
+    } catch {}
+  }
+
+  // Always add the question topic as a node if we have results
+  if (nodeMap.size > 0 && question) {
+    const topicId = "topic-" + Date.now();
+    const words   = question.replace(/[^a-zA-Z\s]/g,"").split(" ").filter(w=>w.length>3);
+    const label   = words.slice(0,3).join(" ") || "Research Topic";
+    if (!nodeMap.has(topicId)) {
+      nodeMap.set(topicId, { id: topicId, label, type: "event", x: 500, y: 50 });
+    }
+    // Connect first real node to topic
+    const firstNode = [...nodeMap.values()][0];
+    if (firstNode.id !== topicId) {
+      edges.unshift({ id: nextId++, from: topicId, to: firstNode.id, label: "Relates to" });
+    }
+  }
+
+  return { nodes: [...nodeMap.values()], edges };
+}
+
 // ── Main Research Section ─────────────────────────────────────
-export default function ResearchSection({ T }) {
+export default function ResearchSection({ T, onPushToBoard, onNavigate }) {
   const [question,       setQuestion]       = useState("");
   const [depth,          setDepth]          = useState("teaser");
   const [showReasoning,  setShowReasoning]  = useState(false);
@@ -277,22 +353,31 @@ export default function ResearchSection({ T }) {
               }
             }
 
-            // Image generated
-            if (data.image_b64) {
-              setImages(prev => [...prev, data]);
-              // Mark visualizer done when image arrives
-              setAgentStatuses(prev => ({ ...prev, visualizer: "done" }));
+            // Image generated — check event type OR content
+            if (lastEventType === "image_generated" || data.image_b64) {
+              if (data.image_b64) {
+                setImages(prev => [...prev, data]);
+                setAgentStatuses(prev => ({ ...prev, visualizer: "done" }));
+              }
+              lastEventType = "";
+              continue;
             }
 
             // Video prompt
-            if (data.video_prompt) {
-              setVideos(prev => [...prev, data]);
+            if (lastEventType === "video_prompt" || data.video_prompt) {
+              if (data.video_prompt) setVideos(prev => [...prev, data]);
+              lastEventType = "";
+              continue;
             }
 
             // Final narrative
-            if (data.narrative) {
-              setNarrative(data.narrative);
-              setAgentStatuses(prev => ({ ...prev, guide: "done" }));
+            if (lastEventType === "narrative" || data.narrative) {
+              if (data.narrative) {
+                setNarrative(data.narrative);
+                setAgentStatuses(prev => ({ ...prev, guide: "done" }));
+              }
+              lastEventType = "";
+              continue;
             }
 
             // Error
@@ -452,6 +537,38 @@ export default function ResearchSection({ T }) {
 
             {/* Final narrative */}
             <NarrativeCard narrative={narrative} depth={depth} T={T}/>
+
+            {/* ── Map to PI Board button ─────────────────────── */}
+            {narrative && onPushToBoard && (
+              <div style={{ background:T.card, border:`1px solid ${T.border}`, borderRadius:10, padding:"16px 20px", marginTop:14, display:"flex", alignItems:"center", gap:16 }}>
+                <div style={{ flex:1 }}>
+                  <div style={{ fontFamily:"'Playfair Display',serif", fontSize:15, fontWeight:700, color:T.ink, marginBottom:4 }}>
+                    Map these connections to the PI Board
+                  </div>
+                  <p style={{ fontFamily:"'DM Sans',sans-serif", fontSize:12, color:T.inkMid, margin:0, lineHeight:1.6 }}>
+                    The Investigator traced {agentToolCalls.investigator?.filter(t=>t.type==="tool_result").length||0} connection{agentToolCalls.investigator?.filter(t=>t.type==="tool_result").length!==1?"s":""}.
+                    Add them as nodes to the PI board — then extend the investigation manually.
+                  </p>
+                </div>
+                <button
+                  onClick={() => {
+                    const { nodes: newNodes, edges: newEdges } = parseConnectionsForBoard(
+                      agentToolCalls.investigator || [],
+                      question
+                    );
+                    if (newNodes.length > 0) {
+                      onPushToBoard(newNodes, newEdges);
+                      onNavigate("investigate");
+                    }
+                  }}
+                  style={{ display:"flex", alignItems:"center", gap:8, padding:"10px 20px", background:T.slate+"22", border:`1px solid ${T.slate}50`, borderRadius:8, color:T.ink, fontFamily:"'DM Sans',sans-serif", fontSize:12, fontWeight:700, cursor:"pointer", whiteSpace:"nowrap", transition:"all 0.2s" }}
+                  onMouseEnter={e=>{e.currentTarget.style.background=T.accent;e.currentTarget.style.borderColor=T.accent;e.currentTarget.style.color="#fff";}}
+                  onMouseLeave={e=>{e.currentTarget.style.background=T.slate+"22";e.currentTarget.style.borderColor=T.slate+"50";e.currentTarget.style.color=T.ink;}}
+                >
+                  🔍 Open PI Board →
+                </button>
+              </div>
+            )}
 
             <div ref={bottomRef}/>
           </div>
