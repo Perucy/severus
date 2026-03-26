@@ -271,12 +271,22 @@ function parseConnectionsForBoard(result, question) {
   const investigator = result?.investigator_output || "";
   const allEvents    = result?.events              || [];
 
-  // Helper: is this name mentioned in the research outputs?
-  const isRelevant = (name) => {
-    const word = (name||"").split(" ")[0].toLowerCase();
-    return word.length > 3 &&
-      (historian.toLowerCase().includes(word) ||
-       investigator.toLowerCase().includes(word));
+  // Strict relevance: the entity name must appear substantially in the outputs
+  // AND must not be a generic slave-trade node unless question is about slave trade
+  const slaveTradeQuestion = /slave|enslave|plantation|transatlantic|middle passage|abolition/i.test(question);
+  const ALWAYS_EXCLUDE_UNLESS_SLAVE_TRADE = new Set(["rac","lloyds","ouidah","ouidah-door","berlin","leopold","slave","plantation"]);
+
+  const isRelevant = (name, id) => {
+    // Exclude generic slave-trade nodes unless question is about slave trade
+    if (!slaveTradeQuestion && ALWAYS_EXCLUDE_UNLESS_SLAVE_TRADE.has((id||"").toLowerCase())) return false;
+    if (!slaveTradeQuestion && ALWAYS_EXCLUDE_UNLESS_SLAVE_TRADE.has((name||"").toLowerCase().split(" ")[0])) return false;
+
+    // Name must appear in outputs (check first meaningful word + one more)
+    const words = (name||"").toLowerCase().split(/\s+/).filter(w=>w.length>3);
+    if (words.length === 0) return false;
+    const combined = (historian + " " + investigator).toLowerCase();
+    // Require at least the first word to appear
+    return combined.includes(words[0]);
   };
 
   // ── From historian KB results ──────────────────────────────
@@ -307,10 +317,10 @@ function parseConnectionsForBoard(result, question) {
 
       // get_node_connections — only add nodes actually mentioned in outputs
       if (d.node && d.connections) {
-        if (isRelevant(d.node.name)) {
+        if (isRelevant(d.node.name, d.node.id)) {
           const root = addNode(d.node.id, d.node.name, "");
           for (const c of d.connections) {
-            if (isRelevant(c.name)) {
+            if (isRelevant(c.name, c.id)) {
               const child = addNode(c.id, c.name, c.type);
               addEdge(root.id, child.id,
                 c.type==="accountability"?"Implicated":
@@ -322,7 +332,7 @@ function parseConnectionsForBoard(result, question) {
 
       // KB search results from investigator
       for (const loc of (d.locations||[])) {
-        if (isRelevant(loc.name)) {
+        if (isRelevant(loc.name, loc.id)) {
           const n = addNode(loc.id, loc.name, loc.type);
           if (!edges.find(e=>e.to===n.id||e.from===n.id))
             addEdge(topicNode.id, n.id, "Implicated");

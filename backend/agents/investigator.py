@@ -89,13 +89,19 @@ async def run_investigator(state: dict) -> dict:
         "tool_name":None,"tool_input":None})
 
     messages = [{"role":"user","content":(
-        f"Question asked: {question}\n\n"
+        f"Question: {question}\n\n"
         f"The Historian found:\n{historian[:2000]}\n\n"
-        f"Now investigate connections SPECIFICALLY related to this question.\n"
-        f"Use search_severus_kb and get_node_connections to find entities directly related to the topic.\n"
-        f"Only use search_slavevoyages if the question is specifically about the slave trade.\n"
-        f"Trace: who is involved, what institutions are implicated, what is the modern legacy, "
-        f"what accountability exists — all specifically in the context of this question."
+        f"INSTRUCTIONS:\n"
+        f"1. Search the Severus KB for the SPECIFIC entities mentioned in the historian's research above.\n"
+        f"   For example: if the historian mentions 'Benin Bronzes', search for 'benin bronzes', 'british museum', '1897 expedition'.\n"
+        f"   If the historian mentions 'Mali Empire', search for 'mali', 'mansa musa', 'timbuktu'.\n"
+        f"2. Use get_node_connections ONLY for nodes that are DIRECTLY about the question topic.\n"
+        f"3. Do NOT search for 'Royal African Company', 'Lloyd's', 'Berlin Conference', 'Ouidah', or slave trade\n"
+        f"   UNLESS the question is specifically about the slave trade or colonial economics.\n"
+        f"4. For art/culture questions: focus on institutions holding the objects, legal battles, repatriation.\n"
+        f"5. For empire/civilization questions: focus on the empire's connections, trade partners, legacy.\n"
+        f"6. For accountability questions: then YES trace financial/colonial institutions.\n"
+        f"7. Answer: what are the specific connections, who is responsible, what is the modern status?"
     )}]
 
     final_output = ""
