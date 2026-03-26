@@ -374,7 +374,7 @@ function GlobeView({ visibleLocs, visibleArcs, onLocClick, selected, theme }) {
           </div>
         ))}
         <div style={{marginTop:5,paddingTop:5,borderTop:"1px solid rgba(255,255,255,0.06)"}}>
-          {[["#FFD700","Ancient"],["#E03030","Slave Trade"],["#4CAF7D","Modern"]].map(([c,l])=>(
+          {[["#FFD700","Ancient Routes"],["#E03030","Conflict/Trade"],["#4CAF7D","Modern"]].map(([c,l])=>(
             <div key={l} style={{display:"flex",alignItems:"center",gap:6,marginBottom:4}}>
               <div style={{width:14,borderTop:`1.5px dashed ${c}70`}}/>
               <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,color:"rgba(255,255,255,0.25)"}}>{l}</span>
@@ -431,7 +431,7 @@ function DetailPanel({ loc, T, onClose }) {
 // ── EXPLORE SECTION ───────────────────────────────────────────
 function ExploreSection({ T, theme }) {
   const [selected, setSelected]   = useState(null);
-  const [filterType,setFilterType]= useState("all");
+  const [filterType,setFilterType]= useState("all");  // default: show everything
   const [showArcs,  setShowArcs]  = useState(true);
   const [eraIdx,    setEraIdx]    = useState(ERAS.length-1);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -454,7 +454,7 @@ function ExploreSection({ T, theme }) {
     <div style={{height:"100%",display:"flex",flexDirection:"column",background:T.bg,overflow:"hidden"}}>
       <div style={{background:T.surface,borderBottom:`1px solid ${T.border}`,padding:"7px 14px",display:"flex",alignItems:"center",gap:6,flexShrink:0,flexWrap:"wrap"}}>
         <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.1em",textTransform:"uppercase",color:T.inkLight,fontWeight:600}}>Type</span>
-        {[["all","All"],["origin","Origins"],["civilization","Civilizations"],["indigenous","Indigenous"],["diaspora","Diaspora"],["accountability","Accountability"],["world","World History"]].map(([v,l])=>{
+        {[["all","All"],["origin","Origins"],["civilization","Civilizations"],["indigenous","Indigenous"],["diaspora","Diaspora & Migration"],["accountability","Power & Accountability"],["world","World History"]].map(([v,l])=>{
           const ac=v==="all"?T.accent:TYPE_META[v]?.color||T.accent,on=filterType===v;
           return <div key={v} onClick={()=>setFilterType(v)} style={{padding:"3px 10px",borderRadius:20,border:`1px solid ${on?ac+"60":T.border}`,background:on?ac+"18":"transparent",color:on?ac:T.inkLight,fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.08em",textTransform:"uppercase",fontWeight:on?600:400,cursor:"pointer",transition:"all 0.15s",whiteSpace:"nowrap"}}>{l}</div>;
         })}
@@ -490,7 +490,7 @@ function ExploreSection({ T, theme }) {
           </div>
         </div>
         <div style={{display:"flex",justifyContent:"space-between",marginTop:5}}>
-          {["315k BCE","Out of Africa","First Kingdoms","Islamic Age","Slave Trade","Independence","Present"].map((l,i)=>(
+          {["315k BCE","Out of Africa","First Kingdoms","Classical Age","Colonial Era","Independence","Present"].map((l,i)=>(
             <span key={i} style={{fontFamily:"'DM Sans',sans-serif",fontSize:8,color:T.inkFaint}}>{l}</span>
           ))}
         </div>
@@ -695,14 +695,14 @@ function LearnDetailPanel({ item, tab, T, onClose }) {
 
 function ContributionsTab({ T }) {
   const contribs = [
-    { cat:"Mathematics", icon:"📐", items:["Egyptian Rhind Papyrus (1550 BCE): earliest algebra and geometry","Timbuktu scholars: advanced astronomical calculations","Binary number system concepts traced to West African counting systems","Architecture of the pyramids required pi, trigonometry, and surveying"] },
+    { cat:"Mathematics", icon:"📐", items:["Egyptian Rhind Papyrus (1550 BCE): world's earliest algebra and geometry","Indian mathematicians invented zero — transforming all of mathematics","Islamic scholars (Al-Khwarizmi, 820 CE) invented algebra — the word comes from Arabic","Greek geometry + Indian numbers + Arab algebra = modern mathematics"] },
     { cat:"Medicine", icon:"🏥", items:["Ebers Papyrus (1550 BCE): 700 medical treatments — world's oldest medical text","Edwin Smith Papyrus: first surgical text — described brain, spinal cord, nervous system","Imhotep (2650 BCE): first named physician in history — later deified","Ancient Nubians: tetracycline found in bones, suggesting antibiotic brewing"] },
-    { cat:"Music & Culture", icon:"🎵", items:["Jazz, Blues, Gospel, Rock & Roll, R&B, Hip-Hop all trace to African roots","Polyrhythmic drumming: foundational to all popular music on Earth","Griots: West African oral historians who preserved history for millennia","Vodou, Candomblé, Santería: African religions that survived slavery intact"] },
+    { cat:"Music & Culture", icon:"🎵", items:["Jazz, Blues, Rock & Roll, Hip-Hop — all trace to West African musical traditions","Classical music: Bach, Mozart, Beethoven built on Arabic musical theory","The Silk Road carried musical instruments from China to Persia to Europe","Every music tradition on Earth connects back to African rhythmic foundations"] },
     { cat:"Architecture", icon:"🏛️", items:["The Great Pyramid (2560 BCE): tallest structure on Earth for 3,800 years","Nubian pyramids: 200+ still standing at Meroë, Sudan","Great Zimbabwe: unmortared stone structures covering 720 hectares","Timbuktu mosques: Djinguereber Mosque built 1327 CE, still standing"] },
-    { cat:"Language & Writing", icon:"📜", items:["Hieroglyphs (3200 BCE): among world's earliest writing systems","Meroitic script: independently developed in Sudan, not derived from Egyptian","Ge'ez script (Ethiopia): still in use today — one of oldest living alphabets","Swahili: lingua franca of East Africa, spoken by 200 million people today"] },
-    { cat:"Philosophy & Religion", icon:"🌟", items:["Ma'at (Egyptian): concept of truth, justice, cosmic balance — predates Greek philosophy","Ifa oracle (Yoruba): recognised by UNESCO as Intangible Cultural Heritage","Christianity: born in Jewish-African context; Ethiopia adopted it before Rome","Islam in Africa: independent intellectual tradition producing 700,000+ manuscripts"] },
-    { cat:"Science & Innovation", icon:"🔬", items:["Iron-smelting: independently invented in sub-Saharan Africa before Iron Age Europe","Astronomy: Dogon people (Mali) described Sirius B before European telescopes could see it","Traditional ecological knowledge: Hadza and forest peoples outperform Western pharmacology","Modern agriculture: sorghum, coffee, millet, okra — all domesticated in Africa"] },
-    { cat:"Politics & Law", icon:"⚖️", items:["Ubuntu philosophy: 'I am because we are' — foundational to restorative justice movements","Gada system (Oromo, Ethiopia): democratic governance system 500+ years old","Maroon societies: self-governing free communities across the Americas","African Union (1963–): continental governance body representing 1.4 billion people"] },
+    { cat:"Language & Writing", icon:"📜", items:["Hieroglyphs (3200 BCE) and Sumerian cuneiform: the world's first writing systems","Phoenician alphabet → Greek alphabet → Latin alphabet → every European language","Chinese writing: 3,500 years of continuous use — the world's longest literary tradition","Arabic: language of science, medicine, and philosophy during Europe's Dark Ages"] },
+    { cat:"Philosophy & Religion", icon:"🌟", items:["Egyptian Ma'at concept of justice predates Greek philosophy by 2,000 years","Buddhism, Christianity, and Islam all originated in Asia and the Middle East","The Axial Age (800–200 BCE): Confucius, Buddha, Socrates, Isaiah — all at once","Islamic Golden Age (700–1200 CE): preserved Greek philosophy and advanced science while Europe had the Dark Ages"] },
+    { cat:"Science & Innovation", icon:"🔬", items:["Gunpowder, compass, paper, printing press: all invented in China","Islamic scholars invented algebra, optics, and made the first accurate maps","Coffee discovered in Ethiopia — the drink that fuelled the Enlightenment and Industrial Revolution","The Scientific Revolution (1543–1687): Copernicus, Galileo, Newton — built on Islamic and Greek foundations"] },
+    { cat:"Politics & Law", icon:"⚖️", items:["Magna Carta (1215): first document establishing rule of law — foundation of all democracies","Haudenosaunee (Iroquois) Confederacy inspired the US Constitution's federal structure","Athenian democracy (507 BCE): first government by the people — though only free men counted","The UN Declaration of Human Rights (1948): shaped by thinkers from 58 nations, not just the West"] },
   ];
   return (
     <div style={{flex:1,overflowY:"auto",padding:"20px 24px"}}>
@@ -731,7 +731,7 @@ function ReckonSection({ T }) {
   const [tab,  setTab]  = useState("ships");
   const [sel,  setSel]  = useState(null);
 
-  const tabs=[["ships","Slave Ships"],["companies","Companies"],["families","Families"],["institutions","Institutions"]];
+  const tabs=[["ships","Historic Ships"],["companies","Companies"],["families","Families"],["institutions","Institutions"]];
   const data={ships:ACCOUNTABILITY.ships,companies:ACCOUNTABILITY.companies,families:ACCOUNTABILITY.families,institutions:ACCOUNTABILITY.institutions};
   const items=data[tab]||[];
 
@@ -743,8 +743,8 @@ function ReckonSection({ T }) {
             <Ic n="warning" s={14} c={T.danger}/>
           </div>
           <div>
-            <h2 style={{fontFamily:"'Playfair Display',Georgia,serif",fontSize:18,fontWeight:700,color:T.ink,margin:"0 0 3px"}}>Truth & Accountability</h2>
-            <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:T.inkMid,margin:0}}>Named individuals, companies, and institutions. Every entry is sourced. Nothing here is opinion.</p>
+            <h2 style={{fontFamily:"'Playfair Display',Georgia,serif",fontSize:18,fontWeight:700,color:T.ink,margin:"0 0 3px"}}>Power, Wealth & Accountability</h2>
+            <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:T.inkMid,margin:0}}>Named individuals, companies, and institutions. Who built empires. Who profited. Every entry is sourced.</p>
           </div>
         </div>
         <div style={{display:"flex",gap:0}}>
@@ -1043,19 +1043,15 @@ const RELATION_LABELS = [
 ];
 
 const DEFAULT_NODES = [
-  { id:1, label:"Mansa Musa",         type:"person",      x:220, y:160 },
-  { id:2, label:"Mali Empire",        type:"place",       x:500, y:200 },
-  { id:3, label:"Sankore University", type:"institution", x:760, y:130 },
-  { id:4, label:"Trans-Saharan Trade",type:"trade",       x:160, y:380 },
-  { id:5, label:"Timbuktu",           type:"place",       x:500, y:380 },
+  { id:1, label:"Roman Empire",       type:"place",       x:220, y:160 },
+  { id:2, label:"Julius Caesar",      type:"person",      x:480, y:100 },
+  { id:3, label:"Silk Road",          type:"trade",       x:740, y:160 },
+  { id:4, label:"Byzantine Empire",   type:"place",       x:160, y:360 },
+  { id:5, label:"Ottoman Empire",     type:"institution", x:500, y:360 },
 ];
 
 const DEFAULT_EDGES = [
-  { id:1, from:1, to:2, label:"Ruled"      },
-  { id:2, from:2, to:3, label:"Patronized" },
-  { id:3, from:1, to:5, label:"Visited"    },
-  { id:4, from:4, to:2, label:"Funded"     },
-  { id:5, from:5, to:3, label:"Hosted"     },
+  {id:1,from:1,to:2,label:"Led by"},{id:2,from:1,to:3,label:"Traded via"},{id:3,from:3,to:5,label:"Connected to"},{id:4,from:1,to:4,label:"Became"},{id:5,from:4,to:5,label:"Replaced by"}
 ];
 
 function InvestigateSection({ T, nodes: propNodes, edges: propEdges, setNodes: setPropNodes, setEdges: setPropEdges }) {
@@ -1089,7 +1085,7 @@ function InvestigateSection({ T, nodes: propNodes, edges: propEdges, setNodes: s
   const [relLabel,  setRelLabel]  = useState("Connected to");
   const [layout,    setLayout]    = useState("free"); // free | radial | tree
   const [search,    setSearch]    = useState("");
-  const [filterType,setFilterType]= useState("all");
+  const [filterType,setFilterType]= useState("all");  // default: show everything
   const dragOffset  = useRef({x:0,y:0});
   const nextId      = useRef(6);
 
@@ -1473,7 +1469,7 @@ function Home({ T, onNavigate }) {
   const sectionCards=[
     {id:"explore",label:"Explore",icon:"globe",colorKey:"info",tagline:"The Interactive Globe",desc:"Navigate human history from 315,000 BCE. African civilizations, world empires, diaspora communities, accountability records."},
     {id:"timeline",label:"Timeline",icon:"clock",colorKey:"accent",tagline:"300,000 BCE → Present",desc:"Every era, every turning point. From human origins to today — on one scrollable timeline."},
-    {id:"learn",label:"Learn",icon:"book",colorKey:"info",tagline:"People & Civilizations",desc:"Kings, scholars, warriors, activists. From Mansa Musa to the Aztec Empire — every civilisation that shaped today."},
+    {id:"learn",label:"Learn",icon:"book",colorKey:"info",tagline:"People & Civilizations",desc:"Kings, scholars, warriors, activists. From Julius Caesar to Genghis Khan — every civilisation that shaped today."},
     {id:"reckon",label:"Reckon",icon:"scale",colorKey:"reckon",tagline:"Truth & Accountability",desc:"Named ships, owners, companies, institutions. The wealth trail from the slave trade to Wall Street."},
     {id:"investigate",label:"Investigate",icon:"connect",colorKey:"slate",tagline:"The PI Board",desc:"Drop nodes, draw connections, follow any thread. AI builds the connection graph automatically."},
     {id:"research",label:"Research",icon:"ai",colorKey:"success",tagline:"AI Research Suite",desc:"Four AI agents answer any history question — African, American, Asian, European. Ask anything."},
@@ -1516,9 +1512,9 @@ function Home({ T, onNavigate }) {
                 <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.12em",textTransform:"uppercase",color:T.inkLight,fontWeight:600}}>Knowledge Depth</span>
                 <Ic n="flame" s={14} c={T.accent}/>
               </div>
-              <PBar label="African Civilizations" pct={84} color={T.accent}  T={T} delay={0}/>
-              <PBar label="Diaspora History"      pct={62} color={T.info}    T={T} delay={120}/>
-              <PBar label="Colonial Records"      pct={78} color={T.danger}  T={T} delay={240}/>
+              <PBar label="Ancient Civilizations" pct={84} color={T.accent}  T={T} delay={0}/>
+              <PBar label="Migration & Diaspora"      pct={62} color={T.info}    T={T} delay={120}/>
+              <PBar label="Empires & Conquest"      pct={78} color={T.danger}  T={T} delay={240}/>
               <PBar label="Artifact Provenance"   pct={55} color={T.success} T={T} delay={360}/>
             </div>
           </div>
@@ -1550,7 +1546,7 @@ function Home({ T, onNavigate }) {
         <div style={{padding:"18px 22px",background:T.card,border:`1px solid ${T.border}`,borderRadius:12,display:"flex",alignItems:"center",gap:18}}>
           <img src={severusLogo} alt="Severus" style={{width:44,height:44,borderRadius:"50%",objectFit:"cover",flexShrink:0}}/>
           <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:T.inkMid,lineHeight:1.7,margin:0,flex:1}}>
-            Named after <strong style={{color:T.ink,fontWeight:600}}>Septimius Severus</strong> — born in Leptis Magna, North Africa, 145 CE. Emperor of Rome, 193 CE. A reminder that great civilisations have always been more connected, more diverse, and more African than history books admit. <em style={{color:T.accent}}>Every student deserves to know this.</em>
+            Named after <strong style={{color:T.ink,fontWeight:600}}>Septimius Severus</strong> — born in Leptis Magna, North Africa, 145 CE. Emperor of Rome, 193 CE. A reminder that great civilisations have always been more connected, more diverse, and more intertwined than history books admit. <em style={{color:T.accent}}>Every student deserves to know this.</em>
           </p>
           <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.08em",textTransform:"uppercase",color:T.inkFaint,textAlign:"right",flexShrink:0}}>Free Forever<br/>All Sources Cited</div>
         </div>
