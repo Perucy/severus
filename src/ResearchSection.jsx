@@ -227,60 +227,127 @@ function extractToolCalls(events, agentName) {
 }
 
 // ── Parse connections for PI board ───────────────────────────
-function parseConnectionsForBoard(events, question) {
+// Builds a relevant graph from BOTH historian and investigator outputs
+function parseConnectionsForBoard(result, question) {
   const nodeMap = new Map();
   const edges   = [];
   let   nextId  = Date.now();
 
-  const typeGuess = (name, nodeType) => {
-    if (nodeType === "accountability") return "institution";
-    if (nodeType === "diaspora")       return "place";
+  const typeGuess = (name, ntype) => {
+    if (ntype === "accountability") return "institution";
+    if (ntype === "diaspora")       return "place";
+    if (ntype === "civilization")   return "place";
     const n = (name||"").toLowerCase();
-    if (n.includes("company")||n.includes("bank")||n.includes("lloyd")||n.includes("university")) return "institution";
-    if (n.includes("ship")||n.includes("clotilda")||n.includes("zong")) return "ship";
-    if (n.includes("conference")||n.includes("revolution")||n.includes("war")) return "event";
-    if (n.includes("trade")||n.includes("route")||n.includes("passage")) return "trade";
+    if (n.includes("museum")||n.includes("company")||n.includes("lloyd")||n.includes("bank")||n.includes("university")||n.includes("corp")) return "institution";
+    if (n.includes("ship")||n.includes("clotilda")||n.includes("zong")||n.includes("brooks")) return "ship";
+    if (n.includes("conference")||n.includes("expedition")||n.includes("revolution")||n.includes("war")||n.includes("act")) return "event";
+    if (n.includes("trade")||n.includes("route")||n.includes("passage")||n.includes("market")) return "trade";
+    if (n.includes("king")||n.includes("queen")||n.includes("emperor")||n.includes("mansa")||n.includes("pharaoh")||n.includes("chief")) return "person";
     return "place";
   };
 
   const addNode = (id, name, ntype) => {
-    if (!nodeMap.has(id)) {
-      nodeMap.set(id, { id, label:name, type:typeGuess(name, ntype),
-        x:150+(nodeMap.size%5)*200+Math.random()*50,
-        y:120+Math.floor(nodeMap.size/5)*180+Math.random()*40 });
+    const key = id || name.toLowerCase().replace(/[^a-z0-9]+/g,"-").slice(0,30);
+    if (!nodeMap.has(key)) {
+      nodeMap.set(key, { id:key, label:name, type:typeGuess(name, ntype),
+        x: 150+(nodeMap.size%5)*210+Math.random()*40,
+        y: 130+Math.floor(nodeMap.size/5)*190+Math.random()*40 });
     }
-    return nodeMap.get(id);
+    return nodeMap.get(key);
   };
 
-  for (const ev of (events||[])) {
-    if (ev.agent !== "investigator" || ev.type !== "tool_result") continue;
+  const addEdge = (fromId, toId, label) => {
+    const key = [fromId,toId].sort().join("--");
+    if (!edges.find(e=>[e.from,e.to].sort().join("--")===key))
+      edges.push({id:nextId++,from:fromId,to:toId,label});
+  };
+
+  // Central topic node
+  const topicWords = (question||"").replace(/[^a-zA-Z\s]/g,"").split(" ").filter(w=>w.length>3);
+  const topicLabel = topicWords.slice(0,4).join(" ") || "Research Topic";
+  const topicNode  = addNode("topic-root", topicLabel, "event");
+
+  const historian    = result?.historian_output    || "";
+  const investigator = result?.investigator_output || "";
+  const allEvents    = result?.events              || [];
+
+  // Helper: is this name mentioned in the research outputs?
+  const isRelevant = (name) => {
+    const word = (name||"").split(" ")[0].toLowerCase();
+    return word.length > 3 &&
+      (historian.toLowerCase().includes(word) ||
+       investigator.toLowerCase().includes(word));
+  };
+
+  // ── From historian KB results ──────────────────────────────
+  for (const ev of allEvents.filter(e=>e.agent==="historian"&&e.type==="tool_result")) {
     try {
       const d = JSON.parse((ev.content||"").replace(/\.\.\.$/,""));
+      for (const loc of (d.locations||[])) {
+        const n = addNode(loc.id, loc.name, loc.type);
+        addEdge(topicNode.id, n.id, "Subject");
+      }
+      for (const p of (d.people||[])) {
+        const n = addNode(p.id, p.name, "person");
+        n.type = "person";
+        addEdge(topicNode.id, n.id, "Key figure");
+      }
+      // Wikipedia hit
+      if (d.title && !d.error && !d.note) {
+        const n = addNode(null, d.title, "place");
+        if (!edges.find(e=>e.to===n.id)) addEdge(topicNode.id, n.id, "Subject");
+      }
+    } catch {}
+  }
+
+  // ── From investigator KB + connection results ──────────────
+  for (const ev of allEvents.filter(e=>e.agent==="investigator"&&e.type==="tool_result")) {
+    try {
+      const d = JSON.parse((ev.content||"").replace(/\.\.\.$/,""));
+
+      // get_node_connections — only add nodes actually mentioned in outputs
       if (d.node && d.connections) {
-        const root = addNode(d.node.id, d.node.name, "");
-        for (const c of d.connections) {
-          const child = addNode(c.id, c.name, c.type);
-          const key = [root.id, child.id].sort().join("-");
-          if (!edges.find(e=>[e.from,e.to].sort().join("-")===key)) {
-            edges.push({ id:nextId++, from:root.id, to:child.id,
-              label:c.type==="accountability"?"Implicated":c.type==="diaspora"?"Connected to":"Linked to" });
+        if (isRelevant(d.node.name)) {
+          const root = addNode(d.node.id, d.node.name, "");
+          for (const c of d.connections) {
+            if (isRelevant(c.name)) {
+              const child = addNode(c.id, c.name, c.type);
+              addEdge(root.id, child.id,
+                c.type==="accountability"?"Implicated":
+                c.type==="diaspora"?"Connected to":"Linked to");
+            }
           }
+        }
+      }
+
+      // KB search results from investigator
+      for (const loc of (d.locations||[])) {
+        if (isRelevant(loc.name)) {
+          const n = addNode(loc.id, loc.name, loc.type);
+          if (!edges.find(e=>e.to===n.id||e.from===n.id))
+            addEdge(topicNode.id, n.id, "Implicated");
         }
       }
     } catch {}
   }
 
-  if (nodeMap.size > 0 && question) {
-    const tid   = "topic-"+Date.now();
-    const words = question.replace(/[^a-zA-Z\s]/g,"").split(" ").filter(w=>w.length>3);
-    const label = words.slice(0,3).join(" ") || "Research Topic";
-    nodeMap.set(tid, { id:tid, label, type:"event", x:500, y:50 });
-    const first = [...nodeMap.values()].find(n=>n.id!==tid);
-    if (first) edges.unshift({ id:nextId++, from:tid, to:first.id, label:"Relates to" });
+  // ── Fallback: extract capitalised entities from outputs ────
+  if (nodeMap.size < 3) {
+    const combined = historian + " " + investigator;
+    const matches  = [...new Set(combined.match(/\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,3})\b/g)||[])];
+    let added = 0;
+    for (const m of matches) {
+      if (added >= 7) break;
+      const words = m.split(" ");
+      if (words.length < 2 || words.some(w=>["The","His","Her","This","That","They","Their"].includes(w))) continue;
+      const n = addNode(null, m, "place");
+      if (!edges.find(e=>e.to===n.id)) { addEdge(topicNode.id, n.id, "Mentioned"); added++; }
+    }
   }
 
   return { nodes:[...nodeMap.values()], edges };
 }
+
 
 // ── Main component ────────────────────────────────────────────
 export default function ResearchSection({ T, onPushToBoard, onNavigate, savedState, onSaveState }) {
@@ -447,7 +514,7 @@ export default function ResearchSection({ T, onPushToBoard, onNavigate, savedSta
                     </p>
                   </div>
                   <button onClick={()=>{
-                    const {nodes:n, edges:e} = parseConnectionsForBoard(allEvents, question);
+                    const {nodes:n, edges:e} = parseConnectionsForBoard(result, question);
                     if (n.length > 0) { onPushToBoard(n, e); onNavigate("investigate"); }
                   }} style={{ display:"flex", alignItems:"center", gap:8, padding:"10px 18px", background:T.accent, border:"none", borderRadius:8, color:"#fff", fontFamily:"'DM Sans',sans-serif", fontSize:12, fontWeight:700, cursor:"pointer", whiteSpace:"nowrap", transition:"all 0.2s" }}
                     onMouseEnter={e=>e.currentTarget.style.background=T.accentMid}

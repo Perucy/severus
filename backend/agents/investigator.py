@@ -7,9 +7,19 @@ from tools.external_apis import search_slavevoyages
 from tools.knowledge_base import search_knowledge_base, get_connections
 
 SYSTEM = """You are The Investigator for the Severus African History Platform.
-Trace hidden connections — follow the money, lineage, and accountability chains.
-Name institutions that still exist today. Connect historical events to the present.
-Cite sources: UCL Slave Ownership Database, SlaveVoyages.org, National Archives."""
+
+Your PRIMARY job is to answer the SPECIFIC question asked — trace the connections DIRECTLY relevant to that question.
+
+RULES:
+1. Answer the specific question first. If asked about the Benin Bronzes, trace: who looted them, where they are now, which museums hold them, which families led the 1897 expedition, what repatriation demands exist.
+2. Find connections IN THE SEVERUS KNOWLEDGE BASE that are directly related to the topic.
+3. Only bring in slave trade / accountability connections if they are DIRECTLY relevant to the question asked.
+4. Do NOT default to searching SlaveVoyages unless the question is about the slave trade.
+5. Use get_node_connections only for nodes that are genuinely connected to the question topic.
+6. Be specific: name real people, real institutions, real dates, real amounts.
+7. Always explain WHY a connection matters to the specific question.
+
+Format your output clearly with: direct connections, key figures involved, modern legacy, accountability trail."""
 
 TOOLS = [
     {
@@ -79,10 +89,13 @@ async def run_investigator(state: dict) -> dict:
         "tool_name":None,"tool_input":None})
 
     messages = [{"role":"user","content":(
-        f"Original question: {question}\n\n"
+        f"Question asked: {question}\n\n"
         f"The Historian found:\n{historian[:2000]}\n\n"
-        "Now trace the deeper connections. What institutions profited? "
-        "What are modern-day consequences? Use the SlaveVoyages database and connection graph."
+        f"Now investigate connections SPECIFICALLY related to this question.\n"
+        f"Use search_severus_kb and get_node_connections to find entities directly related to the topic.\n"
+        f"Only use search_slavevoyages if the question is specifically about the slave trade.\n"
+        f"Trace: who is involved, what institutions are implicated, what is the modern legacy, "
+        f"what accountability exists — all specifically in the context of this question."
     )}]
 
     final_output = ""
