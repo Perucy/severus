@@ -788,81 +788,169 @@ function ReckonSection({ T }) {
 
 // ── NODE DETAIL PANEL ─────────────────────────────────────────
 function NodeDetailPanel({ node, edges, nodes, T, onClose, onConnect, onDelete, onUpdateNote }) {
-  const [note,    setNote]    = useState(node.note || "");
-  const [wikiImg, setWikiImg] = useState(null);
-  const [wikiSum, setWikiSum] = useState("");
-  const [loading, setLoading] = useState(false);
-  const meta = NODE_TYPES[node.type] || NODE_TYPES.person;
+  const [note,      setNote]      = useState(node.note || "");
+  const [wikiImg,   setWikiImg]   = useState(null);
+  const [wikiSum,   setWikiSum]   = useState("");
+  const [aiContext, setAiContext]  = useState(null);
+  const [aiLoading, setAiLoading] = useState(false);
+  const meta      = NODE_TYPES[node.type] || NODE_TYPES.person;
+  const nodeEdges = edges.filter(e => e.from === node.id || e.to === node.id);
 
-  // Fetch Wikipedia on node select
+  // Wikipedia
   useEffect(() => {
     setNote(node.note || "");
-    setWikiImg(null);
-    setWikiSum("");
-    setLoading(true);
-    const query = encodeURIComponent(node.label);
-    fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${query}`)
+    setWikiImg(null); setWikiSum(""); setAiContext(null);
+    fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(node.label)}`)
       .then(r => r.ok ? r.json() : null)
       .then(d => {
         if (d?.thumbnail?.source) setWikiImg(d.thumbnail.source.replace(/\/\d+px-/, "/320px-"));
         if (d?.extract) setWikiSum(d.extract.slice(0, 280));
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
+      }).catch(() => {});
   }, [node.id]);
 
-  const nodeEdges = edges.filter(e => e.from === node.id || e.to === node.id);
+  // AI context — fires when node selected and has edges
+  useEffect(() => {
+    if (nodeEdges.length === 0) return;
+    setAiContext(null);
+    setAiLoading(true);
+
+    const connectionLines = nodeEdges.map(edge => {
+      const otherId = edge.from === node.id ? edge.to : edge.from;
+      const other   = nodes.find(n => n.id === otherId);
+      const dir     = edge.from === node.id ? "connects TO" : "is connected FROM";
+      return other ? `- ${node.label} ${dir} "${other.label}" (relationship: "${edge.label}")` : null;
+    }).filter(Boolean).join("\n");
+
+    const allLabels = nodes.map(n => n.label).join(", ");
+
+    fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 500,
+        messages: [{ role: "user", content:
+          `You are an expert on African history for the Severus History Investigation Platform.
+
+A researcher is examining the node "${node.label}" (type: ${node.type}) on a PI board investigation diagram.
+
+All nodes in this diagram: ${allLabels}
+
+This node's connections:
+${connectionLines}
+
+Respond with exactly these 3 sections (keep total response under 200 words):
+
+BACKGROUND
+2 sentences: What is ${node.label} historically?
+
+ROLE IN DIAGRAM
+2 sentences: Why does this node appear in THIS investigation? What does it represent here?
+
+CONNECTIONS
+One line per connection explaining why that relationship matters historically. Format: "→ [Other Node]: [explanation]"` }],
+      }),
+    })
+      .then(r => r.json())
+      .then(d => { const t = d.content?.[0]?.text; if (t) setAiContext(t); })
+      .catch(() => {})
+      .finally(() => setAiLoading(false));
+  }, [node.id, nodeEdges.length]);
+
+  // Parse sections from AI response
+  const sections = (() => {
+    if (!aiContext) return null;
+    const bg   = aiContext.match(/BACKGROUND\s*\n([\s\S]*?)(?=\n\s*ROLE IN|$)/i)?.[1]?.trim();
+    const role = aiContext.match(/ROLE IN DIAGRAM\s*\n([\s\S]*?)(?=\n\s*CONNECTIONS|$)/i)?.[1]?.trim();
+    const conn = aiContext.match(/CONNECTIONS\s*\n([\s\S]*?)$/i)?.[1]?.trim();
+    return { bg, role, conn };
+  })();
+
+  // Match AI connection lines to edges
+  const getEdgeExplanation = (otherLabel) => {
+    if (!sections?.conn) return null;
+    const lines = sections.conn.split("\n").filter(l => l.trim());
+    return lines.find(l => l.toLowerCase().includes(otherLabel.toLowerCase().split(" ")[0]))
+      ?.replace(/^→\s*[^:]+:\s*/,"").replace(/^[-•*]\s*/,"").trim() || null;
+  };
+
+  const Shimmer = () => (
+    <div style={{ height:14, borderRadius:4, marginBottom:5,
+      background: T.name==="dark"?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.06)",
+      animation:"shimmer 1.4s ease-in-out infinite" }}/>
+  );
 
   return (
-    <div style={{ flex:1, overflowY:"auto", padding:0, display:"flex", flexDirection:"column" }}>
-      {/* Header image */}
-      <div style={{ height:120, background:`linear-gradient(135deg,${meta.color}30,${meta.color}10)`, position:"relative", flexShrink:0, overflow:"hidden" }}>
-        {wikiImg && <img src={wikiImg} alt="" style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"center top", filter:"brightness(0.85)" }}/>}
-        <div style={{ position:"absolute", inset:0, background:"linear-gradient(to top,rgba(0,0,0,0.7),transparent 55%)" }}/>
-        <button onClick={onClose} style={{ position:"absolute", top:8, right:8, width:22, height:22, borderRadius:"50%", background:"rgba(0,0,0,0.5)", border:"1px solid rgba(255,255,255,0.2)", color:"rgba(255,255,255,0.7)", fontSize:10, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center" }}>✕</button>
-        <div style={{ position:"absolute", bottom:8, left:10 }}>
-          <span style={{ fontSize:18 }}>{meta.icon}</span>
+    <div style={{ flex:1, display:"flex", flexDirection:"column", overflow:"hidden" }}>
+      {/* Header */}
+      <div style={{ height:110, background:`linear-gradient(135deg,${meta.color}35,${meta.color}10)`,
+        position:"relative", flexShrink:0, overflow:"hidden" }}>
+        {wikiImg && <img src={wikiImg} alt="" style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"center top", filter:"brightness(0.8)" }}/>}
+        <div style={{ position:"absolute", inset:0, background:"linear-gradient(to top,rgba(0,0,0,0.75),transparent 50%)" }}/>
+        <button onClick={onClose} style={{ position:"absolute", top:8, right:8, width:22, height:22, borderRadius:"50%", background:"rgba(0,0,0,0.55)", border:"1px solid rgba(255,255,255,0.2)", color:"rgba(255,255,255,0.7)", fontSize:11, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center" }}>✕</button>
+        <div style={{ position:"absolute", bottom:8, left:10, display:"flex", alignItems:"center", gap:6 }}>
+          <span style={{ fontSize:16 }}>{meta.icon}</span>
+          <span style={{ fontFamily:"'DM Sans',sans-serif", fontSize:8, fontWeight:700, color:"rgba(255,255,255,0.8)", textTransform:"uppercase", letterSpacing:"0.08em", background:meta.color+"60", padding:"2px 7px", borderRadius:20 }}>{meta.label}</span>
         </div>
       </div>
 
-      {/* Content */}
-      <div style={{ padding:"12px 14px", flex:1, overflowY:"auto" }}>
-        {/* Title */}
-        <div style={{ marginBottom:10 }}>
-          <h3 style={{ fontFamily:"'Playfair Display',serif", fontSize:15, fontWeight:700, color:T.ink, margin:"0 0 3px" }}>{node.label}</h3>
-          <div style={{ display:"inline-block", padding:"2px 8px", borderRadius:20, background:meta.color+"22", border:`1px solid ${meta.color}50` }}>
-            <span style={{ fontFamily:"'DM Sans',sans-serif", fontSize:8, fontWeight:700, color:meta.color, textTransform:"uppercase", letterSpacing:"0.08em" }}>{meta.label}</span>
+      {/* Scrollable content */}
+      <div style={{ flex:1, overflowY:"auto", padding:"12px 14px" }}>
+        <h3 style={{ fontFamily:"'Playfair Display',serif", fontSize:15, fontWeight:700, color:T.ink, margin:"0 0 12px" }}>{node.label}</h3>
+
+        {/* Background */}
+        <div style={{ marginBottom:12 }}>
+          <div style={{ display:"flex", alignItems:"center", gap:5, marginBottom:6 }}>
+            <div style={{ width:3, height:12, background:meta.color, borderRadius:2 }}/>
+            <span style={{ fontFamily:"'DM Sans',sans-serif", fontSize:9, letterSpacing:"0.1em", textTransform:"uppercase", color:T.inkFaint, fontWeight:600 }}>Background</span>
           </div>
+          {aiLoading && !sections?.bg ? <><Shimmer/><Shimmer/></>
+            : sections?.bg
+            ? <p style={{ fontFamily:"'DM Sans',sans-serif", fontSize:11, color:T.inkMid, lineHeight:1.75, margin:0 }}>{sections.bg}</p>
+            : wikiSum
+            ? <p style={{ fontFamily:"'DM Sans',sans-serif", fontSize:11, color:T.inkMid, lineHeight:1.75, margin:0 }}>{wikiSum}…</p>
+            : null}
         </div>
 
-        {/* Wikipedia summary */}
-        {loading && <p style={{ fontFamily:"'DM Sans',sans-serif", fontSize:11, color:T.inkFaint, fontStyle:"italic" }}>Loading Wikipedia…</p>}
-        {wikiSum && !loading && (
-          <div style={{ marginBottom:10 }}>
-            <div style={{ fontFamily:"'DM Sans',sans-serif", fontSize:9, letterSpacing:"0.1em", textTransform:"uppercase", color:T.inkFaint, marginBottom:5, fontWeight:600 }}>Wikipedia</div>
-            <p style={{ fontFamily:"'DM Sans',sans-serif", fontSize:11, color:T.inkMid, lineHeight:1.65, margin:0 }}>{wikiSum}…</p>
+        {/* Role in diagram */}
+        {(aiLoading || sections?.role) && (
+          <div style={{ marginBottom:12, padding:"9px 11px", background:meta.color+"12", border:`1px solid ${meta.color}30`, borderRadius:8 }}>
+            <div style={{ display:"flex", alignItems:"center", gap:5, marginBottom:5 }}>
+              <div style={{ width:3, height:12, background:meta.color, borderRadius:2 }}/>
+              <span style={{ fontFamily:"'DM Sans',sans-serif", fontSize:9, letterSpacing:"0.1em", textTransform:"uppercase", color:meta.color, fontWeight:600 }}>Role in this investigation</span>
+            </div>
+            {aiLoading && !sections?.role ? <Shimmer/>
+              : <p style={{ fontFamily:"'DM Sans',sans-serif", fontSize:11, color:T.ink, lineHeight:1.75, margin:0, fontStyle:"italic" }}>{sections?.role}</p>}
           </div>
         )}
 
         {/* Connections */}
-        <div style={{ fontFamily:"'DM Sans',sans-serif", fontSize:9, letterSpacing:"0.1em", textTransform:"uppercase", color:T.inkFaint, marginBottom:6, fontWeight:600 }}>
+        <div style={{ fontFamily:"'DM Sans',sans-serif", fontSize:9, letterSpacing:"0.1em", textTransform:"uppercase", color:T.inkFaint, marginBottom:8, fontWeight:600 }}>
           Connections ({nodeEdges.length})
         </div>
         {nodeEdges.length === 0
           ? <p style={{ fontFamily:"'DM Sans',sans-serif", fontSize:11, color:T.inkLight, marginBottom:10 }}>None yet</p>
-          : <div style={{ marginBottom:10 }}>
+          : <div style={{ marginBottom:12 }}>
             {nodeEdges.map((edge, i) => {
-              const otherId = edge.from === node.id ? edge.to : edge.from;
-              const other   = nodes.find(n => n.id === otherId);
-              const dir     = edge.from === node.id ? "→" : "←";
+              const otherId   = edge.from === node.id ? edge.to : edge.from;
+              const other     = nodes.find(n => n.id === otherId);
+              const dir       = edge.from === node.id ? "→" : "←";
+              const otherMeta = NODE_TYPES[other?.type] || NODE_TYPES.place;
+              const explanation = other ? getEdgeExplanation(other.label) : null;
               if (!other) return null;
               return (
-                <div key={i} style={{ display:"flex", alignItems:"center", gap:6, padding:"6px 8px", background:T.card, border:`1px solid ${T.border}`, borderRadius:7, marginBottom:5 }}>
-                  <span style={{ fontSize:12 }}>{NODE_TYPES[other.type]?.icon}</span>
-                  <div style={{ flex:1, minWidth:0 }}>
-                    <div style={{ fontFamily:"'DM Sans',sans-serif", fontSize:10, fontWeight:600, color:T.ink, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{dir} {other.label}</div>
-                    <div style={{ fontFamily:"'DM Sans',sans-serif", fontSize:9, color:T.inkLight, fontStyle:"italic" }}>{edge.label}</div>
+                <div key={i} style={{ marginBottom:8, padding:"9px 10px", background:T.card,
+                  border:`1px solid ${T.border}`, borderRadius:8, borderLeft:`2.5px solid ${otherMeta.color}` }}>
+                  <div style={{ display:"flex", alignItems:"center", gap:6, marginBottom: explanation||aiLoading ? 5:0 }}>
+                    <span style={{ fontSize:13 }}>{otherMeta.icon}</span>
+                    <span style={{ fontFamily:"'DM Sans',sans-serif", fontSize:10, fontWeight:700, color:T.ink }}>{dir} {other.label}</span>
+                    <span style={{ fontFamily:"'DM Sans',sans-serif", fontSize:9, color:meta.color, fontStyle:"italic", marginLeft:2 }}>{edge.label}</span>
                   </div>
+                  {aiLoading && !explanation
+                    ? <div style={{ height:12, borderRadius:3, background:T.name==="dark"?"rgba(255,255,255,0.04)":"rgba(0,0,0,0.04)", animation:"shimmer 1.4s ease-in-out infinite" }}/>
+                    : explanation
+                    ? <p style={{ fontFamily:"'DM Sans',sans-serif", fontSize:10, color:T.inkMid, lineHeight:1.6, margin:0 }}>{explanation}</p>
+                    : null}
                 </div>
               );
             })}
@@ -871,27 +959,22 @@ function NodeDetailPanel({ node, edges, nodes, T, onClose, onConnect, onDelete, 
 
         {/* Notes */}
         <div style={{ fontFamily:"'DM Sans',sans-serif", fontSize:9, letterSpacing:"0.1em", textTransform:"uppercase", color:T.inkFaint, marginBottom:5, fontWeight:600 }}>Investigation Notes</div>
-        <textarea
-          value={note}
-          onChange={e => setNote(e.target.value)}
-          onBlur={() => onUpdateNote(note)}
-          placeholder="Add your investigation notes…"
-          rows={3}
-          style={{ width:"100%", padding:"8px 10px", background:T.card, border:`1px solid ${T.border}`, borderRadius:7, fontFamily:"'DM Sans',sans-serif", fontSize:11, color:T.ink, resize:"vertical", outline:"none", caretColor:T.accent, lineHeight:1.6, boxSizing:"border-box" }}
-        />
+        <textarea value={note} onChange={e=>setNote(e.target.value)} onBlur={()=>onUpdateNote(note)}
+          placeholder="Add your investigation notes…" rows={3}
+          style={{ width:"100%", padding:"8px 10px", background:T.card, border:`1px solid ${T.border}`,
+            borderRadius:7, fontFamily:"'DM Sans',sans-serif", fontSize:11, color:T.ink, resize:"vertical",
+            outline:"none", caretColor:T.accent, lineHeight:1.6, boxSizing:"border-box" }}/>
 
-        {/* Actions */}
         <div style={{ display:"flex", flexDirection:"column", gap:7, marginTop:10 }}>
-          <button onClick={onConnect}
-            style={{ padding:"7px", background:T.info+"18", border:`1px solid ${T.info}40`, borderRadius:7, color:T.info, fontFamily:"'DM Sans',sans-serif", fontSize:11, fontWeight:600, cursor:"pointer", textTransform:"uppercase", letterSpacing:"0.04em" }}>
+          <button onClick={onConnect} style={{ padding:"7px", background:T.info+"18", border:`1px solid ${T.info}40`, borderRadius:7, color:T.info, fontFamily:"'DM Sans',sans-serif", fontSize:11, fontWeight:600, cursor:"pointer", textTransform:"uppercase", letterSpacing:"0.04em" }}>
             🔗 Connect from here
           </button>
-          <button onClick={onDelete}
-            style={{ padding:"7px", background:"transparent", border:`1px solid ${T.border}`, borderRadius:7, color:T.danger, fontFamily:"'DM Sans',sans-serif", fontSize:11, fontWeight:600, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", gap:5 }}>
+          <button onClick={onDelete} style={{ padding:"7px", background:"transparent", border:`1px solid ${T.border}`, borderRadius:7, color:T.danger, fontFamily:"'DM Sans',sans-serif", fontSize:11, fontWeight:600, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", gap:5 }}>
             <Ic n="trash" s={12} c={T.danger}/> Delete node
           </button>
         </div>
       </div>
+      <style>{`@keyframes shimmer{0%,100%{opacity:0.4}50%{opacity:0.9}}`}</style>
     </div>
   );
 }
