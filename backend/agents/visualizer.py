@@ -5,7 +5,7 @@ import anthropic
 from utils import create_with_retry
 from tools.external_apis import generate_image, generate_video_prompt
 
-SYSTEM = """You are The Visualizer for the Severus African History Platform.
+SYSTEM = """You are The Visualizer for the Severus World History Platform.
 Create vivid, historically accurate visual reconstructions.
 Generate 2 scenes: one establishing shot, one key dramatic moment.
 Prioritise authentic African aesthetics — correct period clothing, architecture, tools.

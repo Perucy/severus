@@ -10,12 +10,14 @@ const AGENTS = {
 };
 
 const SUGGESTIONS = [
-  "Tell me about the Egyptian pyramids and their African origins",
-  "Who financed the transatlantic slave trade and where is that wealth today?",
-  "What was the Kingdom of Mali and why isn't it taught in schools?",
-  "Trace the journey of the Benin Bronzes from Nigeria to British museums",
-  "How did the Haitian Revolution defeat Napoleon's army?",
-  "What did Timbuktu look like at its peak under Mansa Musa?",
+  "What caused the fall of the Roman Empire?",
+  "How did the Silk Road connect the ancient world?",
+  "Who was Mansa Musa — the wealthiest person in history?",
+  "What was Black Wall Street and what happened to it?",
+  "How did 600 Spanish soldiers destroy the Aztec Empire?",
+  "What was the Ottoman Empire and why did it collapse?",
+  "Trace the Benin Bronzes from Nigeria to the British Museum",
+  "How did the slave trade fund modern banking institutions?",
 ];
 
 // ── Tool call block (collapsible) ─────────────────────────────
@@ -386,9 +388,9 @@ export default function ResearchSection({ T, onPushToBoard, onNavigate, savedSta
           {!loading && !result && !error && (
             <div style={{ textAlign:"center", paddingTop:32 }}>
               <div style={{ fontSize:48, marginBottom:14 }}>🌍</div>
-              <h3 style={{ fontFamily:"'Playfair Display',Georgia,serif", fontSize:24, fontWeight:700, color:T.ink, margin:"0 0 8px" }}>4 AI Agents. 300,000 Years.</h3>
+              <h3 style={{ fontFamily:"'Playfair Display',Georgia,serif", fontSize:24, fontWeight:700, color:T.ink, margin:"0 0 8px" }}>4 AI Agents. Every Civilisation.</h3>
               <p style={{ fontFamily:"'DM Sans',sans-serif", fontSize:14, color:T.inkMid, maxWidth:480, margin:"0 auto 28px", lineHeight:1.75 }}>
-                The Historian finds facts. The Investigator traces connections. The Visualizer generates images. The Guide writes the story.
+                Ask about any civilisation in history. The Historian finds facts. The Investigator traces connections. The Visualizer generates images. The Guide writes the story.
               </p>
               <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10, maxWidth:580, margin:"0 auto" }}>
                 {SUGGESTIONS.map((s,i)=>(
@@ -559,7 +561,7 @@ export default function ResearchSection({ T, onPushToBoard, onNavigate, savedSta
         <input
           value={question} onChange={e=>setQuestion(e.target.value)}
           onKeyDown={e=>e.key==="Enter"&&!e.shiftKey&&run(question)}
-          placeholder="Ask the agents anything about African history…"
+          placeholder="Ask about any civilisation, empire, or historical event…"
           disabled={loading}
           style={{ flex:1, padding:"10px 14px", background:T.card, border:`1px solid ${T.border}`, borderRadius:8, fontFamily:"'DM Sans',sans-serif", fontSize:13, color:T.ink, outline:"none", caretColor:T.accent, opacity:loading?0.6:1 }}
         />

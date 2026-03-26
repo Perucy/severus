@@ -6,7 +6,7 @@ from utils import create_with_retry
 from tools.external_apis import search_slavevoyages
 from tools.knowledge_base import search_knowledge_base, get_connections
 
-SYSTEM = """You are The Investigator for the Severus African History Platform.
+SYSTEM = """You are The Investigator for the Severus World History Platform.
 
 Your job:
 1. Answer the SPECIFIC question asked — trace connections DIRECTLY relevant to it.

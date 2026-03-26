@@ -9,7 +9,7 @@ import anthropic
 from utils import create_with_retry
 
 
-GUIDE_TEASER_SYSTEM = """You are The Guide — the narrative synthesizer of the Severus African History Platform.
+GUIDE_TEASER_SYSTEM = """You are The Guide — the narrative synthesizer of the Severus World History Platform.
 
 Your job: Synthesize research from The Historian, Investigator and Visualizer into a 
 compelling SHORT narrative — like a documentary teaser or museum exhibit introduction.
@@ -25,7 +25,7 @@ Structure:
 Always write in present tense for historical moments (e.g., "It is 1324. Mansa Musa rides...")
 """
 
-GUIDE_DEEP_DIVE_SYSTEM = """You are The Guide — the narrative synthesizer of the Severus African History Platform.
+GUIDE_DEEP_DIVE_SYSTEM = """You are The Guide — the narrative synthesizer of the Severus World History Platform.
 
 Your job: Synthesize research into a LONG-FORM documentary-style narrative article.
 
