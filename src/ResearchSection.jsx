@@ -226,136 +226,63 @@ function extractToolCalls(events, agentName) {
   return events.filter(e => e.agent === agentName && (e.type === "tool_call" || e.type === "tool_result"));
 }
 
-// ── Parse connections for PI board ───────────────────────────
-// Builds a relevant graph from BOTH historian and investigator outputs
+// ── Parse PI board directly from investigator JSON output ────
 function parseConnectionsForBoard(result, question) {
-  const nodeMap = new Map();
-  const edges   = [];
-  let   nextId  = Date.now();
+  const investigatorOutput = result?.investigator_output || "";
 
-  const typeGuess = (name, ntype) => {
-    if (ntype === "accountability") return "institution";
-    if (ntype === "diaspora")       return "place";
-    if (ntype === "civilization")   return "place";
-    const n = (name||"").toLowerCase();
-    if (n.includes("museum")||n.includes("company")||n.includes("lloyd")||n.includes("bank")||n.includes("university")||n.includes("corp")) return "institution";
-    if (n.includes("ship")||n.includes("clotilda")||n.includes("zong")||n.includes("brooks")) return "ship";
-    if (n.includes("conference")||n.includes("expedition")||n.includes("revolution")||n.includes("war")||n.includes("act")) return "event";
-    if (n.includes("trade")||n.includes("route")||n.includes("passage")||n.includes("market")) return "trade";
-    if (n.includes("king")||n.includes("queen")||n.includes("emperor")||n.includes("mansa")||n.includes("pharaoh")||n.includes("chief")) return "person";
-    return "place";
-  };
+  // Extract the ```pi_board JSON block the investigator outputs
+  const match = investigatorOutput.match(/```pi_board\s*([\s\S]*?)```/);
+  if (match) {
+    try {
+      const parsed = JSON.parse(match[1].trim());
+      const rawNodes = parsed.nodes || [];
+      const rawEdges = parsed.edges || [];
 
-  const addNode = (id, name, ntype) => {
-    const key = id || name.toLowerCase().replace(/[^a-z0-9]+/g,"-").slice(0,30);
-    if (!nodeMap.has(key)) {
-      nodeMap.set(key, { id:key, label:name, type:typeGuess(name, ntype),
-        x: 150+(nodeMap.size%5)*210+Math.random()*40,
-        y: 130+Math.floor(nodeMap.size/5)*190+Math.random()*40 });
+      // Assign positions
+      const nodes = rawNodes.map((n, i) => ({
+        ...n,
+        x: 150 + (i % 5) * 220 + Math.random() * 30,
+        y: 140 + Math.floor(i / 5) * 200 + Math.random() * 30,
+      }));
+
+      const edges = rawEdges.map((e, i) => ({
+        ...e,
+        id: Date.now() + i,
+      }));
+
+      return { nodes, edges };
+    } catch (e) {
+      console.warn("PI board JSON parse failed:", e);
     }
-    return nodeMap.get(key);
-  };
+  }
 
-  const addEdge = (fromId, toId, label) => {
-    const key = [fromId,toId].sort().join("--");
-    if (!edges.find(e=>[e.from,e.to].sort().join("--")===key))
-      edges.push({id:nextId++,from:fromId,to:toId,label});
-  };
-
-  // Central topic node
+  // Fallback: extract capitalised proper nouns from investigator output
+  const nodes = [];
+  const edges = [];
   const topicWords = (question||"").replace(/[^a-zA-Z\s]/g,"").split(" ").filter(w=>w.length>3);
   const topicLabel = topicWords.slice(0,4).join(" ") || "Research Topic";
-  const topicNode  = addNode("topic-root", topicLabel, "event");
 
-  const historian    = result?.historian_output    || "";
-  const investigator = result?.investigator_output || "";
-  const allEvents    = result?.events              || [];
+  nodes.push({ id:"topic-root", label:topicLabel, type:"event",
+    x:400, y:60 });
 
-  // Strict relevance: the entity name must appear substantially in the outputs
-  // AND must not be a generic slave-trade node unless question is about slave trade
-  const slaveTradeQuestion = /slave|enslave|plantation|transatlantic|middle passage|abolition/i.test(question);
-  const ALWAYS_EXCLUDE_UNLESS_SLAVE_TRADE = new Set(["rac","lloyds","ouidah","ouidah-door","berlin","leopold","slave","plantation"]);
-
-  const isRelevant = (name, id) => {
-    // Exclude generic slave-trade nodes unless question is about slave trade
-    if (!slaveTradeQuestion && ALWAYS_EXCLUDE_UNLESS_SLAVE_TRADE.has((id||"").toLowerCase())) return false;
-    if (!slaveTradeQuestion && ALWAYS_EXCLUDE_UNLESS_SLAVE_TRADE.has((name||"").toLowerCase().split(" ")[0])) return false;
-
-    // Name must appear in outputs (check first meaningful word + one more)
-    const words = (name||"").toLowerCase().split(/\s+/).filter(w=>w.length>3);
-    if (words.length === 0) return false;
-    const combined = (historian + " " + investigator).toLowerCase();
-    // Require at least the first word to appear
-    return combined.includes(words[0]);
-  };
-
-  // ── From historian KB results ──────────────────────────────
-  for (const ev of allEvents.filter(e=>e.agent==="historian"&&e.type==="tool_result")) {
-    try {
-      const d = JSON.parse((ev.content||"").replace(/\.\.\.$/,""));
-      for (const loc of (d.locations||[])) {
-        const n = addNode(loc.id, loc.name, loc.type);
-        addEdge(topicNode.id, n.id, "Subject");
-      }
-      for (const p of (d.people||[])) {
-        const n = addNode(p.id, p.name, "person");
-        n.type = "person";
-        addEdge(topicNode.id, n.id, "Key figure");
-      }
-      // Wikipedia hit
-      if (d.title && !d.error && !d.note) {
-        const n = addNode(null, d.title, "place");
-        if (!edges.find(e=>e.to===n.id)) addEdge(topicNode.id, n.id, "Subject");
-      }
-    } catch {}
+  const seen = new Set(["topic-root"]);
+  const matches = [...new Set((investigatorOutput.match(/\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,3})\b/g)||[]))];
+  let added = 0;
+  for (const m of matches) {
+    if (added >= 8) break;
+    const skip = ["The","This","That","These","Their","There","They","Its","Our","His","Her"];
+    if (m.split(" ").some(w => skip.includes(w))) continue;
+    const id = m.toLowerCase().replace(/\s+/g,"-").slice(0,25);
+    if (seen.has(id)) continue;
+    seen.add(id);
+    nodes.push({ id, label:m, type:"place",
+      x: 120 + (added % 4) * 250 + Math.random()*40,
+      y: 200 + Math.floor(added / 4) * 200 + Math.random()*40 });
+    edges.push({ id: Date.now()+added, from:"topic-root", to:id, label:"Mentioned" });
+    added++;
   }
 
-  // ── From investigator KB + connection results ──────────────
-  for (const ev of allEvents.filter(e=>e.agent==="investigator"&&e.type==="tool_result")) {
-    try {
-      const d = JSON.parse((ev.content||"").replace(/\.\.\.$/,""));
-
-      // get_node_connections — only add nodes actually mentioned in outputs
-      if (d.node && d.connections) {
-        if (isRelevant(d.node.name, d.node.id)) {
-          const root = addNode(d.node.id, d.node.name, "");
-          for (const c of d.connections) {
-            if (isRelevant(c.name, c.id)) {
-              const child = addNode(c.id, c.name, c.type);
-              addEdge(root.id, child.id,
-                c.type==="accountability"?"Implicated":
-                c.type==="diaspora"?"Connected to":"Linked to");
-            }
-          }
-        }
-      }
-
-      // KB search results from investigator
-      for (const loc of (d.locations||[])) {
-        if (isRelevant(loc.name, loc.id)) {
-          const n = addNode(loc.id, loc.name, loc.type);
-          if (!edges.find(e=>e.to===n.id||e.from===n.id))
-            addEdge(topicNode.id, n.id, "Implicated");
-        }
-      }
-    } catch {}
-  }
-
-  // ── Fallback: extract capitalised entities from outputs ────
-  if (nodeMap.size < 3) {
-    const combined = historian + " " + investigator;
-    const matches  = [...new Set(combined.match(/\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,3})\b/g)||[])];
-    let added = 0;
-    for (const m of matches) {
-      if (added >= 7) break;
-      const words = m.split(" ");
-      if (words.length < 2 || words.some(w=>["The","His","Her","This","That","They","Their"].includes(w))) continue;
-      const n = addNode(null, m, "place");
-      if (!edges.find(e=>e.to===n.id)) { addEdge(topicNode.id, n.id, "Mentioned"); added++; }
-    }
-  }
-
-  return { nodes:[...nodeMap.values()], edges };
+  return { nodes, edges };
 }
 
 
@@ -514,25 +441,71 @@ export default function ResearchSection({ T, onPushToBoard, onNavigate, savedSta
               {/* Guide narrative */}
               <GuideCard narrative={result.guide_narrative} depth={depth} T={T}/>
 
-              {/* Map to PI Board */}
-              {result.guide_narrative && onPushToBoard && (
-                <div style={{ background:T.card, border:`1px solid ${T.border}`, borderRadius:10, padding:"16px 20px", marginTop:4, marginBottom:16, display:"flex", alignItems:"center", gap:16 }}>
-                  <div style={{ flex:1 }}>
-                    <div style={{ fontFamily:"'Playfair Display',serif", fontSize:14, fontWeight:700, color:T.ink, marginBottom:3 }}>Map connections to the PI Board</div>
-                    <p style={{ fontFamily:"'DM Sans',sans-serif", fontSize:11, color:T.inkMid, margin:0, lineHeight:1.6 }}>
-                      The Investigator traced connections across the Severus graph. Add them as nodes you can explore further.
-                    </p>
+              {/* Map to PI Board — with AI-generated preview */}
+              {result.guide_narrative && onPushToBoard && (() => {
+                const {nodes: piNodes, edges: piEdges} = parseConnectionsForBoard(result, question);
+                if (piNodes.length === 0) return null;
+                const NODE_COLORS = { person:"#009AD8", place:"#E05A2B", event:"#9B59B6", institution:"#4CAF7D", trade:"#E6A817", ship:"#E03030", document:"#708090" };
+                const NODE_ICONS  = { person:"👤", place:"🏛️", event:"⚡", institution:"📖", trade:"🐪", ship:"⚓", document:"📜" };
+                return (
+                  <div style={{ background:T.card, border:`1px solid ${T.border}`, borderRadius:10, padding:"16px 18px", marginTop:4, marginBottom:16 }}>
+                    <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:12 }}>
+                      <div>
+                        <div style={{ fontFamily:"'Playfair Display',serif", fontSize:14, fontWeight:700, color:T.ink, marginBottom:2 }}>
+                          🔍 AI-Mapped Connections — {piNodes.length} nodes, {piEdges.length} edges
+                        </div>
+                        <p style={{ fontFamily:"'DM Sans',sans-serif", fontSize:11, color:T.inkMid, margin:0 }}>
+                          The Investigator built this connection graph. Open it on the PI board to explore further.
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => { onPushToBoard(piNodes, piEdges); onNavigate("investigate"); }}
+                        style={{ display:"flex", alignItems:"center", gap:7, padding:"9px 18px", background:T.accent, border:"none", borderRadius:8, color:"#fff", fontFamily:"'DM Sans',sans-serif", fontSize:12, fontWeight:700, cursor:"pointer", whiteSpace:"nowrap", flexShrink:0, marginLeft:16 }}
+                        onMouseEnter={e=>e.currentTarget.style.background=T.accentMid}
+                        onMouseLeave={e=>e.currentTarget.style.background=T.accent}>
+                        Open PI Board →
+                      </button>
+                    </div>
+                    {/* Node preview chips */}
+                    <div style={{ display:"flex", flexWrap:"wrap", gap:6 }}>
+                      {piNodes.map((node, i) => {
+                        const color = NODE_COLORS[node.type] || T.slate;
+                        const icon  = NODE_ICONS[node.type]  || "📍";
+                        return (
+                          <div key={i} style={{ display:"flex", alignItems:"center", gap:5, padding:"4px 10px", background:color+"18", border:`1px solid ${color}50`, borderRadius:20 }}>
+                            <span style={{ fontSize:11 }}>{icon}</span>
+                            <span style={{ fontFamily:"'DM Sans',sans-serif", fontSize:11, color:T.ink, fontWeight:500 }}>{node.label}</span>
+                            {piEdges.filter(e=>e.from===node.id||e.to===node.id).length > 0 && (
+                              <span style={{ fontFamily:"'DM Sans',sans-serif", fontSize:9, color:color, fontWeight:700 }}>
+                                {piEdges.filter(e=>e.from===node.id||e.to===node.id).length}↔
+                              </span>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                    {/* Edge preview */}
+                    {piEdges.length > 0 && (
+                      <div style={{ marginTop:10, paddingTop:10, borderTop:`1px solid ${T.border}` }}>
+                        <div style={{ fontFamily:"'DM Sans',sans-serif", fontSize:9, color:T.inkFaint, textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:6, fontWeight:600 }}>Connections</div>
+                        <div style={{ display:"flex", flexWrap:"wrap", gap:4 }}>
+                          {piEdges.slice(0,8).map((edge, i) => {
+                            const fromNode = piNodes.find(n=>n.id===edge.from);
+                            const toNode   = piNodes.find(n=>n.id===edge.to);
+                            if (!fromNode||!toNode) return null;
+                            return (
+                              <div key={i} style={{ fontFamily:"'DM Sans',sans-serif", fontSize:10, color:T.inkMid, padding:"2px 8px", background:T.surface, borderRadius:20, border:`1px solid ${T.border}` }}>
+                                {fromNode.label} <span style={{ color:T.accent }}>→ {edge.label} →</span> {toNode.label}
+                              </div>
+                            );
+                          })}
+                          {piEdges.length > 8 && <span style={{ fontFamily:"'DM Sans',sans-serif", fontSize:10, color:T.inkFaint }}>+{piEdges.length-8} more</span>}
+                        </div>
+                      </div>
+                    )}
                   </div>
-                  <button onClick={()=>{
-                    const {nodes:n, edges:e} = parseConnectionsForBoard(result, question);
-                    if (n.length > 0) { onPushToBoard(n, e); onNavigate("investigate"); }
-                  }} style={{ display:"flex", alignItems:"center", gap:8, padding:"10px 18px", background:T.accent, border:"none", borderRadius:8, color:"#fff", fontFamily:"'DM Sans',sans-serif", fontSize:12, fontWeight:700, cursor:"pointer", whiteSpace:"nowrap", transition:"all 0.2s" }}
-                    onMouseEnter={e=>e.currentTarget.style.background=T.accentMid}
-                    onMouseLeave={e=>e.currentTarget.style.background=T.accent}>
-                    🔍 Open PI Board →
-                  </button>
-                </div>
-              )}
+                );
+              })()}
             </>
           )}
 
