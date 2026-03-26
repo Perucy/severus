@@ -40,6 +40,7 @@ const TYPE_META = {
   indigenous:    { label:"Indigenous People",    color:"#009AD8" },
   diaspora:      { label:"African Diaspora",     color:"#4CAF7D" },
   accountability:{ label:"Accountability",       color:"#E03030" },
+  world:         { label:"World Civilization",   color:"#9B59B6" },
 };
 
 // ── LOCATIONS ─────────────────────────────────────────────────
@@ -71,6 +72,19 @@ const LOCATIONS = [
   { id:"ouidah",   name:"Ouidah — Door of No Return",    region:"Benin, West Africa",   lat:6.4,  lon:2.1,  type:"accountability", startYear:1500,    era:"1500 CE",     wikiTitle:"Ouidah",              summary:"The most active slave port in West Africa. Over 1 million enslaved people passed through Ouidah's Door of No Return.", facts:["Over 1 million enslaved people departed through Ouidah","'Door of No Return' — last point of African soil","Connected to Kingdom of Dahomey","Route des Esclaves is now a UNESCO memorial trail"] },
   { id:"berlin",   name:"Berlin Conference 1884",         region:"Berlin, Germany",      lat:52.5, lon:13.4, type:"accountability", startYear:1884,    era:"1884 CE",     wikiTitle:"Scramble_for_Africa", summary:"14 European powers divided Africa with zero African representation, drawing borders that split 177 ethnic groups and created today's African nations.", facts:["14 European nations divided Africa — zero African representation","Created 54 artificial borders splitting 177 ethnic groups","Triggered colonial rule of 90% of Africa within 30 years","Colonial borders directly cause contemporary African conflicts"] },
   { id:"leopold",  name:"Belgian Congo — Leopold II",    region:"Congo",                lat:-4,   lon:24,   type:"accountability", startYear:1885,    era:"1885 CE",     wikiTitle:"Congo_Free_State",    summary:"Leopold II personally owned the Congo. He enslaved its population to extract rubber, killing an estimated 10 million Congolese — the first genocide of the 20th century.", facts:["Leopold personally owned Congo as private property","~10 million Congolese killed — first genocide of the 20th century","Hands cut off as punishment for failing rubber quotas","Inspired Joseph Conrad's Heart of Darkness (1899)"] },
+
+  // ── WORLD CIVILIZATIONS (Phase 2 preview) ─────────────────
+  { id:"rome",      name:"Roman Empire",                 region:"Mediterranean",        lat:41.9, lon:12.5, type:"world", startYear:-500,    era:"500 BCE",     wikiTitle:"Roman_Empire",         summary:"At its peak the Roman Empire stretched from Britain to Mesopotamia, governing 70 million people. Its law, language, and architecture shaped Western civilisation — and it was led by a North African emperor, Septimius Severus, in 193 CE.", facts:["Governed ~20% of the world's population at its peak","Roman law is the foundation of most Western legal systems","Latin evolved into French, Spanish, Italian, Portuguese, Romanian","Septimius Severus — Rome's greatest emperor — was born in North Africa"] },
+  { id:"greece",    name:"Ancient Greece",                region:"Mediterranean",        lat:37.9, lon:23.7, type:"world", startYear:-800,    era:"800 BCE",     wikiTitle:"Ancient_Greece",       summary:"The birthplace of democracy, philosophy, and the Olympic Games — but Greek civilisation was deeply shaped by Egypt and Africa. Pythagoras, Plato, and Aristotle all studied in Egypt.", facts:["Democracy invented in Athens c.507 BCE","Pythagoras, Plato, Aristotle all studied in Egypt","Alexander the Great spread Greek culture from Egypt to India","The Library of Alexandria was the world's first great research institution"] },
+  { id:"silk-road", name:"The Silk Road",                 region:"Central Asia",         lat:39.9, lon:66.8, type:"world", startYear:-200,    era:"200 BCE",     wikiTitle:"Silk_Road",            summary:"The ancient network of trade routes connecting China to the Mediterranean for 1,400 years. Ideas, religions, diseases, and technologies travelled alongside silk, spices, and gold.", facts:["Connected China to Rome across 4,000 miles","Buddhism, Islam, and Christianity spread via Silk Road","Black Death (1346) likely spread via Silk Road trade routes","Connected to West African gold trade through Arab intermediaries"] },
+  { id:"china",     name:"Imperial China",                region:"East Asia",            lat:35.8, lon:104.2,type:"world", startYear:-2100,   era:"2100 BCE",    wikiTitle:"History_of_China",     summary:"The world's longest continuous civilisation, responsible for paper, printing, gunpowder, and the compass — the four inventions that transformed the modern world.", facts:["Paper invented in China 105 CE — 1,000 years before Europe","Gunpowder, compass, and printing press: all Chinese inventions","Ming Dynasty ships reached East Africa in 1418 — 70 years before Columbus","China's economy was the world's largest until 1820"] },
+  { id:"aztec",     name:"Aztec Empire — Tenochtitlan",   region:"Mexico",               lat:19.4, lon:-99.1,type:"world", startYear:1300,    era:"1300 CE",     wikiTitle:"Aztec_Empire",         summary:"The Aztec capital Tenochtitlan (modern Mexico City) had 200,000 people in 1500 — larger than any city in Europe. Destroyed by Hernán Cortés with 600 men and smallpox.", facts:["Tenochtitlan: 200,000 people — larger than London in 1500","Developed advanced astronomy, mathematics, and medicine","Destroyed by Spanish conquistadors 1519–1521","Smallpox killed ~90% of indigenous population post-conquest"] },
+  { id:"inca",      name:"Inca Empire",                   region:"South America",        lat:-13.5,lon:-71.9,type:"world", startYear:1438,    era:"1438 CE",     wikiTitle:"Inca_Empire",          summary:"The largest empire in pre-Columbian Americas, stretching 4,300 miles along the Andes. Built 40,000 km of roads without the wheel, iron tools, or a written language.", facts:["Largest pre-Columbian empire: 12 million people","40,000 km of roads — more than the Roman road network","No writing system, no wheel, no iron — yet built Machu Picchu","Destroyed by Francisco Pizarro with 168 men and smallpox in 1532"] },
+  { id:"india",     name:"Indus Valley & Mughal India",   region:"South Asia",           lat:27.2, lon:78.0, type:"world", startYear:-3300,   era:"3300 BCE",    wikiTitle:"Indus_Valley_Civilisation", summary:"The Indus Valley Civilisation (3300 BCE) had advanced urban planning, sewage systems, and standardised weights — 2,000 years before Rome. The Mughal Empire produced the Taj Mahal and controlled 25% of world GDP.", facts:["Indus Valley: first planned cities with sewage systems, 3300 BCE","Mughal Empire: 25% of world GDP at its peak (1700 CE)","Zero invented in India — transformed all mathematics","British colonisation drained $45 trillion from India (1765–1938, Columbia study)"] },
+  { id:"ottoman",   name:"Ottoman Empire",                region:"Middle East / Europe", lat:41.0, lon:29.0, type:"world", startYear:1299,    era:"1299 CE",     wikiTitle:"Ottoman_Empire",       summary:"The Ottoman Empire lasted 600 years, ruling 3 continents and preserving Greek and Roman knowledge during Europe's Dark Ages. Constantinople fell in 1453 — the event that triggered Europe's Age of Exploration.", facts:["Ruled 3 continents for 600 years (1299–1922)","Preserved Greek and Roman texts during Europe's Dark Ages","Constantinople's fall (1453) triggered Columbus's voyage west","Ottoman libraries held more books than all of Europe combined in 1400"] },
+  { id:"usa-civil", name:"American Civil War & Reconstruction", region:"USA",           lat:38.9, lon:-77.0,type:"world", startYear:1861,    era:"1861 CE",     wikiTitle:"Reconstruction_era",   summary:"The Civil War ended slavery but Reconstruction (1865–1877) was violently dismantled. The promise of 40 acres and a mule was broken. The wealth gap created then still exists today.", facts:["40 acres and a mule: promised, then revoked by President Johnson","Freedmen's Bureau: 4 million formerly enslaved people, no reparations","Black Wall Street (Tulsa, 1921): destroyed by white mob, 300 killed","Redlining (1930s): banks refused loans in Black neighbourhoods — effects last today"] },
+  { id:"tulsa",     name:"Black Wall Street — Tulsa",    region:"Oklahoma, USA",        lat:36.1, lon:-95.9,type:"world", startYear:1906,    era:"1906 CE",     wikiTitle:"Tulsa_race_massacre",  summary:"Greenwood, Tulsa was the wealthiest Black community in America. In 1921, a white mob — aided by the Oklahoma National Guard — burned it to the ground in 18 hours, killing up to 300 people. No one was charged.", facts:["Greenwood district: 35 blocks, 600 businesses, hospitals, law firms","May 31–June 1, 1921: destroyed in 18 hours","Up to 300 Black Americans killed — largest race massacre in US history","Bodies never found, no one charged, city tried to cover it up for 75 years"] },
+  { id:"native-am", name:"Indigenous Americas",           region:"North America",        lat:44.0, lon:-103.4,type:"indigenous", startYear:-15000, era:"15,000 BCE", wikiTitle:"Indigenous_peoples_of_the_Americas", summary:"Over 500 distinct nations inhabited the Americas before European contact. From the Haudenosaunee democracy that inspired the US Constitution to the Lakota Sioux of the Great Plains.", facts:["500+ distinct nations before European contact","Haudenosaunee (Iroquois) Confederacy inspired the US Constitution","90% of indigenous population killed by European disease and violence","570 federally recognised tribes in the US today — still fighting for sovereignty"] },
 ];
 
 const MIGRATIONS = [
@@ -184,12 +198,12 @@ const ACCOUNTABILITY = {
 // ── SECTIONS NAV ──────────────────────────────────────────────
 const SECTIONS = [
   { id:"home",        label:"Home",        icon:"home",    colorKey:"accent" },
-  { id:"explore",     label:"Explore",     icon:"globe",   colorKey:"info",    tagline:"The Interactive Globe",  status:"active" },
-  { id:"timeline",    label:"Timeline",    icon:"clock",   colorKey:"accent",  tagline:"300,000 BCE → Present",  status:"active" },
-  { id:"learn",       label:"Learn",       icon:"book",    colorKey:"info",    tagline:"People & Civilizations", status:"active" },
-  { id:"reckon",      label:"Reckon",      icon:"scale",   colorKey:"reckon",  tagline:"Truth & Accountability", status:"active" },
-  { id:"investigate", label:"Investigate", icon:"connect", colorKey:"slate",   tagline:"The PI Board",           status:"active" },
-  { id:"research",    label:"Research",    icon:"ai",      colorKey:"success", tagline:"AI Research Suite",      status:"active" },
+  { id:"explore",     label:"Explore",     icon:"globe",   colorKey:"info",    tagline:"The Interactive Globe",        status:"active" },
+  { id:"timeline",    label:"Timeline",    icon:"clock",   colorKey:"accent",  tagline:"315,000 BCE → Present",         status:"active" },
+  { id:"learn",       label:"Learn",       icon:"book",    colorKey:"info",    tagline:"People & Civilizations",        status:"active" },
+  { id:"reckon",      label:"Reckon",      icon:"scale",   colorKey:"reckon",  tagline:"Truth & Accountability",        status:"active" },
+  { id:"investigate", label:"Investigate", icon:"connect", colorKey:"slate",   tagline:"The PI Board",                  status:"active" },
+  { id:"research",    label:"Research",    icon:"ai",      colorKey:"success", tagline:"AI Research Suite",             status:"active" },
 ];
 
 // ── ICONS ─────────────────────────────────────────────────────
@@ -408,7 +422,7 @@ function ExploreSection({ T, theme }) {
     <div style={{height:"100%",display:"flex",flexDirection:"column",background:T.bg,overflow:"hidden"}}>
       <div style={{background:T.surface,borderBottom:`1px solid ${T.border}`,padding:"7px 14px",display:"flex",alignItems:"center",gap:6,flexShrink:0,flexWrap:"wrap"}}>
         <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.1em",textTransform:"uppercase",color:T.inkLight,fontWeight:600}}>Type</span>
-        {[["all","All"],["origin","Origins"],["civilization","Civilizations"],["indigenous","Indigenous"],["diaspora","Diaspora"],["accountability","Accountability"]].map(([v,l])=>{
+        {[["all","All"],["origin","Origins"],["civilization","Civilizations"],["indigenous","Indigenous"],["diaspora","Diaspora"],["accountability","Accountability"],["world","World History"]].map(([v,l])=>{
           const ac=v==="all"?T.accent:TYPE_META[v]?.color||T.accent,on=filterType===v;
           return <div key={v} onClick={()=>setFilterType(v)} style={{padding:"3px 10px",borderRadius:20,border:`1px solid ${on?ac+"60":T.border}`,background:on?ac+"18":"transparent",color:on?ac:T.inkLight,fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.08em",textTransform:"uppercase",fontWeight:on?600:400,cursor:"pointer",transition:"all 0.15s",whiteSpace:"nowrap"}}>{l}</div>;
         })}
@@ -1425,12 +1439,12 @@ function Home({ T, onNavigate }) {
   const heroBg=T.name==="dark"?"linear-gradient(160deg,#2A1800 0%,#1A0E00 40%,#0D1A18 100%)":"linear-gradient(160deg,#3A1800 0%,#5C2400 40%,#1A3830 100%)";
 
   const sectionCards=[
-    {id:"explore",label:"Explore",icon:"globe",colorKey:"info",tagline:"The Interactive Globe",desc:"Navigate 300,000 years of African presence. Click locations, trace migration routes."},
-    {id:"timeline",label:"Timeline",icon:"clock",colorKey:"accent",tagline:"300,000 BCE → Present",desc:"Every era, every turning point. Watch history unfold on the time slider."},
-    {id:"learn",label:"Learn",icon:"book",colorKey:"info",tagline:"People & Civilizations",desc:"Kings, scholars, warriors, activists. Ancient empires. Every contribution Africa gave the world."},
-    {id:"reckon",label:"Reckon",icon:"scale",colorKey:"reckon",tagline:"Truth & Accountability",desc:"Named ships, owners, companies. Looted artifacts. The living wealth trail."},
-    {id:"investigate",label:"Investigate",icon:"connect",colorKey:"slate",tagline:"The PI Board",desc:"Drop nodes, draw connections, follow the thread across 300,000 years."},
-    {id:"research",label:"Research",icon:"ai",colorKey:"success",tagline:"AI Research Suite",desc:"Four AI agents: The Historian, Investigator, Visualizer, Guide. Ask anything."},
+    {id:"explore",label:"Explore",icon:"globe",colorKey:"info",tagline:"The Interactive Globe",desc:"Navigate human history from 315,000 BCE. African civilizations, world empires, diaspora communities, accountability records."},
+    {id:"timeline",label:"Timeline",icon:"clock",colorKey:"accent",tagline:"300,000 BCE → Present",desc:"Every era, every turning point. From human origins to today — on one scrollable timeline."},
+    {id:"learn",label:"Learn",icon:"book",colorKey:"info",tagline:"People & Civilizations",desc:"Kings, scholars, warriors, activists. From Mansa Musa to the Aztec Empire — every civilisation that shaped today."},
+    {id:"reckon",label:"Reckon",icon:"scale",colorKey:"reckon",tagline:"Truth & Accountability",desc:"Named ships, owners, companies, institutions. The wealth trail from the slave trade to Wall Street."},
+    {id:"investigate",label:"Investigate",icon:"connect",colorKey:"slate",tagline:"The PI Board",desc:"Drop nodes, draw connections, follow any thread. AI builds the connection graph automatically."},
+    {id:"research",label:"Research",icon:"ai",colorKey:"success",tagline:"AI Research Suite",desc:"Four AI agents answer any history question — African, American, Asian, European. Ask anything."},
   ];
 
   return (
@@ -1441,14 +1455,14 @@ function Home({ T, onNavigate }) {
             <div style={{height:190,background:heroBg,position:"relative",overflow:"hidden",padding:"24px 28px",display:"flex",flexDirection:"column",justifyContent:"flex-end"}}>
               <div style={{position:"absolute",inset:0,opacity:0.06}}>{[0,1,2,3,4,5].map(i=><div key={i} style={{position:"absolute",borderRadius:"50%",border:`1px solid ${T.accent}`,width:160+i*80,height:160+i*80,top:"50%",left:"30%",transform:"translate(-50%,-50%)"}}/>)}</div>
               <div style={{position:"relative"}}>
-                <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.14em",textTransform:"uppercase",color:T.accent,fontWeight:600,marginBottom:8}}>Current Dossier</div>
-                <h1 style={{fontFamily:"'Playfair Display',Georgia,serif",fontSize:28,fontWeight:700,color:"#FCF9F7",lineHeight:1.1,margin:0}}>The Global<br/><em style={{color:T.accent}}>African Story</em></h1>
+                <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.14em",textTransform:"uppercase",color:T.accent,fontWeight:600,marginBottom:8}}>Free for every student, everywhere</div>
+                <h1 style={{fontFamily:"'Playfair Display',Georgia,serif",fontSize:26,fontWeight:700,color:"#FCF9F7",lineHeight:1.15,margin:0}}>The History<br/>Every Student<br/><em style={{color:T.accent}}>Deserves to Know</em></h1>
               </div>
             </div>
             <div style={{padding:"20px 24px",flex:1}}>
-              <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:13,color:T.inkMid,lineHeight:1.8,margin:"0 0 20px"}}>Investigate 300,000 years of African history. Trace civilizations, follow migration routes, name the architects of the slave trade, and discover how Africa shaped every corner of the modern world.</p>
+              <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:13,color:T.inkMid,lineHeight:1.8,margin:"0 0 20px"}}>300 million students worldwide have no access to quality history education. Severus changes that — free AI-powered investigation of human history for any student on any device. Starting with the African story. Expanding to all of human history.</p>
               <div style={{display:"flex",gap:10}}>
-                <button onClick={()=>onNavigate("explore")} style={{display:"flex",alignItems:"center",gap:8,padding:"10px 20px",background:T.accent,border:"none",borderRadius:7,color:"#fff",fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:700,cursor:"pointer",textTransform:"uppercase",letterSpacing:"0.04em"}} onMouseEnter={e=>e.currentTarget.style.background=T.accentMid} onMouseLeave={e=>e.currentTarget.style.background=T.accent}>Begin Investigation <Ic n="arrowR" s={14} c="#fff"/></button>
+                <button onClick={()=>onNavigate("explore")} style={{display:"flex",alignItems:"center",gap:8,padding:"10px 20px",background:T.accent,border:"none",borderRadius:7,color:"#fff",fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:700,cursor:"pointer",textTransform:"uppercase",letterSpacing:"0.04em"}} onMouseEnter={e=>e.currentTarget.style.background=T.accentMid} onMouseLeave={e=>e.currentTarget.style.background=T.accent}>Start Investigating <Ic n="arrowR" s={14} c="#fff"/></button>
                 <button onClick={()=>onNavigate("research")} style={{padding:"10px 18px",background:"transparent",border:`1px solid ${T.border}`,borderRadius:7,color:T.inkMid,fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer"}} onMouseEnter={e=>{e.currentTarget.style.borderColor=T.inkLight;e.currentTarget.style.color=T.ink;}} onMouseLeave={e=>{e.currentTarget.style.borderColor=T.border;e.currentTarget.style.color=T.inkMid;}}>Ask the AI →</button>
               </div>
             </div>
@@ -1457,7 +1471,7 @@ function Home({ T, onNavigate }) {
             <div style={{...a(0.08),background:T.name==="dark"?T.surface:T.ink,border:`1px solid ${T.border}`,borderRadius:12,padding:"20px"}}>
               <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.12em",textTransform:"uppercase",color:"rgba(252,249,247,0.3)",marginBottom:18,fontWeight:600}}>Platform Scope</div>
               <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16}}>
-                {[{n:300000,suf:" BCE",label:"Years of History",d:100},{n:36000,suf:"+",label:"Slave Voyages",d:250},{n:1500,suf:"+",label:"Historical Figures",d:400},{n:54,suf:"",label:"African Nations",d:550}].map((s,i)=>(
+                {[{n:300,suf:"M+",label:"Students without textbooks",d:100},{n:36000,suf:"+",label:"Slave Voyages Documented",d:250},{n:500,suf:"+",label:"Civilizations & Nations",d:400},{n:0,suf:"$",label:"Cost to any student",d:550}].map((s,i)=>(
                   <div key={i} style={{paddingBottom:i<2?14:0,borderBottom:i<2?"1px solid rgba(252,249,247,0.08)":"none"}}>
                     <div style={{fontFamily:"'Playfair Display',Georgia,serif",fontSize:22,fontWeight:700,color:T.accent,lineHeight:1,marginBottom:4}}><Counter to={s.n} suffix={s.suf} delay={s.d}/></div>
                     <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:"rgba(252,249,247,0.35)"}}>{s.label}</div>
@@ -1504,9 +1518,9 @@ function Home({ T, onNavigate }) {
         <div style={{padding:"18px 22px",background:T.card,border:`1px solid ${T.border}`,borderRadius:12,display:"flex",alignItems:"center",gap:18}}>
           <img src={severusLogo} alt="Severus" style={{width:44,height:44,borderRadius:"50%",objectFit:"cover",flexShrink:0}}/>
           <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:T.inkMid,lineHeight:1.7,margin:0,flex:1}}>
-            Named after <strong style={{color:T.ink,fontWeight:600}}>Septimius Severus</strong> — born in Leptis Magna, North Africa, 145 CE. Emperor of Rome, 193 CE. Africa has always been at the centre of civilisation.
+            Named after <strong style={{color:T.ink,fontWeight:600}}>Septimius Severus</strong> — born in Leptis Magna, North Africa, 145 CE. Emperor of Rome, 193 CE. A reminder that great civilisations have always been more connected, more diverse, and more African than history books admit. <em style={{color:T.accent}}>Every student deserves to know this.</em>
           </p>
-          <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.08em",textTransform:"uppercase",color:T.inkFaint,textAlign:"right",flexShrink:0}}>Open Source<br/>All Sources Cited</div>
+          <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.08em",textTransform:"uppercase",color:T.inkFaint,textAlign:"right",flexShrink:0}}>Free Forever<br/>All Sources Cited</div>
         </div>
       </div>
     </div>
@@ -1521,7 +1535,7 @@ function Sidebar({ active, onNavigate, open, T, piNewCount=0 }) {
         <img src={severusLogo} alt="S" style={{width:32,height:32,borderRadius:8,objectFit:"cover",flexShrink:0}}/>
         {open&&<div style={{overflow:"hidden",whiteSpace:"nowrap"}}>
           <div style={{fontFamily:"'Playfair Display',Georgia,serif",fontSize:15,fontWeight:700,color:T.ink,letterSpacing:"0.04em"}}>SEVERUS</div>
-          <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,color:T.inkLight,letterSpacing:"0.1em",textTransform:"uppercase",marginTop:1}}>History Platform · v1</div>
+          <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,color:T.inkLight,letterSpacing:"0.1em",textTransform:"uppercase",marginTop:1}}>History for Every Student · v1</div>
         </div>}
       </div>
       <nav style={{flex:1,padding:"10px 8px",overflowY:"auto",overflowX:"hidden"}}>
@@ -1571,7 +1585,7 @@ function TopBar({ active, onNavigate, onToggle, theme, onToggleTheme, T }) {
         <Ic n={theme==="dark"?"sun":"moon"} s={14} c="currentColor"/><span>{theme==="dark"?"Light":"Dark"}</span>
       </button>
       <div style={{padding:"5px 14px",background:T.accentDim,border:`1px solid ${T.accent}35`,borderRadius:6,flexShrink:0}}>
-        <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:T.accent,fontWeight:600,letterSpacing:"0.06em",textTransform:"uppercase"}}>Phase 1 · Africa</span>
+        <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:T.accent,fontWeight:600,letterSpacing:"0.06em",textTransform:"uppercase"}}>Phase 1 · Africa & World</span>
       </div>
     </div>
   );
