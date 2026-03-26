@@ -4,7 +4,7 @@
  * Images rendered inline from base64
  */
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
@@ -260,155 +260,142 @@ function parseConnectionsForBoard(toolCalls, question) {
 
 // ── Main Research Section ─────────────────────────────────────
 export default function ResearchSection({ T, onPushToBoard, onNavigate, savedState, onSaveState }) {
-  const [question,       setQuestion]       = useState(savedState?.question      || "");
-  const [depth,          setDepth]          = useState(savedState?.depth         || "teaser");
-  const [showReasoning,  setShowReasoning]  = useState(savedState?.showReasoning || false);
+  const [question,       setQuestion]       = useState(savedState?.question || "");
+  const [depth,          setDepth]          = useState(savedState?.depth    || "teaser");
+  const [showReasoning,  setShowReasoning]  = useState(false);
   const [running,        setRunning]        = useState(false);
-  const [hasRun,         setHasRun]         = useState(savedState?.hasRun        || false);
-  const [agentStatuses,  setAgentStatuses]  = useState(savedState?.agentStatuses || { historian:"pending", investigator:"pending", visualizer:"pending", guide:"pending" });
-  const [agentOutputs,   setAgentOutputs]   = useState(savedState?.agentOutputs  || { historian:"", investigator:"", visualizer:"", guide:"" });
-  const [agentToolCalls, setAgentToolCalls] = useState(savedState?.agentToolCalls|| { historian:[], investigator:[], visualizer:[] });
+  const [hasRun,         setHasRun]         = useState(savedState?.hasRun   || false);
+
+  const [agentStatuses,  setAgentStatuses]  = useState(
+    savedState?.agentStatuses || { historian:"pending", investigator:"pending", visualizer:"pending", guide:"pending" }
+  );
+  const [agentOutputs,   setAgentOutputs]   = useState(
+    savedState?.agentOutputs  || { historian:"", investigator:"", visualizer:"", guide:"" }
+  );
+  const [agentToolCalls, setAgentToolCalls] = useState(
+    savedState?.agentToolCalls || { historian:[], investigator:[], visualizer:[] }
+  );
   const [images,    setImages]    = useState(savedState?.images    || []);
   const [videos,    setVideos]    = useState(savedState?.videos    || []);
   const [narrative, setNarrative] = useState(savedState?.narrative || null);
   const [error,     setError]     = useState(null);
 
-  const bottomRef    = useRef(null);
-  const currentAgent = useRef(null);
-  const runningRef   = useRef(false); // use ref to avoid stale closure
+  const bottomRef = useRef(null);
 
-  // Save state to parent on completion only (not during run)
   useEffect(() => {
-    if (!onSaveState || runningRef.current) return;
-    onSaveState({ question, depth, showReasoning, hasRun, agentStatuses, agentOutputs, agentToolCalls, images, videos, narrative });
-  }, [agentOutputs, images, videos, narrative, hasRun]);
+    bottomRef.current?.scrollIntoView({ behavior:"smooth" });
+  }, [agentOutputs, images, narrative]);
 
-  useEffect(()=>{ bottomRef.current?.scrollIntoView({behavior:"smooth"}); }, [agentOutputs, images, narrative]);
+  // Save to parent when run completes (narrative arriving = done)
+  useEffect(() => {
+    if (!narrative || !onSaveState) return;
+    onSaveState({ question, depth, hasRun:true, agentStatuses, agentOutputs, agentToolCalls, images, videos, narrative });
+  }, [narrative]);
 
-  const resetState = () => {
-    setAgentStatuses({ historian:"pending", investigator:"pending", visualizer:"pending", guide:"pending" });
-    setAgentOutputs({ historian:"", investigator:"", visualizer:"", guide:"" });
-    setAgentToolCalls({ historian:[], investigator:[], visualizer:[] });
+  const runAgents = async (q) => {
+    if (!q.trim() || running) return;
+
+    // Reset
+    setRunning(true);
+    setHasRun(true);
+    setError(null);
     setImages([]);
     setVideos([]);
     setNarrative(null);
-    setError(null);
-  };
-
-  const runAgents = useCallback(async (q) => {
-    if (!q.trim() || runningRef.current) return;
-    resetState();
-    setRunning(true);
-    runningRef.current = true;
-    setHasRun(true);
-    currentAgent.current = null;
+    setAgentOutputs({ historian:"", investigator:"", visualizer:"", guide:"" });
+    setAgentStatuses({ historian:"pending", investigator:"pending", visualizer:"pending", guide:"pending" });
+    setAgentToolCalls({ historian:[], investigator:[], visualizer:[] });
 
     try {
-      const response = await fetch(`${API_URL}/research/stream`, {
-        method: "POST",
+      const res = await fetch(`${API_URL}/research/stream`, {
+        method:  "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question: q, narrative_depth: depth, show_reasoning: showReasoning }),
+        body:    JSON.stringify({ question: q, narrative_depth: depth, show_reasoning: showReasoning }),
       });
 
-      if (!response.ok) throw new Error(`Server error: ${response.status}`);
+      if (!res.ok) {
+        const txt = await res.text().catch(() => "");
+        throw new Error(`Server ${res.status}: ${txt.slice(0,120)}`);
+      }
 
-      const reader  = response.body.getReader();
+      const reader  = res.body.getReader();
       const decoder = new TextDecoder();
-      let buffer = "";
-      let pendingEventType = "";
+      let buf = "";
 
-      const processEvent = (eventType, rawData) => {
-        if (!rawData.trim()) return;
-        try {
-          const data = JSON.parse(rawData);
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buf += decoder.decode(value, { stream: true });
 
-          // Route by explicit event type first, then by content
-          const et = eventType || "";
+        // SSE events are separated by \n\n
+        const blocks = buf.split(/\n\n/);
+        buf = blocks.pop() ?? "";
 
-          if (et === "image_generated" || (!et && data.image_b64)) {
-            if (data.image_b64) {
-              setImages(prev => [...prev, {
-                image_b64:   data.image_b64,
-                mime_type:   data.mime_type || "image/png",
-                prompt_used: data.prompt || data.prompt_used || "",
-                model:       data.model || "Imagen 4 Fast",
-              }]);
-              setAgentStatuses(prev => ({ ...prev, visualizer: "done" }));
-            }
-            return;
+        for (const block of blocks) {
+          let etype = "";
+          let dline = "";
+          for (const line of block.split("\n")) {
+            if (line.startsWith("event: ")) etype = line.slice(7).trim();
+            if (line.startsWith("data: "))  dline = line.slice(6).trim();
+          }
+          if (!dline) continue;
+
+          let data;
+          try { data = JSON.parse(dline); } catch { continue; }
+
+          // ── Route events ────────────────────────────────────
+          if (etype === "image_generated" || data.image_b64) {
+            setImages(p => [...p, {
+              image_b64:   data.image_b64,
+              mime_type:   data.mime_type   || "image/png",
+              prompt_used: data.prompt      || data.prompt_used || "",
+              model:       data.model       || "Imagen 4 Fast",
+            }]);
+            setAgentStatuses(p => ({ ...p, visualizer:"done" }));
+            continue;
           }
 
-          if (et === "video_prompt" || (!et && data.video_prompt)) {
-            if (data.video_prompt) setVideos(prev => [...prev, data]);
-            return;
+          if (etype === "video_prompt" || data.video_prompt) {
+            setVideos(p => [...p, data]);
+            continue;
           }
 
-          if (et === "narrative" || (!et && data.narrative)) {
-            if (data.narrative) {
-              setNarrative(data.narrative);
-              setAgentStatuses(prev => ({ ...prev, guide: "done" }));
-            }
-            return;
+          if (etype === "narrative" || data.narrative) {
+            setNarrative(data.narrative);
+            setAgentStatuses(p => ({ ...p, guide:"done" }));
+            continue;
           }
 
-          if (et === "error" || (!et && data.error && !data.agent)) {
-            if (data.error) setError(data.error);
-            return;
+          if (data.error && !data.agent) {
+            setError(data.error);
+            continue;
           }
 
           // Agent events
           if (data.agent && data.type) {
             const ag = data.agent;
             if (data.type === "thinking") {
-              setAgentStatuses(prev => ({ ...prev, [ag]: "active" }));
-              currentAgent.current = ag;
+              setAgentStatuses(p => ({ ...p, [ag]:"active" }));
             }
             if (data.type === "output") {
-              setAgentOutputs(prev => ({ ...prev, [ag]: data.content }));
-              setAgentStatuses(prev => ({ ...prev, [ag]: "done" }));
+              setAgentOutputs(p => ({ ...p, [ag]: data.content }));
+              setAgentStatuses(p => ({ ...p, [ag]:"done" }));
             }
             if (data.type === "tool_call" || data.type === "tool_result") {
-              setAgentToolCalls(prev => ({
-                ...prev,
-                [ag]: [...(prev[ag] || []), data],
-              }));
+              setAgentToolCalls(p => ({ ...p, [ag]: [...(p[ag]||[]), data] }));
             }
           }
-        } catch {}
-      };
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        buffer += decoder.decode(value, { stream: true });
-        // Split on double newline (SSE event separator)
-        const events = buffer.split(/\n\n/);
-        buffer = events.pop() || ""; // keep incomplete last chunk
-
-        for (const eventBlock of events) {
-          let eventType = "";
-          let dataLine  = "";
-          for (const line of eventBlock.split("\n")) {
-            if (line.startsWith("event: ")) eventType = line.slice(7).trim();
-            if (line.startsWith("data: "))  dataLine  = line.slice(6).trim();
-          }
-          if (dataLine) processEvent(eventType, dataLine);
         }
       }
     } catch (e) {
-      setError(e.message || "Connection failed — is the backend running?");
+      setError(e.message || "Connection failed — is the backend running at " + API_URL + "?");
     } finally {
       setRunning(false);
-      runningRef.current = false;
-      // Save final state to parent
-      if (onSaveState) {
-        onSaveState({ question: q, depth, showReasoning, hasRun: true });
-      }
     }
-  }, [depth, showReasoning]);
+  };
 
   const activeAgent = AGENT_ORDER.find(a => agentStatuses[a] === "active");
+
 
   return (
     <div style={{ height:"100%", display:"flex", flexDirection:"column", background:T.bg, overflow:"hidden" }}>
