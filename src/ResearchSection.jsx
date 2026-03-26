@@ -275,10 +275,11 @@ export default function ResearchSection({ T, onPushToBoard, onNavigate, savedSta
 
   const bottomRef    = useRef(null);
   const currentAgent = useRef(null);
+  const runningRef   = useRef(false); // use ref to avoid stale closure
 
-  // Save state to parent whenever key values change
+  // Save state to parent on completion only (not during run)
   useEffect(() => {
-    if (!onSaveState) return;
+    if (!onSaveState || runningRef.current) return;
     onSaveState({ question, depth, showReasoning, hasRun, agentStatuses, agentOutputs, agentToolCalls, images, videos, narrative });
   }, [agentOutputs, images, videos, narrative, hasRun]);
 
@@ -295,9 +296,10 @@ export default function ResearchSection({ T, onPushToBoard, onNavigate, savedSta
   };
 
   const runAgents = useCallback(async (q) => {
-    if (!q.trim() || running) return;
+    if (!q.trim() || runningRef.current) return;
     resetState();
     setRunning(true);
+    runningRef.current = true;
     setHasRun(true);
     currentAgent.current = null;
 
@@ -398,8 +400,13 @@ export default function ResearchSection({ T, onPushToBoard, onNavigate, savedSta
       setError(e.message || "Connection failed — is the backend running?");
     } finally {
       setRunning(false);
+      runningRef.current = false;
+      // Save final state to parent
+      if (onSaveState) {
+        onSaveState({ question: q, depth, showReasoning, hasRun: true });
+      }
     }
-  }, [depth, showReasoning, running]);
+  }, [depth, showReasoning]);
 
   const activeAgent = AGENT_ORDER.find(a => agentStatuses[a] === "active");
 
