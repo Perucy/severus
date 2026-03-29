@@ -5,7 +5,7 @@
 > AI-powered learning platform. Any question, any subject, any student.   
 
 > [!Caution]
-> This is a self-sponsored project, therefore, the Research feature powered by AI is disabled to prevent misuse. However, you can refer to the [demo](https://www.linkedin.com/posts/perucy-mussiba-361846222_the-classroom-hasnt-changed-in-100-years-ugcPost-7443877853244329984-zO_P?utm_source=share&utm_medium=member_desktop&rcm=ACoAADgCbnkBXUv1_eTeIxyE_ehsfIFNkmqdgFM) to see it in action.
+> This is a self-sponsored project, therefore, the Research feature powered by AI is disabled to prevent misuse (for now). However, you can refer to the [demo](https://www.linkedin.com/posts/perucy-mussiba-361846222_the-classroom-hasnt-changed-in-100-years-ugcPost-7443877853244329984-zO_P?utm_source=share&utm_medium=member_desktop&rcm=ACoAADgCbnkBXUv1_eTeIxyE_ehsfIFNkmqdgFM) to see it in action.
 
 
 **Live:** [severus-xi.vercel.app](https://severus-xi.vercel.app)
