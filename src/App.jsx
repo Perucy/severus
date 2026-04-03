@@ -230,8 +230,22 @@ const PEOPLE = [
   { id:"mlk",          name:"Martin Luther King Jr.", dates:"1929–1968",    region:"USA",                   role:"Civil Rights Leader",         wikiTitle:"Martin_Luther_King_Jr.", desc:"Led the American Civil Rights Movement through non-violent protest, culminating in the Civil Rights Act (1964) and Voting Rights Act (1965). Nobel Peace Prize 1964. Assassinated April 4, 1968 in Memphis, Tennessee.", legacy:"'Injustice anywhere is a threat to justice everywhere.'" },
   { id:"newton",       name:"Isaac Newton",           dates:"1643–1727",    region:"England",               role:"Physicist / Mathematician",   wikiTitle:"Isaac_Newton",          desc:"Formulated the laws of motion and universal gravitation, invented calculus, and explained the spectrum of light — all before age 26. Built on work by Islamic scholars Al-Biruni and Ibn al-Haytham, and Indian mathematician Brahmagupta.", legacy:"The most influential scientist in history — whose work enabled every machine ever built." },
   { id:"einstein",     name:"Albert Einstein",        dates:"1879–1955",    region:"Germany / USA",         role:"Theoretical Physicist",       wikiTitle:"Albert_Einstein",       desc:"Developed special and general relativity, explained the photoelectric effect (Nobel 1921), and proved E=mc². Fled Nazi Germany in 1933. Spent his final years warning against nuclear weapons he had inadvertently helped create.", legacy:"Changed humanity's understanding of space, time, gravity and the universe itself." },
-  { id:"ada-lovelace", name:"Ada Lovelace",           dates:"1815–1852",    region:"England",               role:"Mathematician / First Programmer", wikiTitle:"Ada_Lovelace",      desc:"Daughter of Lord Byron. Worked with Charles Babbage on his Analytical Engine and wrote the first computer algorithm in 1843 — 100 years before the first digital computer was built. Called herself an 'analyst and metaphysician.'", legacy:"The world's first computer programmer. The US military's Ada language is named after her." },
-  { id:"genghis-khan", name:"Genghis Khan",           dates:"1162–1227",    region:"Mongolia",              role:"Conqueror / Emperor",         wikiTitle:"Genghis_Khan",          desc:"Founded the largest contiguous land empire in history, stretching from the Pacific to Eastern Europe. Killed an estimated 40 million people. Also created the first international postal system and promoted religious freedom across his empire.", legacy:"0.5% of all men alive today descend from him — the most reproduced human in history." },
+  { id:"ada-lovelace",  name:"Ada Lovelace",           dates:"1815–1852",    region:"England",               role:"Mathematician / First Programmer", wikiTitle:"Ada_Lovelace",      desc:"Daughter of Lord Byron. Worked with Charles Babbage on his Analytical Engine and wrote the first computer algorithm in 1843 — 100 years before the first digital computer was built. Called herself an 'analyst and metaphysician.'", legacy:"The world's first computer programmer. The US military's Ada language is named after her." },
+  { id:"genghis-khan",  name:"Genghis Khan",           dates:"1162–1227",    region:"Mongolia",              role:"Conqueror / Emperor",         wikiTitle:"Genghis_Khan",          desc:"Founded the largest contiguous land empire in history, stretching from the Pacific to Eastern Europe. Killed an estimated 40 million people. Also created the first international postal system and promoted religious freedom across his empire.", legacy:"0.5% of all men alive today descend from him — the most reproduced human in history." },
+
+  // ── WORLD HISTORY FIGURES ──────────────────────────────────
+  { id:"caesar",         name:"Julius Caesar",          dates:"100–44 BCE",   region:"Roman Empire",          role:"General / Dictator",          wikiTitle:"Julius_Caesar",         desc:"Roman general and statesman who transformed the Republic into the Empire. Conquered Gaul, crossed the Rubicon, and was assassinated by senators who feared he would become king. His calendar reform (Julian calendar) shaped how the world measures time.", legacy:"'Et tu, Brute?' — the most famous betrayal in history. His name became the title of German Kaisers and Russian Tsars." },
+  { id:"napoleon",       name:"Napoleon Bonaparte",     dates:"1769–1821",    region:"France / Europe",       role:"Emperor / General",           wikiTitle:"Napoleon",              desc:"Rose from Corsican obscurity to become Emperor of the French and conqueror of most of Europe. His Napoleonic Code reformed law across Europe and the world. Defeated at Waterloo (1815), exiled to Saint Helena, and died there.", legacy:"The Napoleonic Code remains the basis of law in France, Quebec, Louisiana, and much of Latin America." },
+  { id:"suleiman",       name:"Suleiman the Magnificent",dates:"1494–1566",  region:"Ottoman Empire",        role:"Sultan / Lawgiver",           wikiTitle:"Suleiman_the_Magnificent", desc:"The longest-reigning sultan of the Ottoman Empire at its peak. Known as 'the Lawgiver' in Turkish — he codified Ottoman law, commissioned magnificent architecture including the Süleymaniye Mosque, and expanded the empire from Vienna to the Persian Gulf.", legacy:"Under Suleiman the Ottomans had more territory than the Roman Empire at its height." },
+  { id:"ashoka",         name:"Ashoka the Great",       dates:"304–232 BCE",  region:"Maurya Empire, India",  role:"Emperor / Buddhist",          wikiTitle:"Ashoka",                desc:"Maurya emperor who unified most of the Indian subcontinent, then renounced violence after the bloody Kalinga War and embraced Buddhism. Spread Buddhism across Asia through missionary work and his famous rock edicts preaching non-violence, tolerance, and welfare.", legacy:"The Ashoka Chakra — his wheel — is on the flag of modern India." },
+  { id:"wu-zetian",      name:"Wu Zetian",              dates:"624–705 CE",   region:"Tang Dynasty, China",   role:"Empress / Ruler",             wikiTitle:"Wu_Zetian",             desc:"The only woman in Chinese history to assume the title of Empress Regnant. She ruled China for 45 years — first as regent, then in her own name — and is credited with strengthening the Tang Dynasty, reforming the civil service, and promoting Buddhism.", legacy:"Ruled the world's most populous nation as the sole female emperor in Chinese history." },
+  { id:"saladin",        name:"Saladin",                dates:"1137–1193",    region:"Egypt / Syria",         role:"Sultan / Military Leader",    wikiTitle:"Saladin",               desc:"Kurdish military leader who became Sultan of Egypt and Syria, united the Muslim world, and recaptured Jerusalem from the Crusaders in 1187. Known by both Muslim and Christian sources for his chivalry, strategic genius, and fair treatment of conquered peoples.", legacy:"Even his Crusader enemies wrote admiringly of his honour — a rare tribute in medieval warfare." },
+  { id:"confucius",      name:"Confucius",              dates:"551–479 BCE",  region:"China",                 role:"Philosopher / Teacher",       wikiTitle:"Confucius",             desc:"Chinese philosopher whose teachings on ethics, family, social harmony, and governance became the foundation of East Asian thought for 2,500 years. His Analects shaped the governance of China, Japan, Korea, and Vietnam. Confucianism outlasted every dynasty.", legacy:"More people have lived under Confucian values than any other philosophical system in history." },
+  { id:"bolívar",        name:"Simón Bolívar",          dates:"1783–1830",    region:"South America",         role:"Liberator",                   wikiTitle:"Simón_Bolívar",         desc:"'El Libertador' — the man who liberated six South American nations from Spanish rule: Venezuela, Colombia, Ecuador, Peru, Bolivia, and Panama. Dreamed of a united South America and nearly achieved it before political realities tore it apart.", legacy:"Bolivia is named after him. His vision of Latin American unity still drives politics today." },
+  { id:"elizabeth-i",   name:"Elizabeth I",            dates:"1533–1603",    region:"England",               role:"Queen / Monarch",             wikiTitle:"Elizabeth_I",           desc:"Queen of England for 45 years — the 'Virgin Queen' who defeated the Spanish Armada, presided over a golden age of English literature (Shakespeare, Marlowe), and laid the foundations of the British Empire. Ruled alone, never married, and outmanoeuvred every male rival.", legacy:"The Elizabethan Era is considered England's cultural golden age." },
+  { id:"da-vinci",       name:"Leonardo da Vinci",      dates:"1452–1519",    region:"Italy",                 role:"Artist / Scientist / Engineer",wikiTitle:"Leonardo_da_Vinci",    desc:"The Renaissance genius — painter of the Mona Lisa and Last Supper, designer of flying machines, tanks, and solar power, anatomist of the human body. His notebooks, written in mirror script, contain 13,000 pages of observations that anticipated modern science by 400 years.", legacy:"Often called 'the greatest genius who ever lived' — the original polymath." },
+  { id:"lincoln",        name:"Abraham Lincoln",        dates:"1809–1865",    region:"USA",                   role:"President / Emancipator",     wikiTitle:"Abraham_Lincoln",       desc:"16th US President who led the Union through the Civil War and abolished slavery with the Emancipation Proclamation (1863). Born in a log cabin in Kentucky, he was entirely self-educated. Assassinated by John Wilkes Booth in 1865, days after the Confederacy's surrender.", legacy:"Ended the legal institution of slavery in the United States — freeing 4 million people." },
+  { id:"hirohito",       name:"Hirohito — Emperor Shōwa",dates:"1901–1989",  region:"Japan",                 role:"Emperor",                     wikiTitle:"Hirohito",              desc:"Emperor of Japan during World War II and the subsequent transformation into a constitutional democracy. His reign spanned the Pacific War, nuclear bombing of Hiroshima and Nagasaki, Japan's surrender, and the extraordinary economic recovery that made Japan one of the world's largest economies.", legacy:"Reigned for 63 years — one of the longest in Japanese history — and witnessed Japan's complete transformation." },
 ];
 
 // ── ACCOUNTABILITY RECORDS ────────────────────────────────────
@@ -467,12 +481,15 @@ function DetailPanel({ loc, T, onClose }) {
 
 // ── EXPLORE SECTION ───────────────────────────────────────────
 function ExploreSection({ T, theme }) {
-  const [selected, setSelected]   = useState(null);
-  const [filterType,setFilterType]= useState("all");  // default: show everything
-  const [showArcs,  setShowArcs]  = useState(true);
-  const [eraIdx,    setEraIdx]    = useState(ERAS.length-1);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const playRef = useRef(null);
+  const [selected,   setSelected]   = useState(null);
+  const [filterType, setFilterType] = useState("all");
+  const [showArcs,   setShowArcs]   = useState(true);
+  const [eraIdx,     setEraIdx]     = useState(ERAS.length-1);
+  const [isPlaying,  setIsPlaying]  = useState(false);
+  const [globeSearch,setGlobeSearch]= useState("");
+  const [searchOpen, setSearchOpen] = useState(false);
+  const searchRef = useRef(null);
+  const playRef   = useRef(null);
   const era = ERAS[eraIdx];
 
   const fmtY=y=>{if(y<=-100000)return`${(Math.abs(y)/1000).toFixed(0)}k BCE`;if(y<0)return`${Math.abs(y).toLocaleString()} BCE`;if(y>=2024)return"Present";return`${y} CE`;};
@@ -480,30 +497,158 @@ function ExploreSection({ T, theme }) {
   const visArcs=useMemo(()=>showArcs?MIGRATIONS.filter(m=>m.startYear<=era.year):[],[era.year,showArcs]);
   const handleClick=useCallback(loc=>setSelected(s=>s?.id===loc.id?null:loc),[]);
 
+  // ── Unified search index ────────────────────────────────────
+  const searchIndex = useMemo(() => {
+    // Helper: find best location lat/lon for a region string
+    const regionToLatLon = (region="") => {
+      const r = region.toLowerCase();
+      const match = LOCATIONS.find(l =>
+        r.includes(l.region.toLowerCase().split(",")[0]) ||
+        l.region.toLowerCase().split(",")[0].includes(r.split(",")[0])
+      );
+      return match ? { lat: match.lat, lon: match.lon, loc: match } : { lat: 20, lon: 0, loc: null };
+    };
+
+    const locs = LOCATIONS.map(l => ({
+      id: l.id, name: l.name, subtitle: l.region,
+      meta: l.era, category: "location", icon: TYPE_META[l.type]?.label || "Location",
+      color: TYPE_META[l.type]?.color || "#FF5722",
+      lat: l.lat, lon: l.lon, directLoc: l,
+    }));
+
+    const people = PEOPLE.map(p => {
+      const { lat, lon, loc } = regionToLatLon(p.region);
+      return {
+        id: p.id, name: p.name, subtitle: p.region,
+        meta: p.dates || "", category: "person", icon: p.role,
+        color: "#009AD8", lat, lon, directLoc: loc,
+      };
+    });
+
+    const events = TIMELINE_EVENTS.map((e, i) => {
+      const { lat, lon, loc } = regionToLatLon(e.region);
+      return {
+        id: `ev-${i}`, name: e.title, subtitle: e.region,
+        meta: fmtY(e.year), category: "event", icon: "Event",
+        color: "#9B59B6", lat, lon, directLoc: loc,
+      };
+    });
+
+    return [...locs, ...people, ...events];
+  }, []);
+
+  const searchResults = useMemo(() => {
+    if (globeSearch.length < 2) return [];
+    const q = globeSearch.toLowerCase();
+    return searchIndex
+      .filter(item =>
+        item.name.toLowerCase().includes(q) ||
+        item.subtitle?.toLowerCase().includes(q) ||
+        item.icon?.toLowerCase().includes(q)
+      )
+      .slice(0, 8);
+  }, [globeSearch, searchIndex]);
+
+  const handleSearchSelect = (item) => {
+    setGlobeSearch("");
+    setSearchOpen(false);
+    // If it maps to a direct location, select it (opens detail panel + flies globe)
+    if (item.directLoc) {
+      setSelected(item.directLoc);
+      // Make sure this location is visible (reset era filter if needed)
+      if (item.directLoc.startYear > era.year) {
+        setEraIdx(ERAS.length - 1);
+      }
+    }
+    // Always fly globe to the lat/lon
+    // GlobeView listens to selected?.id — if directLoc set, it flies there
+  };
+
   useEffect(()=>{
     if(isPlaying){playRef.current=setTimeout(()=>{if(eraIdx<ERAS.length-1)setEraIdx(i=>i+1);else setIsPlaying(false);},2200);}
     return()=>clearTimeout(playRef.current);
   },[isPlaying,eraIdx]);
 
+  // Close results when clicking outside
+  useEffect(()=>{
+    const handler = (e) => { if(searchRef.current && !searchRef.current.contains(e.target)) setSearchOpen(false); };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  },[]);
+
   const sp=(eraIdx/(ERAS.length-1))*100;
+
+  const CATEGORY_ICONS = { location:"🌍", person:"👤", event:"⚡" };
 
   return (
     <div style={{height:"100%",display:"flex",flexDirection:"column",background:T.bg,overflow:"hidden"}}>
+
+      {/* ── Toolbar ──────────────────────────────────────────── */}
       <div style={{background:T.surface,borderBottom:`1px solid ${T.border}`,padding:"7px 14px",display:"flex",alignItems:"center",gap:6,flexShrink:0,flexWrap:"wrap"}}>
-        <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.1em",textTransform:"uppercase",color:T.inkLight,fontWeight:600}}>Type</span>
-        {[["all","All"],["origin","Human Origins"],["civilization","Ancient Civilizations"],["world","World Empires"],["empire","Empires"],["islamic","Islamic World"],["indigenous","Indigenous Peoples"],["diaspora","Diaspora & Migration"],["accountability","Power & Accountability"]].map(([v,l])=>{
+
+        {/* Globe search */}
+        <div ref={searchRef} style={{position:"relative",flexShrink:0}}>
+          <div style={{display:"flex",alignItems:"center",gap:7,padding:"5px 12px",background:T.card,border:`1px solid ${searchOpen||globeSearch?T.accent+"60":T.border}`,borderRadius:8,minWidth:220,transition:"border-color 0.15s"}}>
+            <Ic n="search" s={13} c={searchOpen?T.accent:T.inkLight}/>
+            <input
+              value={globeSearch}
+              onChange={e=>{setGlobeSearch(e.target.value);setSearchOpen(true);}}
+              onFocus={()=>setSearchOpen(true)}
+              placeholder="Search civilizations, people, events…"
+              style={{border:"none",background:"transparent",outline:"none",fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.ink,width:190,caretColor:T.accent}}
+            />
+            {globeSearch && <span onClick={()=>{setGlobeSearch("");setSearchOpen(false);}} style={{cursor:"pointer",color:T.inkFaint,fontSize:13,lineHeight:1}}>✕</span>}
+          </div>
+
+          {/* Results dropdown */}
+          {searchOpen && searchResults.length > 0 && (
+            <div style={{position:"absolute",top:"calc(100% + 4px)",left:0,width:340,background:T.card,border:`1px solid ${T.border}`,borderRadius:10,boxShadow:"0 8px 24px rgba(0,0,0,0.25)",zIndex:100,overflow:"hidden"}}>
+              {searchResults.map((item,i) => (
+                <div key={item.id} onClick={()=>handleSearchSelect(item)}
+                  style={{display:"flex",alignItems:"center",gap:10,padding:"9px 12px",cursor:"pointer",borderBottom:i<searchResults.length-1?`1px solid ${T.border}`:"none",transition:"background 0.12s"}}
+                  onMouseEnter={e=>e.currentTarget.style.background=T.cardHov}
+                  onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+                  <span style={{fontSize:16,flexShrink:0}}>{CATEGORY_ICONS[item.category]}</span>
+                  <div style={{flex:1,minWidth:0}}>
+                    <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:600,color:T.ink,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{item.name}</div>
+                    <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:T.inkLight}}>{item.subtitle} · {item.meta}</div>
+                  </div>
+                  <div style={{padding:"2px 7px",borderRadius:20,background:item.color+"20",border:`1px solid ${item.color}40`,fontFamily:"'DM Sans',sans-serif",fontSize:8,color:item.color,fontWeight:600,textTransform:"uppercase",letterSpacing:"0.06em",whiteSpace:"nowrap",flexShrink:0}}>{item.category}</div>
+                </div>
+              ))}
+              <div style={{padding:"6px 12px",fontFamily:"'DM Sans',sans-serif",fontSize:9,color:T.inkFaint,background:T.surface,borderTop:`1px solid ${T.border}`}}>
+                {searchResults.length} result{searchResults.length!==1?"s":""} · click to fly to location
+              </div>
+            </div>
+          )}
+          {searchOpen && globeSearch.length >= 2 && searchResults.length === 0 && (
+            <div style={{position:"absolute",top:"calc(100% + 4px)",left:0,width:280,background:T.card,border:`1px solid ${T.border}`,borderRadius:10,padding:"12px 14px",zIndex:100,boxShadow:"0 8px 24px rgba(0,0,0,0.2)"}}>
+              <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.inkLight}}>No results for "{globeSearch}"</span>
+            </div>
+          )}
+        </div>
+
+        <div style={{width:1,height:16,background:T.border,margin:"0 2px"}}/>
+
+        {/* Type filters */}
+        <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.1em",textTransform:"uppercase",color:T.inkLight,fontWeight:600}}>Filter</span>
+        {[["all","All"],["origin","Origins"],["civilization","Ancient"],["world","World"],["empire","Empires"],["islamic","Islamic"],["indigenous","Indigenous"],["diaspora","Diaspora"],["accountability","Accountability"]].map(([v,l])=>{
           const ac=v==="all"?T.accent:TYPE_META[v]?.color||T.accent,on=filterType===v;
           return <div key={v} onClick={()=>setFilterType(v)} style={{padding:"3px 10px",borderRadius:20,border:`1px solid ${on?ac+"60":T.border}`,background:on?ac+"18":"transparent",color:on?ac:T.inkLight,fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.08em",textTransform:"uppercase",fontWeight:on?600:400,cursor:"pointer",transition:"all 0.15s",whiteSpace:"nowrap"}}>{l}</div>;
         })}
         <div style={{width:1,height:16,background:T.border,margin:"0 2px"}}/>
-        <div onClick={()=>setShowArcs(v=>!v)} style={{padding:"3px 10px",borderRadius:20,border:`1px solid ${showArcs?"rgba(76,175,125,0.5)":T.border}`,background:showArcs?"rgba(76,175,125,0.12)":"transparent",color:showArcs?"#4CAF7D":T.inkLight,fontFamily:"'DM Sans',sans-serif",fontSize:9,textTransform:"uppercase",fontWeight:600,cursor:"pointer"}}>Arcs {showArcs?"On":"Off"}</div>
+        <div onClick={()=>setShowArcs(v=>!v)} style={{padding:"3px 10px",borderRadius:20,border:`1px solid ${showArcs?"rgba(76,175,125,0.5)":T.border}`,background:showArcs?"rgba(76,175,125,0.12)":"transparent",color:showArcs?"#4CAF7D":T.inkLight,fontFamily:"'DM Sans',sans-serif",fontSize:9,textTransform:"uppercase",fontWeight:600,cursor:"pointer"}}>Routes {showArcs?"On":"Off"}</div>
         <div style={{flex:1}}/>
         <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.inkLight}}><span style={{color:T.accent,fontWeight:700}}>{visLocs.length}</span> locations</span>
       </div>
+
+      {/* ── Globe + detail panel ─────────────────────────────── */}
       <div style={{flex:1,display:"flex",overflow:"hidden"}}>
         <div style={{flex:1,overflow:"hidden"}}><GlobeView visibleLocs={visLocs} visibleArcs={visArcs} onLocClick={handleClick} selected={selected} theme={theme}/></div>
         {selected&&<DetailPanel loc={selected} T={T} onClose={()=>setSelected(null)}/>}
       </div>
+
+      {/* ── Timeline scrubber ────────────────────────────────── */}
       <div style={{background:T.surface,borderTop:`1px solid ${T.border}`,padding:"10px 18px 12px",flexShrink:0}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
           <div style={{display:"flex",alignItems:"center",gap:10}}>
@@ -636,38 +781,103 @@ function TimelineSection({ T }) {
 
 // ── LEARN SECTION ─────────────────────────────────────────────
 function LearnSection({ T }) {
-  const [tab,   setTab]   = useState("people");
-  const [search,setSearch]= useState("");
-  const [sel,   setSel]   = useState(null);
+  const [tab,        setTab]       = useState("people");
+  const [search,     setSearch]    = useState("");
+  const [sel,        setSel]       = useState(null);
+  const [regionFilter, setRegionFilter] = useState("all");
 
-  const filtered = useMemo(()=>{
-    const src=tab==="people"?PEOPLE:LOCATIONS.filter(l=>l.type==="civilization");
-    return src.filter(item=>item.name.toLowerCase().includes(search.toLowerCase())||(item.role||item.era||"").toLowerCase().includes(search.toLowerCase()));
-  },[tab,search]);
+  // All location types that represent civilizations (not just type="civilization")
+  const CIVI_TYPES = new Set(["civilization","world","empire","islamic","origin"]);
+
+  const REGION_OPTIONS = useMemo(() => {
+    if (tab === "people") {
+      const regions = [...new Set(PEOPLE.map(p => p.region?.split(",")[0]?.split("/")[0]?.trim()).filter(Boolean))].sort();
+      return ["all", ...regions];
+    }
+    const regions = [...new Set(
+      LOCATIONS.filter(l => CIVI_TYPES.has(l.type)).map(l => l.region?.split(",")[0]?.trim()).filter(Boolean)
+    )].sort();
+    return ["all", ...regions];
+  }, [tab]);
+
+  const filtered = useMemo(() => {
+    const src = tab === "people"
+      ? PEOPLE
+      : LOCATIONS.filter(l => CIVI_TYPES.has(l.type));
+
+    return src.filter(item => {
+      const name    = item.name?.toLowerCase() || "";
+      const role    = (item.role || item.era || "").toLowerCase();
+      const region  = (item.region || "").toLowerCase();
+      const desc    = (item.desc || item.summary || "").toLowerCase();
+      const q       = search.toLowerCase();
+      const matchSearch = !q || name.includes(q) || role.includes(q) || region.includes(q) || desc.includes(q);
+      const matchRegion = regionFilter === "all" || (item.region || "").toLowerCase().includes(regionFilter.toLowerCase());
+      return matchSearch && matchRegion;
+    });
+  }, [tab, search, regionFilter]);
+
+  // Region shorthand for filter chips
+  const REGION_GROUPS = [
+    ["all","All"],
+    ["Africa","Africa"],
+    ["Asia","Asia"],
+    ["Europe","Europe"],
+    ["Americas","Americas"],
+    ["Middle East","Middle East"],
+    ["Pacific","Pacific"],
+  ];
 
   return (
     <div style={{height:"100%",display:"flex",flexDirection:"column",background:T.bg,overflow:"hidden"}}>
       {/* Tabs + search */}
       <div style={{background:T.surface,borderBottom:`1px solid ${T.border}`,padding:"0 16px",display:"flex",alignItems:"center",gap:12,flexShrink:0}}>
-        {[["people","People & Figures"],["civilizations","Civilizations"],["contributions","Contributions"]].map(([v,l])=>(
-          <button key={v} onClick={()=>setTab(v)} style={{padding:"12px 4px",background:"transparent",border:"none",borderBottom:tab===v?`2px solid ${T.accent}`:"2px solid transparent",color:tab===v?T.accent:T.inkLight,fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:tab===v?600:400,cursor:"pointer",letterSpacing:"0.04em",whiteSpace:"nowrap"}}>{l}</button>
+        {[["people","People & Figures"],["civilizations","Civilizations & Empires"],["contributions","Contributions"]].map(([v,l])=>(
+          <button key={v} onClick={()=>{setTab(v);setSel(null);setRegionFilter("all");}} style={{padding:"12px 4px",background:"transparent",border:"none",borderBottom:tab===v?`2px solid ${T.accent}`:"2px solid transparent",color:tab===v?T.accent:T.inkLight,fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:tab===v?600:400,cursor:"pointer",letterSpacing:"0.04em",whiteSpace:"nowrap"}}>{l}</button>
         ))}
         <div style={{flex:1}}/>
-        <div style={{display:"flex",alignItems:"center",gap:8,padding:"6px 12px",background:T.card,border:`1px solid ${T.border}`,borderRadius:8,minWidth:180}}>
-          <Ic n="search" s={13} c={T.inkLight}/><input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search…" style={{border:"none",background:"transparent",outline:"none",fontFamily:"'DM Sans',sans-serif",fontSize:12,color:T.ink,flex:1,caretColor:T.accent}}/>
+        <div style={{display:"flex",alignItems:"center",gap:8,padding:"6px 12px",background:T.card,border:`1px solid ${T.border}`,borderRadius:8,minWidth:200}}>
+          <Ic n="search" s={13} c={T.inkLight}/>
+          <input value={search} onChange={e=>setSearch(e.target.value)} placeholder={`Search ${tab === "people" ? "people" : tab === "civilizations" ? "civilizations" : "contributions"}…`} style={{border:"none",background:"transparent",outline:"none",fontFamily:"'DM Sans',sans-serif",fontSize:12,color:T.ink,flex:1,caretColor:T.accent}}/>
+          {search && <span onClick={()=>setSearch("")} style={{cursor:"pointer",color:T.inkFaint,fontSize:12}}>✕</span>}
         </div>
       </div>
+
+      {/* Region filter pills — only for people + civilizations tabs */}
+      {tab !== "contributions" && (
+        <div style={{background:T.surface,borderBottom:`1px solid ${T.border}`,padding:"6px 16px",display:"flex",gap:6,flexWrap:"wrap",flexShrink:0}}>
+          {REGION_GROUPS.map(([v,l]) => {
+            const on = regionFilter === v;
+            return (
+              <div key={v} onClick={()=>setRegionFilter(v)}
+                style={{padding:"3px 10px",borderRadius:20,border:`1px solid ${on?T.accent+"60":T.border}`,background:on?T.accentDim:"transparent",color:on?T.accent:T.inkLight,fontFamily:"'DM Sans',sans-serif",fontSize:10,cursor:"pointer",letterSpacing:"0.04em",transition:"all 0.15s",whiteSpace:"nowrap"}}>
+                {l}
+              </div>
+            );
+          })}
+          <div style={{flex:1}}/>
+          <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:T.inkLight,alignSelf:"center"}}>
+            <span style={{color:T.accent,fontWeight:700}}>{filtered.length}</span> results
+          </span>
+        </div>
+      )}
 
       <div style={{flex:1,display:"flex",overflow:"hidden"}}>
         {tab==="contributions"
           ? <ContributionsTab T={T}/>
           : <>
               <div style={{flex:1,overflowY:"auto",padding:"20px 24px"}}>
-                <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(220px,1fr))",gap:16}}>
-                  {filtered.map(item=>(
-                    <PersonCard key={item.id} item={item} tab={tab} T={T} selected={sel?.id===item.id} onClick={()=>setSel(s=>s?.id===item.id?null:item)}/>
-                  ))}
-                </div>
+                {filtered.length === 0 ? (
+                  <div style={{textAlign:"center",padding:"60px 0",color:T.inkLight,fontFamily:"'DM Sans',sans-serif",fontSize:13}}>
+                    No results for "{search}" in {regionFilter !== "all" ? regionFilter : "any region"}
+                  </div>
+                ) : (
+                  <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(220px,1fr))",gap:16}}>
+                    {filtered.map(item=>(
+                      <PersonCard key={item.id} item={item} tab={tab} T={T} selected={sel?.id===item.id} onClick={()=>setSel(s=>s?.id===item.id?null:item)}/>
+                    ))}
+                  </div>
+                )}
               </div>
               {sel&&<LearnDetailPanel item={sel} tab={tab} T={T} onClose={()=>setSel(null)}/>}
             </>
