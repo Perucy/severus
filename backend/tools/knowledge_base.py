@@ -1,185 +1,169 @@
 """
-Severus Knowledge Base Tool
-Provides structured access to all Severus data — locations, people, timeline events, migrations.
+Severus Knowledge Base
+
+Replaced hardcoded facts with live Wikipedia lookups.
+Keeps a thin connection-hints layer so the Investigator
+knows which world history topics are meaningfully related.
+
+The actual facts, descriptions, and dates come from Wikipedia
+at query time — not from this file.
 """
 
+import httpx
 from typing import Any
 
-# ── LOCATIONS ─────────────────────────────────────────────────
-LOCATIONS = [
-    {"id": "rift", "name": "Great Rift Valley", "region": "East Africa", "type": "origin", "era": "315,000 BCE",
-     "facts": ["Omo remains: oldest confirmed Homo sapiens, 195,000 BCE", "Lucy (3.2M years old) found at Hadar, Ethiopia", "Africa holds more genetic diversity than rest of world combined", "First stone tools created here 2.6 million years ago"],
-     "connections": ["egypt", "kush", "hadza"]},
-    {"id": "kush", "name": "Kingdom of Kush", "region": "Sudan", "type": "civilization", "era": "2500 BCE",
-     "facts": ["200+ pyramids — more than Egypt", "25th Dynasty: Nubian Black Pharaohs ruled Egypt 744–656 BCE", "Meroitic script: Africa's earliest independent writing system", "Major iron-smelting hub"],
-     "connections": ["egypt", "mali", "berlin"]},
-    {"id": "egypt", "name": "Ancient Egypt — Kemet", "region": "North Africa", "type": "civilization", "era": "3100 BCE",
-     "facts": ["Kemet = 'the Black Land'", "Great Pyramid: tallest structure on Earth for 3,800 years", "Ebers Papyrus: world's oldest medical text", "Egyptian theology shaped Greek, Roman and Christian traditions"],
-     "connections": ["kush", "rift", "lloyds"]},
-    {"id": "mali", "name": "Mali Empire & Timbuktu", "region": "West Africa", "type": "civilization", "era": "1235 CE",
-     "facts": ["Mansa Musa I: likely wealthiest individual in recorded history", "1324 Mecca pilgrimage crashed gold markets for 10 years", "700,000+ manuscripts in Timbuktu libraries", "Controlled 50%+ of world's gold supply"],
-     "connections": ["songhai", "yoruba", "rac", "ouidah"]},
-    {"id": "benin", "name": "Kingdom of Benin", "region": "Nigeria", "type": "civilization", "era": "1180 CE",
-     "facts": ["Benin Bronzes: 13th-century bronze casting rivalling Renaissance Europe", "Diplomatic contact with Portugal from 1485 CE", "1897 British Punitive Expedition: 3,000+ artworks looted", "Over 3,000 bronzes held in Western museums today"],
-     "connections": ["yoruba", "british-museum", "expedition-1897", "repatriation"]},
-    {"id": "british-museum", "name": "British Museum", "region": "London, UK", "type": "accountability", "era": "1753 CE",
-     "facts": ["Holds 900+ Benin Bronzes looted in 1897", "One of the world's largest holders of looted African art", "Refuses repatriation under the British Museum Act 1963", "Germany, Netherlands, and USA have begun returning bronzes"],
-     "connections": ["benin", "expedition-1897", "repatriation", "lloyds"]},
-    {"id": "expedition-1897", "name": "1897 Punitive Expedition", "region": "Benin City, Nigeria", "type": "accountability", "era": "1897 CE",
-     "facts": ["Led by Admiral Harry Rawson on orders of the British government", "3,000+ bronze artworks seized and sold to European museums", "Oba Ovonramwen exiled to Calabar where he died in 1914", "Triggered by killing of a British trade delegation — pretext for colonial seizure"],
-     "connections": ["benin", "british-museum", "repatriation", "berlin"]},
-    {"id": "repatriation", "name": "Benin Bronzes Repatriation", "region": "Global", "type": "accountability", "era": "2021 CE",
-     "facts": ["Germany returned 20 bronzes to Nigeria in 2022 — first major restitution", "Netherlands' Rijksmuseum returned 119 bronzes in 2023", "British Museum still refuses under UK law", "Nigeria's Edo State museum opened 2023 to house returned pieces"],
-     "connections": ["benin", "british-museum", "expedition-1897"]},
-    {"id": "caribbean", "name": "Caribbean — Haiti", "region": "Caribbean", "type": "diaspora", "era": "1503 CE",
-     "facts": ["Haiti: first Black republic in history, January 1, 1804", "Only successful slave revolution in history", "Defeated Napoleon's professional army"],
-     "connections": ["ouidah", "rac", "yoruba", "usa"]},
-    {"id": "rac", "name": "Royal African Company", "region": "London", "type": "accountability", "era": "1660 CE",
-     "facts": ["Duke of York (King James II) was its governor", "Transported 100,000+ enslaved Africans", "Held monopoly on English slave trade 1672–1698"],
-     "connections": ["lloyds", "ouidah", "berlin", "caribbean", "usa"]},
-    {"id": "lloyds", "name": "Lloyd's of London", "region": "London", "type": "accountability", "era": "1688 CE",
-     "facts": ["Insured enslaved people as property", "Acknowledged its role publicly in 2020", "Still one of world's largest insurance markets"],
-     "connections": ["rac", "berlin", "ouidah"]},
-    {"id": "berlin", "name": "Berlin Conference 1884", "region": "Germany", "type": "accountability", "era": "1884 CE",
-     "facts": ["14 European nations divided Africa — zero African representation", "Created 54 artificial borders splitting 177 ethnic groups", "Triggered colonial rule of 90% of Africa within 30 years"],
-     "connections": ["leopold", "rac", "lloyds"]},
-    {"id": "leopold", "name": "Belgian Congo — Leopold II", "region": "Congo", "type": "accountability", "era": "1885 CE",
-     "facts": ["Leopold personally owned Congo as private property", "~10 million Congolese killed — first genocide of 20th century", "Hands cut off as punishment for failing rubber quotas"],
-     "connections": ["berlin", "rac"]},
-    {"id": "ouidah", "name": "Ouidah — Door of No Return", "region": "Benin, West Africa", "type": "accountability", "era": "1500 CE",
-     "facts": ["Over 1 million enslaved people departed through Ouidah", "'Door of No Return' — last point of African soil", "Connected to Kingdom of Dahomey"],
-     "connections": ["rac", "lloyds", "caribbean", "brazil", "usa"]},
-]
 
-# ── PEOPLE ────────────────────────────────────────────────────
-PEOPLE = [
-    {"id": "mansa-musa", "name": "Mansa Musa I", "dates": "c.1280–1337", "role": "Emperor, Mali Empire",
-     "desc": "Likely the wealthiest person in all of recorded history. Controlled 50%+ of world's gold. His 1324 Mecca pilgrimage crashed Egypt's economy for a decade.",
-     "connections": ["mali", "timbuktu", "trans-saharan-trade"]},
-    {"id": "taharqa", "name": "Taharqa", "dates": "690–664 BCE", "role": "Nubian Pharaoh",
-     "desc": "Greatest Nubian pharaoh of the 25th Dynasty. Ruled all of Egypt and Kush. Built more temples than any pharaoh since Ramesses II. Mentioned in the Bible.",
-     "connections": ["kush", "egypt"]},
-    {"id": "toussaint", "name": "Toussaint Louverture", "dates": "1743–1803", "role": "Revolutionary General",
-     "desc": "Led the Haitian Revolution — the only successful slave revolt in history. Defeated armies of France, Spain and Britain.",
-     "connections": ["caribbean", "rac", "ouidah"]},
-    {"id": "nkrumah", "name": "Kwame Nkrumah", "dates": "1909–1972", "role": "President of Ghana, Pan-Africanist",
-     "desc": "First President of Ghana. Led first sub-Saharan independence (1957). Father of Pan-Africanism.",
-     "connections": ["berlin", "independence-movements"]},
-    {"id": "sankara", "name": "Thomas Sankara", "dates": "1949–1987", "role": "President of Burkina Faso",
-     "desc": "Renamed country from colonial name, launched mass literacy, planted 10M trees, vaccinated 2.5M children in one week. Assassinated, likely with French involvement.",
-     "connections": ["berlin", "neo-colonialism"]},
-    {"id": "imhotep", "name": "Imhotep", "dates": "c.2650 BCE", "role": "Architect, Physician",
-     "desc": "First named architect and physician in history. Designed the Step Pyramid of Djoser. Later deified as god of medicine. Inspired Asclepius in Greek mythology.",
-     "connections": ["egypt", "kush"]},
-    {"id": "yaa-asantewaa", "name": "Yaa Asantewaa", "dates": "c.1840–1921", "role": "Queen Mother, War Leader",
-     "desc": "Led the War of the Golden Stool (1900) against the British Empire. One of the last African rulers to wage war against colonialism.",
-     "connections": ["berlin", "rac"]},
-    {"id": "harriet-tubman", "name": "Harriet Tubman", "dates": "1822–1913", "role": "Liberator, Spy",
-     "desc": "Born enslaved, made 13 missions to free ~70 people via Underground Railroad. Led first armed raid by a woman in US history.",
-     "connections": ["usa", "rac", "ouidah"]},
-]
+# ── CONNECTION HINTS ──────────────────────────────────────────
+# Lightweight map of which history topics connect to which.
+# Used by the Investigator to seed the PI board with real edges.
+# Format: { topic_id: [connected_topic_ids] }
+# These are HINTS only — the agent validates them with Wikipedia.
 
-# ── TIMELINE EVENTS ───────────────────────────────────────────
-TIMELINE_EVENTS = [
-    {"year": -315000, "title": "Homo Sapiens Emerge", "region": "Africa", "era": "origins",
-     "desc": "First anatomically modern humans appear. Jebel Irhoud skulls (315,000 BCE), Omo remains (195,000 BCE).",
-     "impact": "Origin of all 8 billion humans alive today."},
-    {"year": -3100, "title": "Ancient Egypt Founded", "region": "North Africa", "era": "firstkings",
-     "desc": "Narmer unifies Upper and Lower Egypt. The civilisation Egyptians called Kemet — the Black Land.",
-     "impact": "3,000 years of civilisation that built the pyramids and invented formal mathematics."},
-    {"year": -2500, "title": "Kingdom of Kush Rises", "region": "Sudan", "era": "firstkings",
-     "desc": "Kush emerges as a major power, eventually building more pyramids than Egypt.",
-     "impact": "Proved African civilisation did not begin and end at Egypt's borders."},
-    {"year": 1324, "title": "Mansa Musa's Pilgrimage", "region": "West Africa", "era": "empires",
-     "desc": "Mansa Musa travels to Mecca with 60,000 people, crashes Egypt's gold market for a decade.",
-     "impact": "Remains the benchmark for the wealthiest person in all of history."},
-    {"year": 1619, "title": "First Africans in English America", "region": "Virginia", "era": "slavetrade",
-     "desc": "First enslaved Africans arrive at Point Comfort, Virginia.",
-     "impact": "Start of African American history — 400 years of building America."},
-    {"year": 1804, "title": "Haitian Revolution Succeeds", "region": "Haiti", "era": "slavetrade",
-     "desc": "January 1, 1804: first Black republic, created by defeating Napoleon's army.",
-     "impact": "Only successful slave revolt in human history."},
-    {"year": 1884, "title": "Berlin Conference", "region": "Europe", "era": "colonial",
-     "desc": "14 European powers divide Africa with zero African representation.",
-     "impact": "These borders created today's African nations and contemporary conflicts."},
-    {"year": 1897, "title": "Benin Bronzes Looted", "region": "Nigeria", "era": "colonial",
-     "desc": "British forces loot over 3,000 bronze artworks from Kingdom of Benin.",
-     "impact": "At the centre of the global repatriation debate today."},
-    {"year": 1957, "title": "Ghana Independence", "region": "Ghana", "era": "independence",
-     "desc": "Ghana becomes first sub-Saharan African country to gain independence under Nkrumah.",
-     "impact": "Triggered wave of independence movements across the continent."},
-]
+CONNECTION_HINTS: dict[str, list[str]] = {
+    # African civilisations
+    "great-rift-valley":    ["ancient-egypt", "kingdom-of-kush", "homo-sapiens"],
+    "ancient-egypt":        ["kingdom-of-kush", "ancient-greece", "roman-empire", "alexander-the-great"],
+    "kingdom-of-kush":      ["ancient-egypt", "great-rift-valley", "axum"],
+    "axum":                 ["kingdom-of-kush", "ancient-egypt", "silk-road"],
+    "mali-empire":          ["timbuktu", "mansa-musa", "trans-saharan-trade", "trans-atlantic-slave-trade"],
+    "songhai-empire":       ["mali-empire", "timbuktu", "trans-saharan-trade"],
+    "kingdom-of-benin":     ["trans-atlantic-slave-trade", "benin-bronzes", "british-empire"],
+    "great-zimbabwe":       ["trans-saharan-trade", "swahili-coast"],
+    "swahili-coast":        ["great-zimbabwe", "silk-road", "indian-ocean-trade"],
 
-# ── SEARCH FUNCTION ───────────────────────────────────────────
-def search_knowledge_base(query: str, category: str = "all") -> dict[str, Any]:
+    # People
+    "mansa-musa":           ["mali-empire", "timbuktu", "trans-saharan-trade"],
+    "toussaint-louverture": ["haitian-revolution", "trans-atlantic-slave-trade", "napoleon-bonaparte"],
+    "kwame-nkrumah":        ["ghanaian-independence", "pan-africanism", "berlin-conference"],
+    "harriet-tubman":       ["trans-atlantic-slave-trade", "american-civil-war", "underground-railroad"],
+    "nelson-mandela":       ["apartheid", "african-national-congress", "cold-war"],
+    "thomas-sankara":       ["burkina-faso", "pan-africanism", "cold-war"],
+
+    # The slave trade and colonialism
+    "trans-atlantic-slave-trade": ["royal-african-company", "haitian-revolution", "american-civil-war",
+                                    "kingdom-of-benin", "mali-empire", "lloyds-of-london"],
+    "royal-african-company":      ["trans-atlantic-slave-trade", "lloyds-of-london", "british-empire"],
+    "lloyds-of-london":           ["royal-african-company", "trans-atlantic-slave-trade", "british-empire"],
+    "berlin-conference":          ["scramble-for-africa", "belgian-congo", "british-empire", "french-empire"],
+    "scramble-for-africa":        ["berlin-conference", "belgian-congo", "british-empire"],
+    "belgian-congo":              ["berlin-conference", "leopold-ii", "scramble-for-africa"],
+    "haitian-revolution":         ["trans-atlantic-slave-trade", "toussaint-louverture", "french-revolution",
+                                    "napoleon-bonaparte"],
+
+    # European empires
+    "british-empire":       ["berlin-conference", "trans-atlantic-slave-trade", "kingdom-of-benin",
+                              "indian-independence", "scramble-for-africa"],
+    "roman-empire":         ["ancient-egypt", "ancient-greece", "fall-of-rome", "byzantine-empire"],
+    "mongol-empire":        ["silk-road", "black-death", "genghis-khan"],
+    "ottoman-empire":       ["byzantine-empire", "silk-road", "world-war-i", "fall-of-rome"],
+
+    # Asian civilisations
+    "silk-road":            ["mongol-empire", "tang-dynasty", "byzantine-empire", "swahili-coast",
+                              "black-death", "axum"],
+    "tang-dynasty":         ["silk-road", "confucianism"],
+    "ming-dynasty":         ["silk-road", "zheng-he"],
+    "mughal-empire":        ["british-empire", "silk-road", "indian-independence"],
+
+    # The modern era
+    "world-war-i":          ["ottoman-empire", "world-war-ii", "treaty-of-versailles", "russian-revolution"],
+    "world-war-ii":         ["world-war-i", "holocaust", "cold-war", "atomic-bomb"],
+    "cold-war":             ["world-war-ii", "cuban-missile-crisis", "vietnam-war", "nelson-mandela"],
+    "french-revolution":    ["napoleon-bonaparte", "haitian-revolution", "enlightenment"],
+    "russian-revolution":   ["world-war-i", "cold-war", "joseph-stalin"],
+    "apartheid":            ["nelson-mandela", "cold-war", "african-national-congress"],
+    "indian-independence":  ["british-empire", "gandhi", "cold-war"],
+    "benin-bronzes":        ["kingdom-of-benin", "british-empire", "repatriation-debate"],
+    "repatriation-debate":  ["benin-bronzes", "british-museum", "kingdom-of-benin"],
+}
+
+
+def get_connection_hints(topic: str) -> list[str]:
     """
-    Search the Severus knowledge base for locations, people, and events.
-    Returns matching entries with their connections.
+    Returns known related topics for a given topic string.
+    Fuzzy-matches against the hints map.
     """
-    query_lower = query.lower()
-    results = {"locations": [], "people": [], "events": [], "query": query}
-
-    if category in ("all", "locations"):
-        for loc in LOCATIONS:
-            score = sum([
-                3 if query_lower in loc["name"].lower() else 0,
-                2 if query_lower in loc["region"].lower() else 0,
-                2 if query_lower in loc["type"].lower() else 0,
-                1 if any(query_lower in f.lower() for f in loc["facts"]) else 0,
-            ])
-            if score > 0:
-                results["locations"].append({**loc, "_score": score})
-
-    if category in ("all", "people"):
-        for person in PEOPLE:
-            score = sum([
-                3 if query_lower in person["name"].lower() else 0,
-                2 if query_lower in person["role"].lower() else 0,
-                1 if query_lower in person["desc"].lower() else 0,
-            ])
-            if score > 0:
-                results["people"].append({**person, "_score": score})
-
-    if category in ("all", "events"):
-        for event in TIMELINE_EVENTS:
-            score = sum([
-                3 if query_lower in event["title"].lower() else 0,
-                2 if query_lower in event["region"].lower() else 0,
-                1 if query_lower in event["desc"].lower() else 0,
-                1 if query_lower in event["impact"].lower() else 0,
-            ])
-            if score > 0:
-                results["events"].append({**event, "_score": score})
-
-    # Sort by score
-    for key in ("locations", "people", "events"):
-        results[key] = sorted(results[key], key=lambda x: x["_score"], reverse=True)[:5]
-
-    return results
+    topic_lower = topic.lower().replace(" ", "-")
+    # Direct match
+    if topic_lower in CONNECTION_HINTS:
+        return CONNECTION_HINTS[topic_lower]
+    # Partial match
+    for key, connections in CONNECTION_HINTS.items():
+        if topic_lower in key or key in topic_lower:
+            return connections
+    return []
 
 
-def get_connections(node_id: str) -> dict[str, Any]:
+# ── LIVE WIKIPEDIA LOOKUP ─────────────────────────────────────
+
+async def search_wikipedia(query: str, limit: int = 3) -> list[dict[str, Any]]:
     """
-    Get all connections for a given node — useful for the Investigator's PI board tracing.
+    Search Wikipedia and return top results with summaries and thumbnails.
+    Uses the Wikipedia REST API — no API key needed.
     """
-    all_items = LOCATIONS + PEOPLE
-    node = next((item for item in all_items if item["id"] == node_id), None)
-    if not node:
-        return {"error": f"Node '{node_id}' not found"}
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            # Step 1: search for pages
+            search_resp = await client.get(
+                "https://en.wikipedia.org/w/api.php",
+                params={
+                    "action":   "query",
+                    "list":     "search",
+                    "srsearch": query,
+                    "srlimit":  limit,
+                    "format":   "json",
+                    "origin":   "*",
+                },
+            )
+            search_data = search_resp.json()
+            pages = search_data.get("query", {}).get("search", [])
+            if not pages:
+                return []
 
-    connections = []
-    for conn_id in node.get("connections", []):
-        connected = next((item for item in all_items if item["id"] == conn_id), None)
-        if connected:
-            connections.append({
-                "id": connected["id"],
-                "name": connected["name"],
-                "type": connected.get("type", "unknown"),
-                "era": connected.get("era", connected.get("dates", "")),
-            })
+            results = []
+            for page in pages[:limit]:
+                title = page["title"]
+                # Step 2: get summary + thumbnail for each page
+                summary_resp = await client.get(
+                    f"https://en.wikipedia.org/api/rest_v1/page/summary/{title.replace(' ', '_')}",
+                    timeout=8.0,
+                )
+                if summary_resp.status_code == 200:
+                    data = summary_resp.json()
+                    results.append({
+                        "title":       data.get("title", title),
+                        "summary":     data.get("extract", "")[:600],
+                        "url":         data.get("content_urls", {}).get("desktop", {}).get("page", ""),
+                        "thumbnail":   data.get("thumbnail", {}).get("source", ""),
+                        "description": data.get("description", ""),
+                    })
 
-    return {
-        "node": {"id": node["id"], "name": node["name"]},
-        "connections": connections,
-        "connection_count": len(connections),
-    }
+            return results
+
+    except Exception as e:
+        return [{"error": str(e), "title": query, "summary": "", "url": "", "thumbnail": ""}]
+
+
+async def get_wikipedia_summary(title: str) -> dict[str, Any]:
+    """
+    Get a single Wikipedia article summary + thumbnail by exact title.
+    More reliable than search when you know the topic name.
+    """
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            resp = await client.get(
+                f"https://en.wikipedia.org/api/rest_v1/page/summary/{title.replace(' ', '_')}",
+                timeout=8.0,
+            )
+            if resp.status_code == 200:
+                data = resp.json()
+                return {
+                    "title":       data.get("title", title),
+                    "summary":     data.get("extract", "")[:800],
+                    "url":         data.get("content_urls", {}).get("desktop", {}).get("page", ""),
+                    "thumbnail":   data.get("thumbnail", {}).get("source", ""),
+                    "description": data.get("description", ""),
+                    "found":       True,
+                }
+            return {"found": False, "title": title, "summary": "", "thumbnail": ""}
+    except Exception as e:
+        return {"found": False, "error": str(e), "title": title, "summary": "", "thumbnail": ""}
