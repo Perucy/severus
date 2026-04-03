@@ -1,83 +1,13 @@
 """
 External API Tools for Severus Agents
-- Tavily Web Search
 - Wikipedia REST API (with fallback)
-- Google Imagen 4 Fast
-- Veo 3.1 Video Generation
+- SlaveVoyages.org API
+- Google Imagen 3 via Nano Banana Pro
 """
 
 import httpx
 import os
 import base64
-from typing import Any
-
-
-# ── TAVILY WEB SEARCH ─────────────────────────────────────────
-async def search_web(
-    query: str,
-    max_results: int = 5,
-    search_depth: str = "basic",  # "basic" | "advanced"
-    include_domains: list[str] = None,
-) -> dict[str, Any]:
-    """
-    Search the web using Tavily API.
-    Returns clean, structured results ready for agent consumption.
-    Free tier: 1000 searches/month.
-    """
-    api_key = os.getenv("TAVILY_API_KEY")
-    if not api_key:
-        return {
-            "error": "TAVILY_API_KEY not set — falling back to Wikipedia",
-            "results": [],
-        }
-
-    try:
-        async with httpx.AsyncClient(timeout=15.0) as client:
-            payload = {
-                "api_key":      api_key,
-                "query":        query,
-                "max_results":  max_results,
-                "search_depth": search_depth,
-                "include_answer": True,           # Tavily generates a direct answer
-                "include_raw_content": False,
-            }
-            if include_domains:
-                payload["include_domains"] = include_domains
-
-            resp = await client.post(
-                "https://api.tavily.com/search",
-                json=payload,
-                headers={"Content-Type": "application/json"},
-                timeout=15.0,
-            )
-
-            if resp.status_code == 200:
-                data = resp.json()
-                return {
-                    "answer":  data.get("answer", ""),           # Direct AI answer
-                    "results": [
-                        {
-                            "title":   r.get("title", ""),
-                            "url":     r.get("url", ""),
-                            "content": r.get("content", "")[:800],  # Trim for token budget
-                            "score":   r.get("score", 0),
-                        }
-                        for r in data.get("results", [])[:max_results]
-                    ],
-                    "query": query,
-                }
-
-            return {
-                "error": f"Tavily returned HTTP {resp.status_code}",
-                "results": [],
-            }
-
-    except Exception as e:
-        return {
-            "error": f"Tavily search failed: {str(e)}",
-            "results": [],
-        }
-
 from typing import Any
 
 
@@ -155,15 +85,87 @@ def _wikipedia_fallback(query: str, error: str = "") -> dict[str, Any]:
     }
 
 
+# ── SLAVEVOYAGES ──────────────────────────────────────────────
+async def search_slavevoyages(
+    query: str = None,
+    ship_name: str = None,
+    flag: str = None,
+    year_from: int = None,
+    year_to: int = None,
+) -> dict[str, Any]:
+    """Query the SlaveVoyages.org database."""
+    try:
+        async with httpx.AsyncClient(timeout=15.0) as client:
+            params: dict = {"format": "json", "limit": 10}
+            if ship_name:  params["ship_name"] = ship_name
+            if flag:       params["nat_id"]    = flag
+            if year_from:  params["year_from"] = year_from
+            if year_to:    params["year_to"]   = year_to
+
+            resp = await client.get(
+                "https://www.slavevoyages.org/voyage/api/",
+                params=params,
+                headers={"Accept": "application/json"},
+                timeout=15.0,
+            )
+            if resp.status_code == 200:
+                raw = resp.text.strip()
+                if not raw:
+                    return _slavevoyages_curated()
+                data = resp.json()
+                voyages = data.get("results", [])
+                return {
+                    "total_found": data.get("count", 0),
+                    "voyages": [{
+                        "voyage_id":            v.get("id"),
+                        "ship_name":            v.get("ship_name", "Unknown"),
+                        "year_arrived":         v.get("year_arrived_at_port_of_dis"),
+                        "captives_embarked":    v.get("total_embarked"),
+                        "captives_disembarked": v.get("total_disembarked"),
+                        "place_of_purchase":    v.get("place_of_landing"),
+                        "flag":                 v.get("flag"),
+                        "captain":              v.get("captain_name"),
+                    } for v in voyages[:8]],
+                    "source": "SlaveVoyages.org — Trans-Atlantic Slave Trade Database",
+                }
+            return _slavevoyages_curated()
+    except Exception:
+        return _slavevoyages_curated()
+
+
+def _slavevoyages_curated() -> dict[str, Any]:
+    return {
+        "note": "Live API unavailable — returning curated records",
+        "total_documented": 36000,
+        "total_africans_transported": 12500000,
+        "key_facts": [
+            "36,000+ documented voyages in the Trans-Atlantic Slave Trade Database",
+            "~12.5 million Africans transported across the Atlantic",
+            "Brazil received 4.9 million — 46% of the entire trade",
+            "Royal African Company transported 100,000+ between 1672–1698",
+            "The Clotilda (1860) was the last documented slave ship to the USA",
+            "Portugal/Brazil operated ~11,000 voyages — the most of any nation",
+        ],
+        "top_flag_nations": [
+            {"flag": "Portugal/Brazil", "estimated_voyages": 11000},
+            {"flag": "Britain",         "estimated_voyages": 11000},
+            {"flag": "France",          "estimated_voyages": 4200},
+            {"flag": "Netherlands",     "estimated_voyages": 2600},
+            {"flag": "United States",   "estimated_voyages": 1500},
+        ],
+        "source": "SlaveVoyages.org — Trans-Atlantic Slave Trade Database",
+        "url": "https://www.slavevoyages.org",
+    }
+
+
 # ── NANO BANANA PRO — Google Imagen 3 ─────────────────────────
 async def generate_image(
     prompt: str,
     style: str = "photorealistic",
     aspect_ratio: str = "16:9",
-    subject: str = "history",
 ) -> dict[str, Any]:
     """
-    Generate an accurate educational image using Imagen 4 Fast.
+    Generate a historical image using Imagen 4 Fast.
     Falls back to Gemini 2.5 Flash Image if Imagen 4 fails.
     Requires GOOGLE_AI_API_KEY in environment.
     """
@@ -172,10 +174,10 @@ async def generate_image(
         return {
             "success": False,
             "error": "GOOGLE_AI_API_KEY not set",
-            "prompt_ready": _build_enhanced_prompt(prompt, style, aspect_ratio, subject),
+            "prompt_ready": _build_enhanced_prompt(prompt, style, aspect_ratio),
         }
 
-    enhanced = _build_enhanced_prompt(prompt, style, aspect_ratio, subject)
+    enhanced = _build_enhanced_prompt(prompt, style, aspect_ratio)
     ar_map = {"16:9": "16:9", "1:1": "1:1", "4:3": "4:3", "9:16": "9:16"}
     ar = ar_map.get(aspect_ratio, "16:9")
 
@@ -267,32 +269,14 @@ async def _try_gemini_image(api_key: str, prompt: str, model: str) -> dict[str, 
         return {"success": False, "error": str(e)}
 
 
-def _build_enhanced_prompt(prompt: str, style: str, aspect_ratio: str, subject: str = "history") -> str:
-    subject_context = {
-        "history": (
-            "Historical illustration for the Severus Learning Platform. "
-            "Accurate period clothing, architecture and artifacts. No anachronisms. "
-            "Diverse representation of the peoples depicted. "
-        ),
-        "science": (
-            "Scientific diagram or illustration for the Severus Learning Platform. "
-            "Accurate, clear, educational. "
-        ),
-        "econ": (
-            "Economic illustration or infographic for the Severus Learning Platform. "
-            "Clear, informative, modern. "
-        ),
-        "law": (
-            "Legal illustration for the Severus Learning Platform. "
-            "Professional, clear, educational. "
-        ),
-    }.get(subject, "Educational illustration for the Severus Learning Platform. ")
-
+def _build_enhanced_prompt(prompt: str, style: str, aspect_ratio: str) -> str:
     return (
-        f"{subject_context}"
-        f"Style: {style}, cinematographic lighting, highly detailed. "
+        f"Historical illustration for the Severus African History Platform. "
+        f"Style: {style}, cinematographic lighting, highly detailed, educational. "
         f"Aspect ratio: {aspect_ratio}.\n\n"
-        f"Scene: {prompt}"
+        f"Scene: {prompt}\n\n"
+        f"Cultural accuracy: Depict African people with diverse skin tones and authentic "
+        f"period-appropriate clothing, architecture and artifacts. No anachronisms."
     )
 
 
@@ -316,10 +300,11 @@ async def generate_video_prompt(
                     json={
                         "prompt": {
                             "text": (
-                                f"Educational reconstruction for the Severus Learning Platform. "
-                                f"Documentary quality, accurate to the period, culture, and subject matter. "
+                                f"Historical documentary reconstruction for the Severus African History Platform. "
+                                f"BBC/National Geographic quality. "
                                 f"Scene: {scene_description} "
-                                f"Style: Cinematic, photorealistic, educational."
+                                f"Style: Cinematic, photorealistic. "
+                                f"Cultural accuracy: authentic African period clothing, architecture, and artifacts."
                             )
                         },
                         "generationConfig": {
@@ -383,20 +368,20 @@ def _veo_text_prompt(scene_description: str, duration: str) -> dict[str, Any]:
         "success": False,
         "type": "video_prompt",
         "video_prompt": (
-            f"EDUCATIONAL VIDEO RECONSTRUCTION — SEVERUS PLATFORM\n\n"
+            f"HISTORICAL VIDEO RECONSTRUCTION — SEVERUS PLATFORM\n\n"
             f"Scene: {scene_description}\n"
             f"Duration: {duration}\n"
             f"Model: Veo 3.1 (veo-3.1-generate-preview) — includes synchronized audio\n"
             f"Style: Documentary-cinematic, photorealistic, BBC/National Geographic quality\n\n"
             f"Camera: Aerial establishing shot → ground-level → close-ups on faces and artifacts\n"
             f"Lighting: Golden hour, dramatic natural lighting\n"
-            f"Audio: Authentic ambient sounds appropriate to the period and subject (Veo 3.1 auto-generates)\n\n"
+            f"Audio: African traditional instruments, ambient period sounds (Veo 3.1 auto-generates)\n\n"
             f"Cultural accuracy:\n"
-            f"- Accurate clothing, architecture and visual details appropriate to the period and culture\n"
+            f"- Authentic African clothing and hairstyles for the period\n"
             f"- Correct architecture (no anachronistic Western elements)\n"
             f"- Diverse skin tones and facial features\n"
             f"- Accurate tools, weapons, trade goods\n\n"
-            f"Voiceover: Clear, authoritative, educational narration appropriate to the subject"
+            f"Voiceover: Authoritative, respectful, documentary narration"
         ),
         "recommended_tool": "Google Veo 3.1 (veo-3.1-generate-preview) or Runway ML",
         "veo_model": "veo-3.1-generate-preview",

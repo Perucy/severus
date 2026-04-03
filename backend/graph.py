@@ -1,144 +1,115 @@
 """
-Severus Universal Learning Engine — LangGraph Pipeline
-
-Flow:
-  Question → Subject Router → Researcher
-                                  ↓
-                    Connector ──────── Visualizer   (parallel)
-                          ↓                ↓
-                          └───── Teacher ──┘
-                                    ↓
-                                Response
+Severus Agent Graph — LangGraph StateGraph
+Orchestrates 4 agents in a pipeline:
+Guide (router) → Historian → Investigator → Visualizer → Guide (synthesizer)
 """
 
-import asyncio
-import operator
-from typing import TypedDict, Annotated, Optional
-
+import json
+from typing import TypedDict, Optional, Annotated
 from langgraph.graph import StateGraph, END
-
-from agents.researcher  import run_researcher
-from agents.connector   import run_connector
-from agents.visualizer  import run_visualizer
-from agents.teacher import run_teacher
-from router             import route
-from subjects.configs   import SubjectConfig
+import operator
 
 
-# ── STATE SCHEMA ──────────────────────────────────────────────
+# ── STATE ─────────────────────────────────────────────────────
 class AgentEvent(TypedDict):
-    agent:      str
-    type:       str
-    content:    str
-    tool_name:  Optional[str]
+    agent: str
+    type: str          # "thinking" | "tool_call" | "tool_result" | "output"
+    content: str
+    tool_name: Optional[str]
     tool_input: Optional[dict]
+    timestamp: Optional[str]
 
 
 class SeverusState(TypedDict):
-    # Input
-    question:        str
-    narrative_depth: str
-    show_reasoning:  bool
-    user_id:         Optional[str]
-    past_context:    str
-    prior_knowledge: str
-
-    # Routing
-    subject_config:  Optional[SubjectConfig]
-    question_type:   str
-    current_agent:   str
-    completed:       bool
+    question: str
+    narrative_depth: str                           # "teaser" | "deep_dive"
+    show_reasoning: bool
 
     # Agent outputs
-    researcher_output:  Optional[str]
-    researcher_json:    Optional[dict]
-    connector_output:   Optional[str]
-    visualizer_output:  Optional[dict]
-    teacher_output:     Optional[str]
+    historian_output: Optional[str]
+    investigator_output: Optional[str]
+    visualizer_output: Optional[dict]              # includes image data
+    guide_narrative: Optional[str]
 
-    # Events stream
+    # UI streaming events
     events: Annotated[list[AgentEvent], operator.add]
 
+    # Routing
+    skip_visualizer: bool
+    current_agent: str
+    completed: bool
 
-def create_initial_state(
-    question:        str,
-    narrative_depth: str = "teaser",
-    show_reasoning:  bool = False,
-    user_id:         Optional[str] = None,
-    past_context:    str = "",
-    prior_knowledge: str = "",
-) -> SeverusState:
-    subject_cfg, question_type = route(question)
+
+def create_initial_state(question: str, narrative_depth: str = "teaser",
+                          show_reasoning: bool = False) -> SeverusState:
     return SeverusState(
         question=question,
         narrative_depth=narrative_depth,
         show_reasoning=show_reasoning,
-        user_id=user_id,
-        past_context=past_context,
-        prior_knowledge=prior_knowledge,
-        subject_config=subject_cfg,
-        question_type=question_type,
-        current_agent="researcher",
-        completed=False,
-        researcher_output=None,
-        researcher_json=None,
-        connector_output=None,
+        historian_output=None,
+        investigator_output=None,
         visualizer_output=None,
-        teacher_output=None,
+        guide_narrative=None,
         events=[],
+        skip_visualizer=False,
+        current_agent="historian",
+        completed=False,
     )
 
 
-# ── NODES ─────────────────────────────────────────────────────
-
-async def researcher_node(state: SeverusState) -> dict:
-    result = await run_researcher(state)
-    return result
-
-
-async def parallel_node(state: SeverusState) -> dict:
-    """Run Connector and Visualizer in parallel — saves 15-25 seconds."""
-    connector_task  = asyncio.create_task(run_connector(state))
-    visualizer_task = asyncio.create_task(run_visualizer(state))
-
-    connector_result, visualizer_result = await asyncio.gather(
-        connector_task, visualizer_task
-    )
-
-    # Merge events from both
-    all_events = (
-        connector_result.get("events", []) +
-        visualizer_result.get("events", [])
-    )
-
-    return {
-        "connector_output":   connector_result.get("connector_output"),
-        "visualizer_output":  visualizer_result.get("visualizer_output"),
-        "events":             all_events,
-        "current_agent":      "teacher",
-    }
+# ── AGENT NODES ───────────────────────────────────────────────
+from agents.historian   import run_historian
+from agents.investigator import run_investigator
+from agents.visualizer  import run_visualizer
+from agents.guide       import run_guide
 
 
-async def teacher_node(state: SeverusState) -> dict:
-    result = await run_teacher(state)
-    return result
+async def historian_node(state: SeverusState) -> dict:
+    return await run_historian(state)
 
 
-# ── GRAPH ─────────────────────────────────────────────────────
+async def investigator_node(state: SeverusState) -> dict:
+    return await run_investigator(state)
 
-def build_graph():
+
+async def visualizer_node(state: SeverusState) -> dict:
+    return await run_visualizer(state)
+
+
+async def guide_node(state: SeverusState) -> dict:
+    return await run_guide(state)
+
+
+def should_visualize(state: SeverusState) -> str:
+    """Decide whether to run the Visualizer based on question type."""
+    question_lower = state["question"].lower()
+    visual_keywords = ["show", "image", "picture", "visualize", "look like",
+                       "what did", "illustrate", "draw", "painting", "scene",
+                       "pyramid", "palace", "city", "temple", "ship", "battle"]
+    if state.get("skip_visualizer") or not any(kw in question_lower for kw in visual_keywords):
+        # Still run visualizer but flag it as optional
+        pass
+    return "visualizer"
+
+
+# ── BUILD GRAPH ───────────────────────────────────────────────
+def build_graph() -> StateGraph:
     graph = StateGraph(SeverusState)
 
-    graph.add_node("researcher", researcher_node)
-    graph.add_node("parallel",   parallel_node)
-    graph.add_node("teacher",   teacher_node)
+    graph.add_node("historian",   historian_node)
+    graph.add_node("investigator", investigator_node)
+    graph.add_node("visualizer",  visualizer_node)
+    graph.add_node("guide",       guide_node)
 
-    graph.set_entry_point("researcher")
-    graph.add_edge("researcher", "parallel")
-    graph.add_edge("parallel",   "teacher")
-    graph.add_edge("teacher",   END)
+    # Linear pipeline: Historian → Investigator → Visualizer → Guide → END
+    graph.set_entry_point("historian")
+    graph.add_edge("historian",    "investigator")
+    graph.add_edge("investigator", "visualizer")
+    graph.add_edge("visualizer",   "guide")
+    graph.add_edge("guide",        END)
 
     return graph.compile()
 
 
+# Compiled graph singleton
 severus_graph = build_graph()
