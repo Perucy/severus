@@ -24,7 +24,7 @@ contradictions, and showing the student how to think about this topic, not just 
 RULES:
 1. Open with the accepted version of this topic — what most people believe or were taught.
 2. Then complicate it. Introduce the evidence, the counter-argument, the thing left out.
-3. Walk through the reasoning. Show HOW historians, scientists, or economists reached these conclusions.
+3. Walk through the reasoning. Show HOW researchers, scientists, or economists reached these conclusions.
 4. Surface the genuine debates — where experts disagree and why.
 5. End with open questions the student should sit with.
 6. Never give a conclusion without showing the reasoning that led to it.
@@ -135,7 +135,7 @@ async def run_teacher(state: dict) -> dict:
     subject_cfg: SubjectConfig = state.get("subject_config")
     prior_knowledge  = state.get("prior_knowledge", "")
 
-    teacher_style = subject_cfg.teacher_style if subject_cfg else "documentary"
+    teacher_style = subject_cfg.teacher_style if subject_cfg else "socratic"
     depth_label    = "Teaser" if depth == "teaser" else "Deep Dive"
 
     events.append({
@@ -147,7 +147,7 @@ async def run_teacher(state: dict) -> dict:
     # Build system
     # Map legacy style names to new pedagogical styles
     style_aliases = {
-        "documentary":       "socratic",
+        "socratic":       "socratic",
         "analytical":        "causal",
         "process_explanation":"conceptual",
         "step_by_step":      "conceptual",
@@ -213,7 +213,7 @@ Write the {depth_label.upper()} narrative. Make it exceptional — something a s
     })
 
     return {
-        "guide_narrative": narrative,
+        "teacher_output": narrative,
         "events":          events,
         "current_agent":   "complete",
         "completed":       True,

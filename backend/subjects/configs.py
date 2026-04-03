@@ -7,7 +7,7 @@ Each subject defines:
 - teacher_style: pedagogical approach — socratic | conceptual | case_based | comparative | causal
 - question_types: how to classify incoming questions
 - researcher_hints: extra instructions for the Researcher
-- investigator_hints: extra instructions for the Connector
+- connector_hints: extra instructions for the Connector
 """
 
 from dataclasses import dataclass, field
@@ -22,8 +22,7 @@ class SubjectConfig:
     visualizer_mode: str          # historical_image | diagram | none
     teacher_style: str           # socratic | conceptual | case_based | comparative | causal
     researcher_hints: str = ""
-    investigator_hints: str = ""
-    use_slavevoyages: bool = False
+    connector_hints: str = ""
 
 
 # ── HISTORY ───────────────────────────────────────────────────
@@ -39,13 +38,12 @@ HISTORY = SubjectConfig(
         "across all civilisations, regions and time periods. "
         "Format: KEY FACTS, TIMELINE, KEY FIGURES, SOURCE."
     ),
-    investigator_hints=(
+    connector_hints=(
         "Trace the specific connections relevant to the question asked. "
         "Who was involved? What institutions? What is the modern legacy? "
-        "Only use slavevoyages if the question is explicitly about the slave trade. "
+        
         "Follow the question — not a default template."
     ),
-    use_slavevoyages=True,
 )
 
 # ── SCIENCE ───────────────────────────────────────────────────
@@ -61,7 +59,7 @@ SCIENCE = SubjectConfig(
         "real-world examples, and why it matters. "
         "Format: MECHANISM, PROCESS STEPS, KEY COMPONENTS, REAL-WORLD APPLICATION, SOURCE."
     ),
-    investigator_hints=(
+    connector_hints=(
         "Trace the scientific connections. What does this process connect to? "
         "What does it enable? What breaks if it fails? "
         "Connect to real-world applications, medical implications, or technological uses."
@@ -81,7 +79,7 @@ ECON = SubjectConfig(
         "current relevance, key economists or institutions involved. "
         "Format: CONCEPT, HOW IT WORKS, HISTORICAL EXAMPLE, CURRENT RELEVANCE, SOURCE."
     ),
-    investigator_hints=(
+    connector_hints=(
         "Trace the economic connections and power structures. "
         "Who benefits? Who is harmed? What institutions are involved? "
         "Connect to current policy debates, wealth inequality, or global trade."
@@ -101,7 +99,7 @@ LAW = SubjectConfig(
         "how courts apply it today, exceptions and edge cases. "
         "Format: LEGAL PRINCIPLE, ORIGIN, KEY CASES, HOW IT APPLIES TODAY, EXCEPTIONS, SOURCE."
     ),
-    investigator_hints=(
+    connector_hints=(
         "Trace the legal connections and precedents. "
         "What cases built on this principle? What does it conflict with? "
         "How does this law affect ordinary people? What are the debates around it?"
@@ -120,7 +118,7 @@ GENERIC = SubjectConfig(
         "Include: key facts, important figures or components, historical or practical context, "
         "and why it matters. Format: KEY FACTS, CONTEXT, SIGNIFICANCE, SOURCE."
     ),
-    investigator_hints=(
+    connector_hints=(
         "Trace the connections and implications of this topic. "
         "What does it connect to? What are the consequences? "
         "What is the modern relevance?"

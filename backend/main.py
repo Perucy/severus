@@ -11,9 +11,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
 
-from graph import severus_graph, create_initial_state
-from database import save_session, get_prior_knowledge, get_client
-
 load_dotenv()
 
 app = FastAPI(title="Severus Universal Learning Engine", version="2.0.0")
@@ -50,6 +47,8 @@ async def research(request: ResearchRequest):
     Full four-agent pipeline. Returns complete JSON response.
     Frontend polls this — no SSE complexity.
     """
+    from graph import severus_graph, create_initial_state
+    from database import save_session, get_prior_knowledge
 
     start_ms = int(time.time() * 1000)
 
@@ -115,9 +114,9 @@ async def research(request: ResearchRequest):
                     subject_id=subject_id,
                     question_type=question_type,
                     depth=request.narrative_depth,
-                    historian_output=final_state.get("researcher_output") or "",
-                    investigator_output=final_state.get("connector_output") or "",
-                    guide_narrative=final_state.get("guide_narrative") or "",
+                    researcher_output=final_state.get("researcher_output") or "",
+                    connector_output=final_state.get("connector_output") or "",
+                    teacher_output=final_state.get("teacher_output") or "",
                     pi_board=pi_board,
                     has_image=has_image,
                     duration_ms=duration_ms,
@@ -136,11 +135,11 @@ async def research(request: ResearchRequest):
             "researcher_output":   final_state.get("researcher_output"),
             "connector_output":    final_state.get("connector_output"),
             "visualizer_output":   final_state.get("visualizer_output"),
-            "guide_narrative":     final_state.get("guide_narrative"),
+            "teacher_output":     final_state.get("teacher_output"),
 
             # Backward-compat aliases for frontend
-            "historian_output":    final_state.get("researcher_output"),
-            "investigator_output": final_state.get("connector_output"),
+            "researcher_output":    final_state.get("researcher_output"),
+            "connector_output": final_state.get("connector_output"),
 
             "events":              final_state.get("events", []),
             "duration_ms":         duration_ms,
@@ -154,7 +153,7 @@ async def research(request: ResearchRequest):
 @app.get("/user/{user_id}/prior-knowledge")
 async def user_prior_knowledge(user_id: str, subject: Optional[str] = None):
     """Return a user's top concepts by confidence."""
-   
+    from database import get_client
     sb = get_client()
     if not sb:
         return {"concepts": []}
@@ -176,7 +175,7 @@ def health():
         "status":  "ok",
         "version": "2.0.0",
         "agents":  ["researcher", "connector", "visualizer", "teacher"],
-        "tools":   ["tavily_web_search", "wikipedia", "severus_kb", "slavevoyages", "imagen_4"],
+        "tools":   ["tavily_web_search", "wikipedia", "severus_kb", "imagen_4"],
         "subjects": ["history", "science", "econ", "law"],
     }
 

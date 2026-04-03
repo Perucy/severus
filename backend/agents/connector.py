@@ -1,76 +1,78 @@
-"""The Investigator Agent — traces connections and accountability"""
+"""
+The Connector Agent (formerly Investigator)
+Traces connections SPECIFIC to the question asked.
+Entity-driven — works from the Researcher's JSON output.
+Outputs pi_board JSON for the investigation board.
+"""
 
 import json
 import anthropic
 from utils import create_with_retry
-from tools.external_apis import search_slavevoyages
+from tools.external_apis import search_web
 from tools.knowledge_base import search_knowledge_base, get_connections
+from subjects.configs import SubjectConfig
 from core.config import settings
 
-SYSTEM = """You are The Investigator for the Severus World History Platform.
 
-Your job:
-1. Answer the SPECIFIC question asked — trace connections DIRECTLY relevant to it.
-2. At the END of your response, output a JSON block for the PI board.
+SYSTEM_TEMPLATE = """You are The Connector for the Severus Universal Learning Engine.
+
+Subject: {subject_label}
+
+Your job is to trace the specific connections, causes, institutions, and modern relevance of the topic the student asked about.
 
 RULES:
-- Answer the specific question first with full detail.
-- For art/culture questions (bronzes, artifacts): trace who has them, museums, repatriation status.
-- For empire/civilization questions: trace trade connections, key figures, legacy.
-- For accountability questions: trace financial institutions, families, modern legacy.
-- ONLY bring in slave trade / RAC / Lloyd's if the question is explicitly about the slave trade.
-- Be specific: real names, real institutions, real dates.
+1. Work from the entity list the Researcher identified. Investigate those entities specifically.
+2. Find: what is connected, who was involved, what institutions shaped this, what is the present-day relevance.
+3. Be specific — real names, real institutions, real consequences.
+4. Stay tight — 3 to 5 key connections maximum, directly relevant to the question.
+5. For history: trace legacy and accountability. For science: trace applications and consequences.
+   For economics: trace causes, beneficiaries, and policy implications. For law: trace precedents and real-world impact.
+6. {connector_hints}
 
-PI BOARD JSON FORMAT — always end your response with this exact block:
+END your response with a pi_board JSON block:
 
 ```pi_board
-{
+{{
   "nodes": [
-    {"id": "node-1", "label": "Kingdom of Benin", "type": "place"},
-    {"id": "node-2", "label": "British Museum", "type": "institution"},
-    {"id": "node-3", "label": "1897 Expedition", "type": "event"}
+    {{"id": "n1", "label": "...", "type": "place|person|event|institution|trade|concept"}}
   ],
   "edges": [
-    {"from": "node-1", "to": "node-2", "label": "Looted by"},
-    {"from": "node-3", "to": "node-1", "label": "Attacked"}
+    {{"from": "n1", "to": "n2", "label": "2-4 word relationship"}}
   ]
-}
+}}
 ```
 
-Node types: person, place, event, institution, trade, ship, document
-Use 5-10 nodes maximum. Only include what is directly relevant to the question.
-The nodes and edges should tell the CONNECTION STORY of the question asked."""
+Use 5 to 8 nodes maximum. Only include what is directly relevant to the question."""
+
 
 TOOLS = [
     {
-        "name": "search_slavevoyages",
-        "description": "Query the SlaveVoyages.org Trans-Atlantic Slave Trade Database.",
+        "name": "search_web",
+        "description": "Search the web for connections, modern legacy, and accountability trails.",
         "input_schema": {
             "type": "object",
             "properties": {
                 "query": {"type": "string"},
-                "ship_name": {"type": "string"},
-                "year_from": {"type": "integer"},
-                "year_to": {"type": "integer"},
+                "max_results": {"type": "integer", "default": 3},
             },
-            "required": [],
+            "required": ["query"],
         },
     },
     {
         "name": "search_severus_kb",
-        "description": "Search Severus knowledge base for connections and accountability records.",
+        "description": "Search the Severus knowledge base for entity connections.",
         "input_schema": {
             "type": "object",
             "properties": {
                 "query": {"type": "string"},
-                "category": {"type": "string", "enum": ["all","locations","people","events"]}
+                "category": {"type": "string", "enum": ["all", "locations", "people", "events"]},
             },
             "required": ["query"],
         },
     },
     {
         "name": "get_node_connections",
-        "description": "Trace all connections for a historical entity. Node IDs: mali, egypt, kush, benin, rac, lloyds, ouidah, berlin, leopold, caribbean, usa, brazil.",
+        "description": "Get direct connections for a specific entity in the Severus knowledge graph.",
         "input_schema": {
             "type": "object",
             "properties": {"node_id": {"type": "string"}},
@@ -79,65 +81,74 @@ TOOLS = [
     },
 ]
 
+
 async def _run_tool(name: str, inputs: dict) -> str:
     try:
-        if name == "search_slavevoyages":
-            result = await search_slavevoyages(
-                query=inputs.get("query"),
-                ship_name=inputs.get("ship_name"),
-                year_from=inputs.get("year_from"),
-                year_to=inputs.get("year_to"),
-            )
+        if name == "search_web":
+            result = await search_web(inputs.get("query", ""), inputs.get("max_results", 3))
         elif name == "search_severus_kb":
-            result = search_knowledge_base(inputs.get("query",""), inputs.get("category","all"))
+            result = search_knowledge_base(inputs.get("query", ""), inputs.get("category", "all"))
         elif name == "get_node_connections":
-            result = get_connections(inputs.get("node_id",""))
+            result = get_connections(inputs.get("node_id", ""))
         else:
             result = {"error": f"Unknown tool: {name}"}
         return json.dumps(result, default=str)
     except Exception as e:
         return json.dumps({"error": str(e)})
 
-async def run_investigator(state: dict) -> dict:
+
+async def run_connector(state: dict) -> dict:
     client = anthropic.Anthropic()
     events = []
-    question    = state["question"]
-    historian   = state.get("historian_output","")
 
-    events.append({"agent":"investigator","type":"thinking",
-        "content":"Tracing connections — following money, lineage, and accountability chains...",
-        "tool_name":None,"tool_input":None})
+    question        = state["question"]
+    researcher_json = state.get("researcher_json", {})
+    researcher_out  = state.get("researcher_output", "")
+    subject_cfg: SubjectConfig = state.get("subject_config")
 
-    messages = [{"role":"user","content":(
-        f"Question: {question}\n\n"
-        f"The Historian found:\n{historian[:2000]}\n\n"
-        f"INSTRUCTIONS:\n"
-        f"1. Search the Severus KB for the SPECIFIC entities mentioned in the historian's research above.\n"
-        f"   For example: if the historian mentions 'Benin Bronzes', search for 'benin bronzes', 'british museum', '1897 expedition'.\n"
-        f"   If the historian mentions 'Mali Empire', search for 'mali', 'mansa musa', 'timbuktu'.\n"
-        f"2. Use get_node_connections ONLY for nodes that are DIRECTLY about the question topic.\n"
-        f"3. Do NOT search for 'Royal African Company', 'Lloyd's', 'Berlin Conference', 'Ouidah', or slave trade\n"
-        f"   UNLESS the question is specifically about the slave trade or colonial economics.\n"
-        f"4. For art/culture questions: focus on institutions holding the objects, legal battles, repatriation.\n"
-        f"5. For empire/civilization questions: focus on the empire's connections, trade partners, legacy.\n"
-        f"6. For accountability questions: then YES trace financial/colonial institutions.\n"
-        f"7. Answer: what are the specific connections, who is responsible, what is the modern status?"
-    )}]
+    events.append({
+        "agent": "connector", "type": "thinking",
+        "content": f"Tracing connections for '{question}'...",
+        "tool_name": None, "tool_input": None,
+    })
+
+    system = SYSTEM_TEMPLATE.format(
+        subject_label=subject_cfg.label if subject_cfg else "General",
+        connector_hints=subject_cfg.connector_hints if subject_cfg else "",
+    )
+
+    # Build entity list from researcher JSON
+    entities = researcher_json.get("entities", [])
+    entity_str = ", ".join(entities) if entities else "entities from the researcher output"
+
+    messages = [{
+        "role": "user",
+        "content": (
+            f"Question: {question}\n\n"
+            f"The Researcher found these key entities: {entity_str}\n\n"
+            f"Researcher summary:\n{researcher_out[:1000]}\n\n"
+            f"INSTRUCTIONS:\n"
+            f"1. Use search_web and search_severus_kb to find connections for: {entity_str}\n"
+            f"2. Investigate 3-5 key connections directly relevant to this specific question.\n"
+            f"3. End with a pi_board JSON block.\n"
+        ),
+    }]
 
     final_output = ""
 
-    for _ in range(8):
-        resp = create_with_retry(client, 
+    for _ in range(6):
+        resp = create_with_retry(
+            client,
             model=settings.ANTHROPIC_AI_MODEL,
-            max_tokens=2000,
-            system=SYSTEM,
+            max_tokens=1500,
+            system=system,
             tools=TOOLS,
             messages=messages,
         )
-        messages.append({"role":"assistant","content":resp.content})
+        messages.append({"role": "assistant", "content": resp.content})
 
         tool_uses = [b for b in resp.content if b.type == "tool_use"]
-        texts     = [b for b in resp.content if hasattr(b,"text")]
+        texts     = [b for b in resp.content if hasattr(b, "text")]
 
         if resp.stop_reason == "end_turn" or not tool_uses:
             if texts:
@@ -146,28 +157,39 @@ async def run_investigator(state: dict) -> dict:
 
         tool_results = []
         for block in tool_uses:
-            events.append({"agent":"investigator","type":"tool_call",
-                "content":f"Calling {block.name}: {json.dumps(block.input)[:80]}",
-                "tool_name":block.name,"tool_input":block.input})
+            events.append({
+                "agent": "connector", "type": "tool_call",
+                "content": f"{block.name}: {json.dumps(block.input)[:100]}",
+                "tool_name": block.name, "tool_input": block.input,
+            })
 
             content = await _run_tool(block.name, block.input)
 
-            events.append({"agent":"investigator","type":"tool_result",
-                "content":content[:500],"tool_name":block.name,"tool_input":None})
-
-            tool_results.append({
-                "type":"tool_result",
-                "tool_use_id":block.id,
-                "content":content[:2000],
+            events.append({
+                "agent": "connector", "type": "tool_result",
+                "content": content[:400],
+                "tool_name": block.name, "tool_input": None,
             })
 
-        messages.append({"role":"user","content":tool_results})
+            tool_results.append({
+                "type": "tool_result",
+                "tool_use_id": block.id,
+                "content": content[:1500],
+            })
+
+        messages.append({"role": "user", "content": tool_results})
 
     if not final_output:
-        final_output = "Investigation complete — connections mapped."
+        final_output = "Investigation complete."
 
-    events.append({"agent":"investigator","type":"output",
-        "content":final_output[:400]+"..." if len(final_output)>400 else final_output,
-        "tool_name":None,"tool_input":None})
+    events.append({
+        "agent": "connector", "type": "output",
+        "content": final_output[:400] + "..." if len(final_output) > 400 else final_output,
+        "tool_name": None, "tool_input": None,
+    })
 
-    return {"investigator_output":final_output,"events":events,"current_agent":"visualizer"}
+    return {
+        "connector_output": final_output,
+        "events":           events,
+        "current_agent":    "visualizer",
+    }

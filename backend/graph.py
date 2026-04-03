@@ -6,7 +6,7 @@ Flow:
                                   ↓
                     Connector ──────── Visualizer   (parallel)
                           ↓                ↓
-                          └───── Narrator ─┘
+                          └───── Teacher ──┘
                                     ↓
                                 Response
 """
@@ -54,11 +54,7 @@ class SeverusState(TypedDict):
     researcher_json:    Optional[dict]
     connector_output:   Optional[str]
     visualizer_output:  Optional[dict]
-    guide_narrative:    Optional[str]
-
-    # Backward-compat aliases (ResearchSection.jsx reads these)
-    historian_output:   Optional[str]
-    investigator_output: Optional[str]
+    teacher_output:     Optional[str]
 
     # Events stream
     events: Annotated[list[AgentEvent], operator.add]
@@ -88,9 +84,7 @@ def create_initial_state(
         researcher_json=None,
         connector_output=None,
         visualizer_output=None,
-        guide_narrative=None,
-        historian_output=None,       # compat alias
-        investigator_output=None,    # compat alias
+        teacher_output=None,
         events=[],
     )
 
@@ -99,11 +93,7 @@ def create_initial_state(
 
 async def researcher_node(state: SeverusState) -> dict:
     result = await run_researcher(state)
-    return {
-        **result,
-        # Keep backward-compat aliases
-        "historian_output": result.get("researcher_output"),
-    }
+    return result
 
 
 async def parallel_node(state: SeverusState) -> dict:
@@ -124,8 +114,6 @@ async def parallel_node(state: SeverusState) -> dict:
     return {
         "connector_output":   connector_result.get("connector_output"),
         "visualizer_output":  visualizer_result.get("visualizer_output"),
-        # Backward-compat
-        "investigator_output": connector_result.get("connector_output"),
         "events":             all_events,
         "current_agent":      "teacher",
     }
