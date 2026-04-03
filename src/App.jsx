@@ -43,6 +43,7 @@ const TYPE_META = {
   world:         { label:"World Civilization",     color:"#9B59B6" },
   empire:        { label:"Empire",                 color:"#E6A817" },
   islamic:       { label:"Islamic World",          color:"#26A69A" },
+  wiki:          { label:"Found Online",           color:"#00BCD4" },
 };
 
 // ── LOCATIONS ─────────────────────────────────────────────────
@@ -440,8 +441,9 @@ function GlobeView({ visibleLocs, visibleArcs, onLocClick, selected, theme }) {
 
 // ── DETAIL PANEL ──────────────────────────────────────────────
 function DetailPanel({ loc, T, onClose }) {
-  const img = useWikiImage(loc.wikiTitle);
-  const meta = TYPE_META[loc.type];
+  const wikiImg = useWikiImage(loc.wikiTitle);
+  const img = wikiImg || (loc.thumbnail ? { src: loc.thumbnail.replace(/\/\d+px-/,"/400px-"), caption: loc.name } : null);
+  const meta = TYPE_META[loc.type] || TYPE_META.world;
   return (
     <div style={{width:300,background:T.card,borderLeft:`1px solid ${T.border}`,display:"flex",flexDirection:"column",overflow:"hidden",flexShrink:0}}>
       <div style={{height:140,background:"linear-gradient(135deg,#2A1800,#0D1A18)",position:"relative",flexShrink:0,overflow:"hidden"}}>
@@ -461,16 +463,25 @@ function DetailPanel({ loc, T, onClose }) {
         <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.inkLight,margin:"0 0 6px"}}>{loc.region}</p>
         <div style={{display:"inline-block",padding:"2px 8px",background:T.name==="dark"?"rgba(255,255,255,0.05)":T.surface,border:`1px solid ${T.border}`,borderRadius:4,fontFamily:"'DM Sans',sans-serif",fontSize:9,color:T.slate,marginBottom:10}}>⏱ {loc.era}</div>
         <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:T.inkMid,lineHeight:1.75,margin:"0 0 10px"}}>{loc.summary}</p>
-        <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.1em",textTransform:"uppercase",color:T.inkFaint,marginBottom:7,fontWeight:600}}>Key Facts</div>
-        {loc.facts.map((f,i)=>(
-          <div key={i} style={{display:"flex",gap:7,marginBottom:6,paddingBottom:6,borderBottom:`1px solid ${T.border}`}}>
-            <div style={{width:4,height:4,borderRadius:"50%",background:meta.color,flexShrink:0,marginTop:4}}/>
-            <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.inkMid,lineHeight:1.6}}>{f}</span>
+        {loc.facts?.length > 0 && (
+          <>
+            <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.1em",textTransform:"uppercase",color:T.inkFaint,marginBottom:7,fontWeight:600}}>Key Facts</div>
+            {loc.facts.map((f,i)=>(
+              <div key={i} style={{display:"flex",gap:7,marginBottom:6,paddingBottom:6,borderBottom:`1px solid ${T.border}`}}>
+                <div style={{width:4,height:4,borderRadius:"50%",background:meta.color,flexShrink:0,marginTop:4}}/>
+                <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.inkMid,lineHeight:1.6}}>{f}</span>
+              </div>
+            ))}
+          </>
+        )}
+        {loc.type === "wiki" && loc.url && (
+          <div style={{marginTop:8,padding:"8px 10px",background:meta.color+"12",border:`1px solid ${meta.color}30`,borderRadius:8,display:"flex",alignItems:"center",gap:6}}>
+            <span style={{fontSize:14}}>🔍</span>
+            <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:meta.color,fontWeight:600}}>Found via live Wikipedia search</span>
           </div>
-        ))}
+        )}
         <div style={{display:"flex",gap:8,marginTop:12}}>
-          <button style={{flex:1,padding:"7px",background:T.accent,border:"none",borderRadius:7,color:"#fff",fontFamily:"'DM Sans',sans-serif",fontSize:10,fontWeight:700,cursor:"pointer",textTransform:"uppercase",letterSpacing:"0.04em"}}>Open in Learn</button>
-          <a href={`https://en.wikipedia.org/wiki/${loc.wikiTitle}`} target="_blank" rel="noopener noreferrer" style={{flex:1,padding:"7px",background:"transparent",border:`1px solid ${T.border}`,borderRadius:7,color:T.inkMid,fontFamily:"'DM Sans',sans-serif",fontSize:10,fontWeight:600,cursor:"pointer",textTransform:"uppercase",letterSpacing:"0.04em",textDecoration:"none",display:"flex",alignItems:"center",justifyContent:"center",gap:5}}>
+          <a href={loc.url || `https://en.wikipedia.org/wiki/${loc.wikiTitle}`} target="_blank" rel="noopener noreferrer" style={{flex:1,padding:"7px",background:"transparent",border:`1px solid ${T.border}`,borderRadius:7,color:T.inkMid,fontFamily:"'DM Sans',sans-serif",fontSize:10,fontWeight:600,cursor:"pointer",textTransform:"uppercase",letterSpacing:"0.04em",textDecoration:"none",display:"flex",alignItems:"center",justifyContent:"center",gap:5}}>
             <Ic n="extlink" s={10} c="currentColor" sw={2}/> Wikipedia
           </a>
         </div>
@@ -481,16 +492,308 @@ function DetailPanel({ loc, T, onClose }) {
 
 // ── EXPLORE SECTION ───────────────────────────────────────────
 function ExploreSection({ T, theme }) {
-  const [selected,   setSelected]   = useState(null);
-  const [filterType, setFilterType] = useState("all");
-  const [showArcs,   setShowArcs]   = useState(true);
-  const [eraIdx,     setEraIdx]     = useState(ERAS.length-1);
-  const [isPlaying,  setIsPlaying]  = useState(false);
-  const [globeSearch,setGlobeSearch]= useState("");
-  const [searchOpen, setSearchOpen] = useState(false);
+  const [selected,    setSelected]   = useState(null);
+  const [filterType,  setFilterType] = useState("all");
+  const [showArcs,    setShowArcs]   = useState(true);
+  const [eraIdx,      setEraIdx]     = useState(ERAS.length-1);
+  const [isPlaying,   setIsPlaying]  = useState(false);
+  const [globeSearch, setGlobeSearch]= useState("");
+  const [searchOpen,  setSearchOpen] = useState(false);
+  const [wikiResults, setWikiResults]= useState([]);
+  const [wikiLoading, setWikiLoading]= useState(false);
+  const [tempMarkers, setTempMarkers]= useState([]); // dynamically found wiki locations
   const searchRef = useRef(null);
   const playRef   = useRef(null);
   const era = ERAS[eraIdx];
+
+  const fmtY=y=>{if(y<=-100000)return`${(Math.abs(y)/1000).toFixed(0)}k BCE`;if(y<0)return`${Math.abs(y).toLocaleString()} BCE`;if(y>=2024)return"Present";return`${y} CE`;};
+  const visLocs=useMemo(()=>LOCATIONS.filter(l=>l.startYear<=era.year&&(filterType==="all"||l.type===filterType)),[era.year,filterType]);
+  // Combine mapped locations + any temp markers from live search
+  const allVisLocs=useMemo(()=>[...visLocs, ...tempMarkers],[visLocs,tempMarkers]);
+  const visArcs=useMemo(()=>showArcs?MIGRATIONS.filter(m=>m.startYear<=era.year):[],[era.year,showArcs]);
+  const handleClick=useCallback(loc=>setSelected(s=>s?.id===loc.id?null:loc),[]);
+
+  // ── Unified local search index ──────────────────────────────
+  const searchIndex = useMemo(() => {
+    const regionToLatLon = (region="") => {
+      const r = region.toLowerCase();
+      const match = LOCATIONS.find(l =>
+        r.includes(l.region.toLowerCase().split(",")[0]) ||
+        l.region.toLowerCase().split(",")[0].includes(r.split(",")[0])
+      );
+      return match ? { lat: match.lat, lon: match.lon, loc: match } : { lat: 20, lon: 0, loc: null };
+    };
+    const locs = LOCATIONS.map(l => ({
+      id: l.id, name: l.name, subtitle: l.region, meta: l.era,
+      category: "location", icon: TYPE_META[l.type]?.label || "Location",
+      color: TYPE_META[l.type]?.color || "#FF5722", lat: l.lat, lon: l.lon, directLoc: l,
+    }));
+    const people = PEOPLE.map(p => {
+      const { lat, lon, loc } = regionToLatLon(p.region);
+      return { id: p.id, name: p.name, subtitle: p.region, meta: p.dates || "",
+        category: "person", icon: p.role, color: "#009AD8", lat, lon, directLoc: loc };
+    });
+    const events = TIMELINE_EVENTS.map((e, i) => {
+      const { lat, lon, loc } = regionToLatLon(e.region);
+      return { id: `ev-${i}`, name: e.title, subtitle: e.region, meta: fmtY(e.year),
+        category: "event", icon: "Event", color: "#9B59B6", lat, lon, directLoc: loc };
+    });
+    return [...locs, ...people, ...events];
+  }, []);
+
+  const localResults = useMemo(() => {
+    if (globeSearch.length < 2) return [];
+    const q = globeSearch.toLowerCase();
+    return searchIndex.filter(item =>
+      item.name.toLowerCase().includes(q) ||
+      item.subtitle?.toLowerCase().includes(q) ||
+      item.icon?.toLowerCase().includes(q)
+    ).slice(0, 5);
+  }, [globeSearch, searchIndex]);
+
+  // ── Live Wikipedia geographic search ───────────────────────
+  useEffect(() => {
+    if (globeSearch.length < 3) { setWikiResults([]); setWikiLoading(false); return; }
+    setWikiLoading(true);
+    const timer = setTimeout(async () => {
+      try {
+        // Step 1: search Wikipedia for pages matching the query
+        const resp = await fetch(
+          `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(globeSearch)}&srlimit=4&format=json&origin=*`
+        );
+        const data = await resp.json();
+        const pages = data.query?.search || [];
+
+        // Step 2: get summary + coordinates for each result
+        const summaries = await Promise.all(
+          pages.slice(0, 4).map(async p => {
+            try {
+              const r = await fetch(
+                `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(p.title.replace(/ /g,"_"))}`
+              );
+              return r.ok ? r.json() : null;
+            } catch { return null; }
+          })
+        );
+
+        const results = summaries
+          .filter(s => s && s.coordinates) // only geographic articles that have lat/lon
+          .map(s => ({
+            id:        `wiki-${s.pageid}`,
+            name:      s.title,
+            subtitle:  s.description || "Wikipedia",
+            lat:       s.coordinates.lat,
+            lon:       s.coordinates.lon,
+            summary:   s.extract?.slice(0, 500) || "",
+            thumbnail: s.thumbnail?.source || "",
+            url:       s.content_urls?.desktop?.page || `https://en.wikipedia.org/wiki/${s.title.replace(/ /g,"_")}`,
+            wikiTitle: s.title.replace(/ /g,"_"),
+            category:  "wikipedia",
+            color:     "#00BCD4",
+          }));
+
+        setWikiResults(results);
+      } catch { setWikiResults([]); }
+      finally  { setWikiLoading(false); }
+    }, 600);
+    return () => { clearTimeout(timer); };
+  }, [globeSearch]);
+
+  // When a Wikipedia result is selected — add a live marker to the globe
+  const handleWikiSelect = (item) => {
+    setGlobeSearch(""); setSearchOpen(false);
+    const tempLoc = {
+      id:        item.id,
+      name:      item.name,
+      region:    item.subtitle,
+      lat:       item.lat,
+      lon:       item.lon,
+      type:      "wiki",
+      era:       "Wikipedia",
+      summary:   item.summary,
+      thumbnail: item.thumbnail,
+      url:       item.url,
+      wikiTitle: item.wikiTitle,
+      facts:     [],
+      startYear: -999999,
+    };
+    setTempMarkers(prev => [...prev.filter(m => m.id !== tempLoc.id), tempLoc]);
+    setSelected(tempLoc);
+  };
+
+  const handleLocalSelect = (item) => {
+    setGlobeSearch(""); setSearchOpen(false);
+    if (item.directLoc) {
+      setSelected(item.directLoc);
+      if (item.directLoc.startYear > era.year) setEraIdx(ERAS.length - 1);
+    }
+  };
+
+  useEffect(()=>{
+    if(isPlaying){playRef.current=setTimeout(()=>{if(eraIdx<ERAS.length-1)setEraIdx(i=>i+1);else setIsPlaying(false);},2200);}
+    return()=>clearTimeout(playRef.current);
+  },[isPlaying,eraIdx]);
+
+  useEffect(()=>{
+    const handler=(e)=>{if(searchRef.current&&!searchRef.current.contains(e.target))setSearchOpen(false);};
+    document.addEventListener("mousedown",handler);
+    return()=>document.removeEventListener("mousedown",handler);
+  },[]);
+
+  const sp=(eraIdx/(ERAS.length-1))*100;
+  const CATEGORY_ICONS={location:"🌍",person:"👤",event:"⚡",wikipedia:"🔍"};
+  const showDropdown = searchOpen && globeSearch.length >= 2 && (localResults.length > 0 || wikiResults.length > 0 || wikiLoading);
+
+  return (
+    <div style={{height:"100%",display:"flex",flexDirection:"column",background:T.bg,overflow:"hidden"}}>
+
+      {/* ── Toolbar ──────────────────────────────────────────── */}
+      <div style={{background:T.surface,borderBottom:`1px solid ${T.border}`,padding:"7px 14px",display:"flex",alignItems:"center",gap:6,flexShrink:0,flexWrap:"wrap"}}>
+
+        {/* Globe search with live Wikipedia fallback */}
+        <div ref={searchRef} style={{position:"relative",flexShrink:0}}>
+          <div style={{display:"flex",alignItems:"center",gap:7,padding:"5px 12px",background:T.card,border:`1px solid ${searchOpen||globeSearch?T.accent+"60":T.border}`,borderRadius:8,minWidth:260,transition:"border-color 0.15s"}}>
+            <Ic n="search" s={13} c={searchOpen?T.accent:T.inkLight}/>
+            <input
+              value={globeSearch}
+              onChange={e=>{setGlobeSearch(e.target.value);setSearchOpen(true);}}
+              onFocus={()=>setSearchOpen(true)}
+              placeholder="Search anywhere in world history…"
+              style={{border:"none",background:"transparent",outline:"none",fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.ink,width:210,caretColor:T.accent}}
+            />
+            {wikiLoading && <span style={{fontSize:10,color:T.inkFaint,animation:"spin 1s linear infinite",display:"inline-block"}}>⟳</span>}
+            {globeSearch && !wikiLoading && <span onClick={()=>{setGlobeSearch("");setSearchOpen(false);setWikiResults([]);}} style={{cursor:"pointer",color:T.inkFaint,fontSize:13,lineHeight:1}}>✕</span>}
+          </div>
+          <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+
+          {/* Results dropdown */}
+          {showDropdown && (
+            <div style={{position:"absolute",top:"calc(100% + 4px)",left:0,width:380,background:T.card,border:`1px solid ${T.border}`,borderRadius:10,boxShadow:"0 8px 32px rgba(0,0,0,0.3)",zIndex:200,overflow:"hidden",maxHeight:420,overflowY:"auto"}}>
+
+              {/* Local results */}
+              {localResults.length > 0 && (
+                <>
+                  <div style={{padding:"6px 12px 4px",fontFamily:"'DM Sans',sans-serif",fontSize:9,color:T.inkFaint,textTransform:"uppercase",letterSpacing:"0.1em",fontWeight:600,background:T.surface}}>
+                    In Severus
+                  </div>
+                  {localResults.map((item,i) => (
+                    <div key={item.id} onClick={()=>handleLocalSelect(item)}
+                      style={{display:"flex",alignItems:"center",gap:10,padding:"9px 12px",cursor:"pointer",borderBottom:`1px solid ${T.border}`,transition:"background 0.12s"}}
+                      onMouseEnter={e=>e.currentTarget.style.background=T.cardHov}
+                      onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+                      <span style={{fontSize:15,flexShrink:0}}>{CATEGORY_ICONS[item.category]}</span>
+                      <div style={{flex:1,minWidth:0}}>
+                        <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:600,color:T.ink,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{item.name}</div>
+                        <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:T.inkLight}}>{item.subtitle} · {item.meta}</div>
+                      </div>
+                      <div style={{padding:"2px 7px",borderRadius:20,background:item.color+"20",border:`1px solid ${item.color}40`,fontFamily:"'DM Sans',sans-serif",fontSize:8,color:item.color,fontWeight:600,textTransform:"uppercase",letterSpacing:"0.06em",whiteSpace:"nowrap",flexShrink:0}}>{item.category}</div>
+                    </div>
+                  ))}
+                </>
+              )}
+
+              {/* Wikipedia results */}
+              {(wikiResults.length > 0 || wikiLoading) && (
+                <>
+                  <div style={{padding:"6px 12px 4px",fontFamily:"'DM Sans',sans-serif",fontSize:9,color:"#00BCD4",textTransform:"uppercase",letterSpacing:"0.1em",fontWeight:600,background:T.surface,display:"flex",alignItems:"center",gap:6}}>
+                    <span>🔍</span> Found on Wikipedia {wikiLoading ? "· searching…" : `· ${wikiResults.length} geographic match${wikiResults.length!==1?"es":""}`}
+                  </div>
+                  {wikiLoading && (
+                    <div style={{padding:"12px 14px",fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.inkLight,display:"flex",alignItems:"center",gap:8}}>
+                      <span style={{animation:"spin 1s linear infinite",display:"inline-block"}}>⟳</span> Searching Wikipedia for geographic coordinates…
+                    </div>
+                  )}
+                  {wikiResults.map((item,i) => (
+                    <div key={item.id} onClick={()=>handleWikiSelect(item)}
+                      style={{display:"flex",alignItems:"center",gap:10,padding:"9px 12px",cursor:"pointer",borderBottom:i<wikiResults.length-1?`1px solid ${T.border}`:"none",transition:"background 0.12s"}}
+                      onMouseEnter={e=>e.currentTarget.style.background=T.cardHov}
+                      onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+                      {item.thumbnail
+                        ? <img src={item.thumbnail} alt="" style={{width:36,height:36,objectFit:"cover",borderRadius:6,flexShrink:0}}/>
+                        : <span style={{fontSize:15,flexShrink:0}}>🌍</span>}
+                      <div style={{flex:1,minWidth:0}}>
+                        <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:600,color:T.ink,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{item.name}</div>
+                        <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:T.inkLight,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{item.subtitle}</div>
+                      </div>
+                      <div style={{display:"flex",flexDirection:"column",alignItems:"flex-end",gap:3,flexShrink:0}}>
+                        <div style={{padding:"2px 7px",borderRadius:20,background:"#00BCD420",border:"1px solid #00BCD440",fontFamily:"'DM Sans',sans-serif",fontSize:8,color:"#00BCD4",fontWeight:600,textTransform:"uppercase"}}>live</div>
+                        <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,color:T.inkFaint}}>{item.lat.toFixed(1)}°, {item.lon.toFixed(1)}°</div>
+                      </div>
+                    </div>
+                  ))}
+                </>
+              )}
+
+              {/* No results at all */}
+              {!wikiLoading && localResults.length === 0 && wikiResults.length === 0 && (
+                <div style={{padding:"14px",fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.inkLight}}>
+                  No results found. Try a different spelling or broader term.
+                </div>
+              )}
+
+              <div style={{padding:"5px 12px",fontFamily:"'DM Sans',sans-serif",fontSize:9,color:T.inkFaint,background:T.surface,borderTop:`1px solid ${T.border}`}}>
+                Searches Severus data + Wikipedia geographic database
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div style={{width:1,height:16,background:T.border,margin:"0 2px"}}/>
+
+        {/* Type filters */}
+        <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.1em",textTransform:"uppercase",color:T.inkLight,fontWeight:600}}>Filter</span>
+        {[["all","All"],["origin","Origins"],["civilization","Ancient"],["world","World"],["empire","Empires"],["islamic","Islamic"],["indigenous","Indigenous"],["diaspora","Diaspora"],["accountability","Accountability"]].map(([v,l])=>{
+          const ac=v==="all"?T.accent:TYPE_META[v]?.color||T.accent,on=filterType===v;
+          return <div key={v} onClick={()=>setFilterType(v)} style={{padding:"3px 10px",borderRadius:20,border:`1px solid ${on?ac+"60":T.border}`,background:on?ac+"18":"transparent",color:on?ac:T.inkLight,fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.08em",textTransform:"uppercase",fontWeight:on?600:400,cursor:"pointer",transition:"all 0.15s",whiteSpace:"nowrap"}}>{l}</div>;
+        })}
+        <div style={{width:1,height:16,background:T.border,margin:"0 2px"}}/>
+        <div onClick={()=>setShowArcs(v=>!v)} style={{padding:"3px 10px",borderRadius:20,border:`1px solid ${showArcs?"rgba(76,175,125,0.5)":T.border}`,background:showArcs?"rgba(76,175,125,0.12)":"transparent",color:showArcs?"#4CAF7D":T.inkLight,fontFamily:"'DM Sans',sans-serif",fontSize:9,textTransform:"uppercase",fontWeight:600,cursor:"pointer"}}>Routes {showArcs?"On":"Off"}</div>
+        <div style={{flex:1}}/>
+        <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.inkLight}}>
+          <span style={{color:T.accent,fontWeight:700}}>{allVisLocs.length}</span> locations
+          {tempMarkers.length > 0 && <span style={{color:"#00BCD4",fontWeight:600}}> · {tempMarkers.length} live</span>}
+        </span>
+      </div>
+
+      {/* ── Globe + detail panel ─────────────────────────────── */}
+      <div style={{flex:1,display:"flex",overflow:"hidden"}}>
+        <div style={{flex:1,overflow:"hidden"}}>
+          <GlobeView visibleLocs={allVisLocs} visibleArcs={visArcs} onLocClick={handleClick} selected={selected} theme={theme}/>
+        </div>
+        {selected&&<DetailPanel loc={selected} T={T} onClose={()=>setSelected(null)}/>}
+      </div>
+
+      {/* ── Timeline scrubber ────────────────────────────────── */}
+      <div style={{background:T.surface,borderTop:`1px solid ${T.border}`,padding:"10px 18px 12px",flexShrink:0}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
+          <div style={{display:"flex",alignItems:"center",gap:10}}>
+            <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.1em",textTransform:"uppercase",color:T.inkLight,fontWeight:600}}>Time</span>
+            <span style={{fontFamily:"'Playfair Display',serif",fontSize:14,fontWeight:700,color:T.accent}}>{fmtY(era.year)}</span>
+            <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:T.inkMid}}>— {era.label}</span>
+          </div>
+          <div style={{display:"flex",gap:5}}>
+            {[{l:"Reset",fn:()=>{setEraIdx(ERAS.length-1);setIsPlaying(false);}},{l:"◀ Prev",fn:()=>{setEraIdx(i=>Math.max(0,i-1));setIsPlaying(false);},dis:eraIdx===0},{l:isPlaying?"⏸ Pause":"⏵ Play",fn:()=>setIsPlaying(p=>!p),act:true},{l:"Next ▶",fn:()=>{setEraIdx(i=>Math.min(ERAS.length-1,i+1));setIsPlaying(false);},dis:eraIdx===ERAS.length-1}].map((b,i)=>(
+              <button key={i} onClick={b.fn} disabled={b.dis} style={{padding:"5px 12px",border:`1px solid ${b.act?T.accent+"60":T.border}`,borderRadius:6,background:b.act?T.accentDim:"transparent",color:b.act?T.accent:b.dis?T.inkFaint:T.inkMid,fontFamily:"'DM Sans',sans-serif",fontSize:10,fontWeight:600,cursor:b.dis?"not-allowed":"pointer",opacity:b.dis?0.4:1,letterSpacing:"0.04em"}}>{b.l}</button>
+            ))}
+          </div>
+        </div>
+        <div style={{position:"relative",height:20,display:"flex",alignItems:"center",cursor:"pointer"}} onClick={e=>{const r=e.currentTarget.getBoundingClientRect();setEraIdx(Math.round((e.clientX-r.left)/r.width*(ERAS.length-1)));setIsPlaying(false);}}>
+          <div style={{position:"absolute",left:0,right:0,height:3,background:T.border,borderRadius:3}}>
+            <div style={{height:"100%",width:`${sp}%`,background:T.accent,borderRadius:3,position:"relative"}}>
+              <div style={{position:"absolute",right:-6,top:-4.5,width:12,height:12,borderRadius:"50%",background:T.accent,border:`2px solid ${T.bg}`,boxShadow:`0 0 8px ${T.accent}60`}}/>
+            </div>
+            {ERAS.map((_,i)=><div key={i} style={{position:"absolute",left:`${(i/(ERAS.length-1))*100}%`,top:-3,width:1,height:9,background:i===eraIdx?T.accent:T.border,transform:"translateX(-50%)"}}/>)}
+          </div>
+        </div>
+        <div style={{display:"flex",justifyContent:"space-between",marginTop:5}}>
+          {["315k BCE","Out of Africa","First Kingdoms","Classical Age","Colonial Era","Independence","Present"].map((l,i)=>(
+            <span key={i} style={{fontFamily:"'DM Sans',sans-serif",fontSize:8,color:T.inkFaint}}>{l}</span>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
 
   const fmtY=y=>{if(y<=-100000)return`${(Math.abs(y)/1000).toFixed(0)}k BCE`;if(y<0)return`${Math.abs(y).toLocaleString()} BCE`;if(y>=2024)return"Present";return`${y} CE`;};
   const visLocs=useMemo(()=>LOCATIONS.filter(l=>l.startYear<=era.year&&(filterType==="all"||l.type===filterType)),[era.year,filterType]);
@@ -576,110 +879,6 @@ function ExploreSection({ T, theme }) {
     return () => document.removeEventListener("mousedown", handler);
   },[]);
 
-  const sp=(eraIdx/(ERAS.length-1))*100;
-
-  const CATEGORY_ICONS = { location:"🌍", person:"👤", event:"⚡" };
-
-  return (
-    <div style={{height:"100%",display:"flex",flexDirection:"column",background:T.bg,overflow:"hidden"}}>
-
-      {/* ── Toolbar ──────────────────────────────────────────── */}
-      <div style={{background:T.surface,borderBottom:`1px solid ${T.border}`,padding:"7px 14px",display:"flex",alignItems:"center",gap:6,flexShrink:0,flexWrap:"wrap"}}>
-
-        {/* Globe search */}
-        <div ref={searchRef} style={{position:"relative",flexShrink:0}}>
-          <div style={{display:"flex",alignItems:"center",gap:7,padding:"5px 12px",background:T.card,border:`1px solid ${searchOpen||globeSearch?T.accent+"60":T.border}`,borderRadius:8,minWidth:220,transition:"border-color 0.15s"}}>
-            <Ic n="search" s={13} c={searchOpen?T.accent:T.inkLight}/>
-            <input
-              value={globeSearch}
-              onChange={e=>{setGlobeSearch(e.target.value);setSearchOpen(true);}}
-              onFocus={()=>setSearchOpen(true)}
-              placeholder="Search civilizations, people, events…"
-              style={{border:"none",background:"transparent",outline:"none",fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.ink,width:190,caretColor:T.accent}}
-            />
-            {globeSearch && <span onClick={()=>{setGlobeSearch("");setSearchOpen(false);}} style={{cursor:"pointer",color:T.inkFaint,fontSize:13,lineHeight:1}}>✕</span>}
-          </div>
-
-          {/* Results dropdown */}
-          {searchOpen && searchResults.length > 0 && (
-            <div style={{position:"absolute",top:"calc(100% + 4px)",left:0,width:340,background:T.card,border:`1px solid ${T.border}`,borderRadius:10,boxShadow:"0 8px 24px rgba(0,0,0,0.25)",zIndex:100,overflow:"hidden"}}>
-              {searchResults.map((item,i) => (
-                <div key={item.id} onClick={()=>handleSearchSelect(item)}
-                  style={{display:"flex",alignItems:"center",gap:10,padding:"9px 12px",cursor:"pointer",borderBottom:i<searchResults.length-1?`1px solid ${T.border}`:"none",transition:"background 0.12s"}}
-                  onMouseEnter={e=>e.currentTarget.style.background=T.cardHov}
-                  onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
-                  <span style={{fontSize:16,flexShrink:0}}>{CATEGORY_ICONS[item.category]}</span>
-                  <div style={{flex:1,minWidth:0}}>
-                    <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:600,color:T.ink,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{item.name}</div>
-                    <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:T.inkLight}}>{item.subtitle} · {item.meta}</div>
-                  </div>
-                  <div style={{padding:"2px 7px",borderRadius:20,background:item.color+"20",border:`1px solid ${item.color}40`,fontFamily:"'DM Sans',sans-serif",fontSize:8,color:item.color,fontWeight:600,textTransform:"uppercase",letterSpacing:"0.06em",whiteSpace:"nowrap",flexShrink:0}}>{item.category}</div>
-                </div>
-              ))}
-              <div style={{padding:"6px 12px",fontFamily:"'DM Sans',sans-serif",fontSize:9,color:T.inkFaint,background:T.surface,borderTop:`1px solid ${T.border}`}}>
-                {searchResults.length} result{searchResults.length!==1?"s":""} · click to fly to location
-              </div>
-            </div>
-          )}
-          {searchOpen && globeSearch.length >= 2 && searchResults.length === 0 && (
-            <div style={{position:"absolute",top:"calc(100% + 4px)",left:0,width:280,background:T.card,border:`1px solid ${T.border}`,borderRadius:10,padding:"12px 14px",zIndex:100,boxShadow:"0 8px 24px rgba(0,0,0,0.2)"}}>
-              <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.inkLight}}>No results for "{globeSearch}"</span>
-            </div>
-          )}
-        </div>
-
-        <div style={{width:1,height:16,background:T.border,margin:"0 2px"}}/>
-
-        {/* Type filters */}
-        <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.1em",textTransform:"uppercase",color:T.inkLight,fontWeight:600}}>Filter</span>
-        {[["all","All"],["origin","Origins"],["civilization","Ancient"],["world","World"],["empire","Empires"],["islamic","Islamic"],["indigenous","Indigenous"],["diaspora","Diaspora"],["accountability","Accountability"]].map(([v,l])=>{
-          const ac=v==="all"?T.accent:TYPE_META[v]?.color||T.accent,on=filterType===v;
-          return <div key={v} onClick={()=>setFilterType(v)} style={{padding:"3px 10px",borderRadius:20,border:`1px solid ${on?ac+"60":T.border}`,background:on?ac+"18":"transparent",color:on?ac:T.inkLight,fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.08em",textTransform:"uppercase",fontWeight:on?600:400,cursor:"pointer",transition:"all 0.15s",whiteSpace:"nowrap"}}>{l}</div>;
-        })}
-        <div style={{width:1,height:16,background:T.border,margin:"0 2px"}}/>
-        <div onClick={()=>setShowArcs(v=>!v)} style={{padding:"3px 10px",borderRadius:20,border:`1px solid ${showArcs?"rgba(76,175,125,0.5)":T.border}`,background:showArcs?"rgba(76,175,125,0.12)":"transparent",color:showArcs?"#4CAF7D":T.inkLight,fontFamily:"'DM Sans',sans-serif",fontSize:9,textTransform:"uppercase",fontWeight:600,cursor:"pointer"}}>Routes {showArcs?"On":"Off"}</div>
-        <div style={{flex:1}}/>
-        <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.inkLight}}><span style={{color:T.accent,fontWeight:700}}>{visLocs.length}</span> locations</span>
-      </div>
-
-      {/* ── Globe + detail panel ─────────────────────────────── */}
-      <div style={{flex:1,display:"flex",overflow:"hidden"}}>
-        <div style={{flex:1,overflow:"hidden"}}><GlobeView visibleLocs={visLocs} visibleArcs={visArcs} onLocClick={handleClick} selected={selected} theme={theme}/></div>
-        {selected&&<DetailPanel loc={selected} T={T} onClose={()=>setSelected(null)}/>}
-      </div>
-
-      {/* ── Timeline scrubber ────────────────────────────────── */}
-      <div style={{background:T.surface,borderTop:`1px solid ${T.border}`,padding:"10px 18px 12px",flexShrink:0}}>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
-          <div style={{display:"flex",alignItems:"center",gap:10}}>
-            <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.1em",textTransform:"uppercase",color:T.inkLight,fontWeight:600}}>Time</span>
-            <span style={{fontFamily:"'Playfair Display',serif",fontSize:14,fontWeight:700,color:T.accent}}>{fmtY(era.year)}</span>
-            <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:T.inkMid}}>— {era.label}</span>
-            <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:T.inkLight}}>· {visLocs.length} locations</span>
-          </div>
-          <div style={{display:"flex",gap:5}}>
-            {[{l:"Reset",fn:()=>{setEraIdx(ERAS.length-1);setIsPlaying(false);}},{l:"◀ Prev",fn:()=>{setEraIdx(i=>Math.max(0,i-1));setIsPlaying(false);},dis:eraIdx===0},{l:isPlaying?"⏸ Pause":"⏵ Play",fn:()=>setIsPlaying(p=>!p),act:true},{l:"Next ▶",fn:()=>{setEraIdx(i=>Math.min(ERAS.length-1,i+1));setIsPlaying(false);},dis:eraIdx===ERAS.length-1}].map((b,i)=>(
-              <button key={i} onClick={b.fn} disabled={b.dis} style={{padding:"5px 12px",border:`1px solid ${b.act?T.accent+"60":T.border}`,borderRadius:6,background:b.act?T.accentDim:"transparent",color:b.act?T.accent:b.dis?T.inkFaint:T.inkMid,fontFamily:"'DM Sans',sans-serif",fontSize:10,fontWeight:600,cursor:b.dis?"not-allowed":"pointer",opacity:b.dis?0.4:1,letterSpacing:"0.04em"}}>{b.l}</button>
-            ))}
-          </div>
-        </div>
-        <div style={{position:"relative",height:20,display:"flex",alignItems:"center",cursor:"pointer"}} onClick={e=>{const r=e.currentTarget.getBoundingClientRect();setEraIdx(Math.round((e.clientX-r.left)/r.width*(ERAS.length-1)));setIsPlaying(false);}}>
-          <div style={{position:"absolute",left:0,right:0,height:3,background:T.border,borderRadius:3}}>
-            <div style={{height:"100%",width:`${sp}%`,background:T.accent,borderRadius:3,position:"relative"}}>
-              <div style={{position:"absolute",right:-6,top:-4.5,width:12,height:12,borderRadius:"50%",background:T.accent,border:`2px solid ${T.bg}`,boxShadow:`0 0 8px ${T.accent}60`}}/>
-            </div>
-            {ERAS.map((_,i)=><div key={i} style={{position:"absolute",left:`${(i/(ERAS.length-1))*100}%`,top:-3,width:1,height:9,background:i===eraIdx?T.accent:T.border,transform:"translateX(-50%)"}}/>)}
-          </div>
-        </div>
-        <div style={{display:"flex",justifyContent:"space-between",marginTop:5}}>
-          {["315k BCE","Out of Africa","First Kingdoms","Classical Age","Colonial Era","Independence","Present"].map((l,i)=>(
-            <span key={i} style={{fontFamily:"'DM Sans',sans-serif",fontSize:8,color:T.inkFaint}}>{l}</span>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
 
 // ── TIMELINE SECTION ──────────────────────────────────────────
 function TimelineSection({ T }) {
