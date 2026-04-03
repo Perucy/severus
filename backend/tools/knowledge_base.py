@@ -10,6 +10,7 @@ at query time — not from this file.
 """
 
 import httpx
+import asyncio
 from typing import Any
 
 
@@ -167,3 +168,166 @@ async def get_wikipedia_summary(title: str) -> dict[str, Any]:
             return {"found": False, "title": title, "summary": "", "thumbnail": ""}
     except Exception as e:
         return {"found": False, "error": str(e), "title": title, "summary": "", "thumbnail": ""}
+
+
+# ── DEEP RETRIEVAL ────────────────────────────────────────────
+
+async def get_wikipedia_links(title: str, limit: int = 10) -> list[str]:
+    """
+    Get the internal Wikipedia links from an article.
+    Used to find the next layer of entities to look up.
+    Filters to likely-relevant linked articles (proper nouns, named entities).
+    """
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            resp = await client.get(
+                "https://en.wikipedia.org/w/api.php",
+                params={
+                    "action":   "query",
+                    "titles":   title,
+                    "prop":     "links",
+                    "pllimit":  50,
+                    "plnamespace": 0,   # main articles only
+                    "format":   "json",
+                    "origin":   "*",
+                },
+                timeout=8.0,
+            )
+            if resp.status_code != 200:
+                return []
+
+            data = resp.json()
+            pages = data.get("query", {}).get("pages", {})
+            links = []
+            for page in pages.values():
+                for link in page.get("links", []):
+                    link_title = link.get("title", "")
+                    # Filter out meta-pages and short titles
+                    if (
+                        link_title
+                        and not link_title.startswith("List of")
+                        and not link_title.startswith("Wikipedia:")
+                        and not link_title.startswith("Help:")
+                        and len(link_title) > 3
+                    ):
+                        links.append(link_title)
+            return links[:limit]
+    except Exception:
+        return []
+
+
+async def deep_wikipedia_retrieval(
+    seed_entities: list[str],
+    depth: int = 2,
+    max_articles: int = 20,
+) -> dict[str, Any]:
+    """
+    Recursively fetch Wikipedia articles starting from seed entities.
+
+    depth=1: fetch seed entities only
+    depth=2: fetch seeds + their linked articles
+    depth=3: fetch seeds + links + links-of-links
+
+    Returns a rich knowledge dict:
+    {
+      "articles": { title: { summary, url, thumbnail, depth } },
+      "entity_graph": { title: [linked_titles] },
+      "total_fetched": int,
+    }
+    """
+    articles: dict[str, dict] = {}
+    entity_graph: dict[str, list] = {}
+    queue = [(entity, 0) for entity in seed_entities]
+    visited = set()
+
+    async with httpx.AsyncClient(timeout=12.0) as client:
+
+        async def fetch_one(title: str, current_depth: int):
+            if title in visited or len(articles) >= max_articles:
+                return
+            visited.add(title)
+
+            # Fetch the article summary
+            try:
+                resp = await client.get(
+                    f"https://en.wikipedia.org/api/rest_v1/page/summary/{title.replace(' ', '_')}",
+                    timeout=8.0,
+                )
+                if resp.status_code != 200:
+                    return
+
+                data = resp.json()
+                summary = data.get("extract", "")
+                if not summary:
+                    return
+
+                articles[title] = {
+                    "title":       data.get("title", title),
+                    "summary":     summary[:800],
+                    "url":         data.get("content_urls", {}).get("desktop", {}).get("page", ""),
+                    "thumbnail":   data.get("thumbnail", {}).get("source", ""),
+                    "description": data.get("description", ""),
+                    "depth":       current_depth,
+                }
+
+                # If we have depth budget left, get links for next layer
+                if current_depth < depth - 1:
+                    links = await get_wikipedia_links(title, limit=8)
+                    entity_graph[title] = links
+                    # Queue the linked articles for next depth
+                    for link in links:
+                        if link not in visited:
+                            queue.append((link, current_depth + 1))
+
+            except Exception:
+                pass
+
+        # Process queue level by level to respect depth
+        while queue and len(articles) < max_articles:
+            # Take all items at the current minimum depth
+            current_level = min(d for _, d in queue)
+            current_batch = [(t, d) for t, d in queue if d == current_level]
+            queue = [(t, d) for t, d in queue if d != current_level]
+
+            # Fetch current level in parallel
+            await asyncio.gather(*[fetch_one(t, d) for t, d in current_batch])
+
+    return {
+        "articles":     articles,
+        "entity_graph": entity_graph,
+        "total_fetched": len(articles),
+    }
+
+
+def format_deep_context(retrieval_result: dict, max_chars: int = 4000) -> str:
+    """
+    Format deep retrieval results into a dense context string for Claude.
+    Depth-0 articles (seed entities) get more space than deeper ones.
+    """
+    articles = retrieval_result.get("articles", {})
+    if not articles:
+        return ""
+
+    # Sort by depth then alpha
+    sorted_articles = sorted(articles.items(), key=lambda x: (x[1]["depth"], x[0]))
+
+    parts = []
+    total = 0
+
+    for title, data in sorted_articles:
+        depth_label = ["PRIMARY", "SECONDARY", "TERTIARY"][min(data["depth"], 2)]
+        # Give more space to primary sources
+        char_limit = 700 if data["depth"] == 0 else 400 if data["depth"] == 1 else 200
+
+        entry = (
+            f"[{depth_label}] {data['title']}\n"
+            f"{data['summary'][:char_limit]}\n"
+        )
+
+        if total + len(entry) > max_chars:
+            break
+
+        parts.append(entry)
+        total += len(entry)
+
+    return "\n".join(parts)

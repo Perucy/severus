@@ -13,7 +13,11 @@ import asyncio
 import anthropic
 from utils import create_with_retry
 from core.config import settings
-from tools.knowledge_base import search_wikipedia, get_connection_hints
+from tools.knowledge_base import (
+    deep_wikipedia_retrieval,
+    format_deep_context,
+    get_connection_hints,
+)
 
 
 INVESTIGATOR_SYSTEM = """You are the Investigator for Severus, a world history learning platform.
@@ -50,30 +54,8 @@ OUTPUT the pi_board block exactly like this at the end of your response:
 
 
 async def _fetch_wikipedia_context(entities: list[str]) -> str:
-    """
-    Fetch Wikipedia summaries for up to 4 key entities in parallel.
-    Returns a combined context string for the investigator prompt.
-    """
-    if not entities:
-        return ""
-
-    # Take up to 4 most important entities
-    targets = entities[:4]
-
-    tasks = [search_wikipedia(entity, limit=1) for entity in targets]
-    results = await asyncio.gather(*tasks, return_exceptions=True)
-
-    context_parts = []
-    for entity, result in zip(targets, results):
-        if isinstance(result, Exception) or not result:
-            continue
-        top = result[0] if result else {}
-        if top.get("summary"):
-            context_parts.append(
-                f"**{top['title']}**: {top['summary'][:400]}"
-            )
-
-    return "\n\n".join(context_parts)
+    """Kept for backward compat — deep_wikipedia_retrieval is used instead."""
+    return ""
 
 
 def _extract_entities_from_research(researcher_output: str) -> list[str]:
@@ -124,35 +106,49 @@ async def run_investigator(state: dict) -> dict:
         "tool_name": None, "tool_input": None,
     })
 
-    # ── Step 1: get Wikipedia context for key entities ─────────
+    # ── Extract seed entities ──────────────────────────────────
     entities = []
-
-    # Try structured JSON first (from historian agent)
     if researcher_json:
         entities = researcher_json.get("entities", [])[:6]
-
-    # Fall back to parsing the text output
     if not entities and researcher_out:
         entities = _extract_entities_from_research(researcher_out)
+    # Always include the question topic itself as a seed
+    entities = [question[:60]] + entities if entities else [question[:60]]
 
-    # Add connection hints from the KB
+    # ── Step 1: deep Wikipedia retrieval ──────────────────────
+    # Fetch seed entities, then follow their links 2 levels deep.
+    # This gives Claude a rich, layered knowledge base to work from.
+
+    # Add connection hints as additional seed targets
     hint_topics = []
     for entity in entities[:3]:
         hints = get_connection_hints(entity)
-        hint_topics.extend(hints[:3])
+        hint_topics.extend(hints[:2])
+
+    all_seeds = list(dict.fromkeys(entities + hint_topics))[:8]  # dedupe, cap at 8
 
     wiki_context = ""
-    if entities:
+    if all_seeds:
         events.append({
             "agent": "investigator", "type": "tool_call",
-            "content": f"Looking up Wikipedia for: {', '.join(entities[:4])}",
-            "tool_name": "search_wikipedia", "tool_input": {"entities": entities[:4]},
+            "content": f"Deep retrieval: {', '.join(all_seeds[:4])} + linked articles (2 levels)",
+            "tool_name": "deep_wikipedia_retrieval",
+            "tool_input": {"seeds": all_seeds[:4], "depth": 2},
         })
-        wiki_context = await _fetch_wikipedia_context(entities)
+
+        retrieval = await deep_wikipedia_retrieval(
+            seed_entities=all_seeds,
+            depth=2,          # seed → linked articles → their links
+            max_articles=20,  # cap to keep tokens manageable
+        )
+
+        wiki_context = format_deep_context(retrieval, max_chars=4000)
+
         events.append({
             "agent": "investigator", "type": "tool_result",
-            "content": f"Retrieved Wikipedia context for {len(entities[:4])} entities",
-            "tool_name": "search_wikipedia", "tool_input": None,
+            "content": f"Retrieved {retrieval['total_fetched']} Wikipedia articles across 2 levels",
+            "tool_name": "deep_wikipedia_retrieval",
+            "tool_input": None,
         })
 
     # ── Step 2: build the connections with Claude ──────────────

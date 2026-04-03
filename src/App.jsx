@@ -35,12 +35,14 @@ const ERAS = [
 ];
 
 const TYPE_META = {
-  origin:        { label:"Human Origin",         color:"#FFD700" },
-  civilization:  { label:"Ancient Civilization", color:"#FF5722" },
-  indigenous:    { label:"Indigenous People",    color:"#009AD8" },
-  diaspora:      { label:"African Diaspora",     color:"#4CAF7D" },
-  accountability:{ label:"Accountability",       color:"#E03030" },
-  world:         { label:"World Civilization",   color:"#9B59B6" },
+  origin:        { label:"Human Origins",          color:"#FFD700" },
+  civilization:  { label:"Ancient Civilization",   color:"#FF5722" },
+  indigenous:    { label:"Indigenous Peoples",     color:"#009AD8" },
+  diaspora:      { label:"Diaspora & Migration",   color:"#4CAF7D" },
+  accountability:{ label:"Power & Accountability", color:"#E03030" },
+  world:         { label:"World Civilization",     color:"#9B59B6" },
+  empire:        { label:"Empire",                 color:"#E6A817" },
+  islamic:       { label:"Islamic World",          color:"#26A69A" },
 };
 
 // ── LOCATIONS ─────────────────────────────────────────────────
@@ -73,35 +75,70 @@ const LOCATIONS = [
   { id:"berlin",   name:"Berlin Conference 1884",         region:"Berlin, Germany",      lat:52.5, lon:13.4, type:"accountability", startYear:1884,    era:"1884 CE",     wikiTitle:"Scramble_for_Africa", summary:"14 European powers divided Africa with zero African representation, drawing borders that split 177 ethnic groups and created today's African nations.", facts:["14 European nations divided Africa — zero African representation","Created 54 artificial borders splitting 177 ethnic groups","Triggered colonial rule of 90% of Africa within 30 years","Colonial borders directly cause contemporary African conflicts"] },
   { id:"leopold",  name:"Belgian Congo — Leopold II",    region:"Congo",                lat:-4,   lon:24,   type:"accountability", startYear:1885,    era:"1885 CE",     wikiTitle:"Congo_Free_State",    summary:"Leopold II personally owned the Congo. He enslaved its population to extract rubber, killing an estimated 10 million Congolese — the first genocide of the 20th century.", facts:["Leopold personally owned Congo as private property","~10 million Congolese killed — first genocide of the 20th century","Hands cut off as punishment for failing rubber quotas","Inspired Joseph Conrad's Heart of Darkness (1899)"] },
 
-  // ── WORLD CIVILIZATIONS (Phase 2 preview) ─────────────────
-  { id:"rome",      name:"Roman Empire",                 region:"Mediterranean",        lat:41.9, lon:12.5, type:"world", startYear:-500,    era:"500 BCE",     wikiTitle:"Roman_Empire",         summary:"At its peak the Roman Empire stretched from Britain to Mesopotamia, governing 70 million people. Its law, language, and architecture shaped Western civilisation — and it was led by a North African emperor, Septimius Severus, in 193 CE.", facts:["Governed ~20% of the world's population at its peak","Roman law is the foundation of most Western legal systems","Latin evolved into French, Spanish, Italian, Portuguese, Romanian","Septimius Severus — Rome's greatest emperor — was born in North Africa"] },
-  { id:"greece",    name:"Ancient Greece",                region:"Mediterranean",        lat:37.9, lon:23.7, type:"world", startYear:-800,    era:"800 BCE",     wikiTitle:"Ancient_Greece",       summary:"The birthplace of democracy, philosophy, and the Olympic Games — but Greek civilisation was deeply shaped by Egypt and Africa. Pythagoras, Plato, and Aristotle all studied in Egypt.", facts:["Democracy invented in Athens c.507 BCE","Pythagoras, Plato, Aristotle all studied in Egypt","Alexander the Great spread Greek culture from Egypt to India","The Library of Alexandria was the world's first great research institution"] },
-  { id:"silk-road", name:"The Silk Road",                 region:"Central Asia",         lat:39.9, lon:66.8, type:"world", startYear:-200,    era:"200 BCE",     wikiTitle:"Silk_Road",            summary:"The ancient network of trade routes connecting China to the Mediterranean for 1,400 years. Ideas, religions, diseases, and technologies travelled alongside silk, spices, and gold.", facts:["Connected China to Rome across 4,000 miles","Buddhism, Islam, and Christianity spread via Silk Road","Black Death (1346) likely spread via Silk Road trade routes","Connected to West African gold trade through Arab intermediaries"] },
-  { id:"china",     name:"Imperial China",                region:"East Asia",            lat:35.8, lon:104.2,type:"world", startYear:-2100,   era:"2100 BCE",    wikiTitle:"History_of_China",     summary:"The world's longest continuous civilisation, responsible for paper, printing, gunpowder, and the compass — the four inventions that transformed the modern world.", facts:["Paper invented in China 105 CE — 1,000 years before Europe","Gunpowder, compass, and printing press: all Chinese inventions","Ming Dynasty ships reached East Africa in 1418 — 70 years before Columbus","China's economy was the world's largest until 1820"] },
-  { id:"aztec",     name:"Aztec Empire — Tenochtitlan",   region:"Mexico",               lat:19.4, lon:-99.1,type:"world", startYear:1300,    era:"1300 CE",     wikiTitle:"Aztec_Empire",         summary:"The Aztec capital Tenochtitlan (modern Mexico City) had 200,000 people in 1500 — larger than any city in Europe. Destroyed by Hernán Cortés with 600 men and smallpox.", facts:["Tenochtitlan: 200,000 people — larger than London in 1500","Developed advanced astronomy, mathematics, and medicine","Destroyed by Spanish conquistadors 1519–1521","Smallpox killed ~90% of indigenous population post-conquest"] },
-  { id:"inca",      name:"Inca Empire",                   region:"South America",        lat:-13.5,lon:-71.9,type:"world", startYear:1438,    era:"1438 CE",     wikiTitle:"Inca_Empire",          summary:"The largest empire in pre-Columbian Americas, stretching 4,300 miles along the Andes. Built 40,000 km of roads without the wheel, iron tools, or a written language.", facts:["Largest pre-Columbian empire: 12 million people","40,000 km of roads — more than the Roman road network","No writing system, no wheel, no iron — yet built Machu Picchu","Destroyed by Francisco Pizarro with 168 men and smallpox in 1532"] },
-  { id:"india",     name:"Indus Valley & Mughal India",   region:"South Asia",           lat:27.2, lon:78.0, type:"world", startYear:-3300,   era:"3300 BCE",    wikiTitle:"Indus_Valley_Civilisation", summary:"The Indus Valley Civilisation (3300 BCE) had advanced urban planning, sewage systems, and standardised weights — 2,000 years before Rome. The Mughal Empire produced the Taj Mahal and controlled 25% of world GDP.", facts:["Indus Valley: first planned cities with sewage systems, 3300 BCE","Mughal Empire: 25% of world GDP at its peak (1700 CE)","Zero invented in India — transformed all mathematics","British colonisation drained $45 trillion from India (1765–1938, Columbia study)"] },
-  { id:"ottoman",   name:"Ottoman Empire",                region:"Middle East / Europe", lat:41.0, lon:29.0, type:"world", startYear:1299,    era:"1299 CE",     wikiTitle:"Ottoman_Empire",       summary:"The Ottoman Empire lasted 600 years, ruling 3 continents and preserving Greek and Roman knowledge during Europe's Dark Ages. Constantinople fell in 1453 — the event that triggered Europe's Age of Exploration.", facts:["Ruled 3 continents for 600 years (1299–1922)","Preserved Greek and Roman texts during Europe's Dark Ages","Constantinople's fall (1453) triggered Columbus's voyage west","Ottoman libraries held more books than all of Europe combined in 1400"] },
-  { id:"usa-civil", name:"American Civil War & Reconstruction", region:"USA",           lat:38.9, lon:-77.0,type:"world", startYear:1861,    era:"1861 CE",     wikiTitle:"Reconstruction_era",   summary:"The Civil War ended slavery but Reconstruction (1865–1877) was violently dismantled. The promise of 40 acres and a mule was broken. The wealth gap created then still exists today.", facts:["40 acres and a mule: promised, then revoked by President Johnson","Freedmen's Bureau: 4 million formerly enslaved people, no reparations","Black Wall Street (Tulsa, 1921): destroyed by white mob, 300 killed","Redlining (1930s): banks refused loans in Black neighbourhoods — effects last today"] },
-  { id:"tulsa",     name:"Black Wall Street — Tulsa",    region:"Oklahoma, USA",        lat:36.1, lon:-95.9,type:"world", startYear:1906,    era:"1906 CE",     wikiTitle:"Tulsa_race_massacre",  summary:"Greenwood, Tulsa was the wealthiest Black community in America. In 1921, a white mob — aided by the Oklahoma National Guard — burned it to the ground in 18 hours, killing up to 300 people. No one was charged.", facts:["Greenwood district: 35 blocks, 600 businesses, hospitals, law firms","May 31–June 1, 1921: destroyed in 18 hours","Up to 300 Black Americans killed — largest race massacre in US history","Bodies never found, no one charged, city tried to cover it up for 75 years"] },
-  { id:"native-am", name:"Indigenous Americas",           region:"North America",        lat:44.0, lon:-103.4,type:"indigenous", startYear:-15000, era:"15,000 BCE", wikiTitle:"Indigenous_peoples_of_the_Americas", summary:"Over 500 distinct nations inhabited the Americas before European contact. From the Haudenosaunee democracy that inspired the US Constitution to the Lakota Sioux of the Great Plains.", facts:["500+ distinct nations before European contact","Haudenosaunee (Iroquois) Confederacy inspired the US Constitution","90% of indigenous population killed by European disease and violence","570 federally recognised tribes in the US today — still fighting for sovereignty"] },
+  // ── WORLD CIVILIZATIONS ───────────────────────────────────
+  { id:"rome",         name:"Roman Empire",                   region:"Mediterranean",         lat:41.9,  lon:12.5,  type:"world",  startYear:-500,   era:"500 BCE",  wikiTitle:"Roman_Empire",                  summary:"At its peak the Roman Empire stretched from Britain to Mesopotamia, governing 70 million people. Its law, language, and architecture shaped Western civilisation — and it was led by a North African emperor, Septimius Severus, in 193 CE.", facts:["Governed ~20% of the world's population at its peak","Roman law is the foundation of most Western legal systems","Latin evolved into French, Spanish, Italian, Portuguese, Romanian","Septimius Severus — Rome's greatest emperor — was born in North Africa"] },
+  { id:"greece",       name:"Ancient Greece",                 region:"Mediterranean",         lat:37.9,  lon:23.7,  type:"world",  startYear:-800,   era:"800 BCE",  wikiTitle:"Ancient_Greece",                summary:"The birthplace of democracy, philosophy, and the Olympic Games — but Greek civilisation was deeply shaped by Egypt and Africa. Pythagoras, Plato, and Aristotle all studied in Egypt.", facts:["Democracy invented in Athens c.507 BCE","Pythagoras, Plato, Aristotle all studied in Egypt","Alexander the Great spread Greek culture from Egypt to India","The Library of Alexandria was the world's first great research institution"] },
+  { id:"mesopotamia",  name:"Mesopotamia — Cradle of Civilization", region:"Iraq",          lat:33.3,  lon:44.4,  type:"world",  startYear:-3500,  era:"3500 BCE", wikiTitle:"Mesopotamia",                   summary:"The Tigris-Euphrates river valley gave humanity the world's first cities, first writing system (cuneiform), first legal code (Hammurabi), and the foundations of mathematics and astronomy.", facts:["World's first cities: Uruk, Ur, Babylon — 5,000+ years ago","Cuneiform: world's first writing system, c.3400 BCE","Hammurabi's Code (1754 BCE): 282 laws carved in stone","60-second minute, 60-minute hour, 360-degree circle — all Babylonian"] },
+  { id:"persia",       name:"Persian Empire — Achaemenid",    region:"Iran",                  lat:32.4,  lon:53.7,  type:"empire", startYear:-550,   era:"550 BCE",  wikiTitle:"Achaemenid_Empire",             summary:"The Achaemenid Persian Empire was the largest empire the world had ever seen — stretching from Greece to India. Cyrus the Great's human rights cylinder is considered the world's first charter of human rights.", facts:["Largest empire to that point: 44% of the world's population","Cyrus Cylinder (539 BCE): considered world's first human rights declaration","Royal Road: 2,700km highway connecting empire in 7 days","Zoroastrianism — one of the world's oldest monotheistic religions"] },
+  { id:"silk-road",    name:"The Silk Road",                  region:"Central Asia",          lat:39.9,  lon:66.8,  type:"world",  startYear:-200,   era:"200 BCE",  wikiTitle:"Silk_Road",                     summary:"The ancient network of trade routes connecting China to the Mediterranean for 1,400 years. Ideas, religions, diseases, and technologies travelled alongside silk, spices, and gold.", facts:["Connected China to Rome across 4,000 miles","Buddhism, Islam, and Christianity spread via Silk Road","Black Death (1346) likely spread via Silk Road trade routes","Connected to West African gold trade through Arab intermediaries"] },
+  { id:"china",        name:"Imperial China",                 region:"East Asia",             lat:35.8,  lon:104.2, type:"world",  startYear:-2100,  era:"2100 BCE", wikiTitle:"History_of_China",              summary:"The world's longest continuous civilisation, responsible for paper, printing, gunpowder, and the compass — the four inventions that transformed the modern world.", facts:["Paper invented in China 105 CE — 1,000 years before Europe","Gunpowder, compass, and printing press: all Chinese inventions","Ming Dynasty ships reached East Africa in 1418 — 70 years before Columbus","China's economy was the world's largest until 1820"] },
+  { id:"japan",        name:"Feudal Japan & Edo Period",      region:"East Asia",             lat:35.7,  lon:139.7, type:"world",  startYear:794,    era:"794 CE",   wikiTitle:"History_of_Japan",              summary:"Japan's feudal era produced samurai culture, Zen Buddhism, and extraordinary craftsmanship. The Edo period (1603–1868) was one of the world's longest periods of peace, producing haiku, kabuki, and woodblock printing.", facts:["Samurai code of Bushido shaped Japanese culture for 700 years","Edo (Tokyo) was the world's largest city by 1800: 1 million people","Japan industrialised faster than any nation in history after 1868","Hiroshima and Nagasaki: only cities ever struck by nuclear weapons"] },
+  { id:"mongol",       name:"Mongol Empire",                  region:"Central Asia",          lat:47.9,  lon:106.9, type:"empire", startYear:1206,   era:"1206 CE",  wikiTitle:"Mongol_Empire",                 summary:"The Mongol Empire was the largest contiguous land empire in history, stretching from Korea to Hungary. Genghis Khan connected East and West — enabling trade, cultural exchange, and also the Black Death.", facts:["Largest contiguous land empire: 24 million km²","Destroyed Baghdad (1258 CE) — ended Islamic Golden Age","Created first international postal system (Yam network)","Mongol Pax allowed unprecedented East-West trade and exchange"] },
+  { id:"islamic-golden",name:"Islamic Golden Age — Baghdad",  region:"Iraq / Middle East",    lat:33.3,  lon:44.4,  type:"islamic",startYear:750,    era:"750 CE",   wikiTitle:"Islamic_Golden_Age",            summary:"While Europe had the Dark Ages, Baghdad's House of Wisdom was the world's greatest centre of learning. Muslim scholars preserved Greek knowledge and made breakthroughs in algebra, optics, medicine, and astronomy.", facts:["House of Wisdom (Baghdad): largest library in the world, 830 CE","Al-Khwarizmi invented algebra — the word comes from his name","Ibn Sina's Canon of Medicine: used in European universities until 1650","Al-Haytham invented the scientific method 600 years before Europe"] },
+  { id:"ottoman",      name:"Ottoman Empire",                 region:"Turkey / Middle East",  lat:41.0,  lon:29.0,  type:"empire", startYear:1299,   era:"1299 CE",  wikiTitle:"Ottoman_Empire",                summary:"The Ottoman Empire lasted 600 years, ruling 3 continents and preserving Greek and Roman knowledge during Europe's Dark Ages. Constantinople fell in 1453 — the event that triggered Europe's Age of Exploration.", facts:["Ruled 3 continents for 600 years (1299–1922)","Preserved Greek and Roman texts during Europe's Dark Ages","Constantinople's fall (1453) triggered Columbus's voyage west","Ottoman libraries held more books than all of Europe combined in 1400"] },
+  { id:"india",        name:"Indus Valley & Mughal India",   region:"South Asia",            lat:27.2,  lon:78.0,  type:"world",  startYear:-3300,  era:"3300 BCE", wikiTitle:"Indus_Valley_Civilisation",     summary:"The Indus Valley Civilisation (3300 BCE) had advanced urban planning, sewage systems, and standardised weights — 2,000 years before Rome. The Mughal Empire produced the Taj Mahal and controlled 25% of world GDP.", facts:["Indus Valley: first planned cities with sewage systems, 3300 BCE","Mughal Empire: 25% of world GDP at its peak (1700 CE)","Zero invented in India — transformed all mathematics","British colonisation drained $45 trillion from India (1765–1938, Columbia study)"] },
+  { id:"viking",       name:"Viking Age — Norse World",       region:"Scandinavia",           lat:59.9,  lon:10.7,  type:"world",  startYear:793,    era:"793 CE",   wikiTitle:"Viking_Age",                    summary:"The Vikings were not just raiders — they were the world's greatest navigators of their age, reaching North America 500 years before Columbus, trading in Baghdad, and founding the city of Dublin.", facts:["Reached North America (Vinland) c.1000 CE — 500 years before Columbus","Founded Dublin, Kyiv, Novgorod — shaped three nations","Traded in Baghdad, Byzantium, and the Arctic simultaneously","Viking women had more legal rights than most medieval European women"] },
+  { id:"maya",         name:"Maya Civilization",              region:"Mesoamerica",           lat:15.5,  lon:-89.0, type:"world",  startYear:-2000,  era:"2000 BCE", wikiTitle:"Maya_civilization",             summary:"The Maya developed one of the most sophisticated writing systems, mathematical concepts including zero, and an astronomically precise calendar — all independently of Old World civilisations.", facts:["Developed zero independently of India — simultaneously","Maya Long Count calendar accurate to within 0.00007 days/year","Chichén Itzá: built to cast shadow of feathered serpent at equinox","Classic Maya collapse (900 CE) still debated — drought, war, or ecological collapse"] },
+  { id:"aztec",        name:"Aztec Empire — Tenochtitlan",   region:"Mexico",                lat:19.4,  lon:-99.1, type:"world",  startYear:1300,   era:"1300 CE",  wikiTitle:"Aztec_Empire",                  summary:"The Aztec capital Tenochtitlan (modern Mexico City) had 200,000 people in 1500 — larger than any city in Europe. Destroyed by Hernán Cortés with 600 men and smallpox.", facts:["Tenochtitlan: 200,000 people — larger than London in 1500","Developed advanced astronomy, mathematics, and medicine","Destroyed by Spanish conquistadors 1519–1521","Smallpox killed ~90% of indigenous population post-conquest"] },
+  { id:"inca",         name:"Inca Empire",                   region:"South America",         lat:-13.5, lon:-71.9, type:"world",  startYear:1438,   era:"1438 CE",  wikiTitle:"Inca_Empire",                   summary:"The largest empire in pre-Columbian Americas, stretching 4,300 miles along the Andes. Built 40,000 km of roads without the wheel, iron tools, or a written language.", facts:["Largest pre-Columbian empire: 12 million people","40,000 km of roads — more than the Roman road network","No writing system, no wheel, no iron — yet built Machu Picchu","Destroyed by Francisco Pizarro with 168 men and smallpox in 1532"] },
+  { id:"polynesia",    name:"Polynesian Navigation",         region:"Pacific Ocean",         lat:-17.7, lon:-149.4,type:"indigenous",startYear:-1000,era:"1000 BCE", wikiTitle:"Polynesian_navigation",         summary:"Polynesian navigators crossed 10 million square miles of open ocean using only stars, waves, and birds — settling every habitable island in the Pacific, from Hawaii to New Zealand to Easter Island.", facts:["Settled every habitable Pacific island across 10 million km²","Navigated by stars, ocean swells, and bird behaviour — no instruments","Reached Hawaii (800 CE) and New Zealand (1280 CE)","Easter Island moai: 900 statues, some 80 tonnes — moved without wheels"] },
+  { id:"byzantine",    name:"Byzantine Empire",              region:"Southeast Europe",      lat:41.0,  lon:28.9,  type:"empire", startYear:330,    era:"330 CE",   wikiTitle:"Byzantine_Empire",              summary:"The Eastern Roman Empire that survived for 1,000 years after Rome's fall, preserving Greek and Roman knowledge through Europe's Dark Ages and transmitting it back to the Renaissance.", facts:["Survived 1,000 years after the fall of Western Rome","Preserved and transmitted Greek and Roman scholarship to the Renaissance","Justinian Code (529 CE): Roman law that forms modern European legal systems","Final fall of Constantinople (1453) brought Greek scholars to Italy, sparking the Renaissance"] },
+  { id:"russia",       name:"Russian Empire & Tsars",        region:"Eastern Europe / Asia", lat:55.8,  lon:37.6,  type:"empire", startYear:1547,   era:"1547 CE",  wikiTitle:"Russian_Empire",                summary:"The Russian Empire stretched across 11 time zones — the largest empire in history by land area. From Ivan the Terrible to Catherine the Great to the Romanovs, it shaped a quarter of the world's land surface.", facts:["Largest empire by land area: 22.8 million km²","Catherine the Great: longest-reigning female ruler of Russia (34 years)","Trans-Siberian Railway (1891–1916): longest railway on Earth at 9,289 km","Russian Revolution (1917) ended 300 years of Romanov rule"] },
+  { id:"french-rev",   name:"French Revolution — Paris",     region:"France",                lat:48.9,  lon:2.3,   type:"world",  startYear:1789,   era:"1789 CE",  wikiTitle:"French_Revolution",             summary:"The storming of the Bastille (1789) began a revolution that executed a king and queen, produced Napoleon, and sent shockwaves that toppled monarchies across Europe and inspired the Haitian Revolution.", facts:["Executed King Louis XVI and Queen Marie Antoinette in 1793","40,000 people guillotined during the Terror (1793–94)","Declaration of the Rights of Man (1789) — foundation of modern human rights","Directly inspired the Haitian Revolution — the only successful slave revolt in history"] },
+  { id:"usa-civil",    name:"American Civil War & Reconstruction", region:"USA",            lat:38.9,  lon:-77.0, type:"world",  startYear:1861,   era:"1861 CE",  wikiTitle:"Reconstruction_era",            summary:"The Civil War ended slavery but Reconstruction (1865–1877) was violently dismantled. The promise of 40 acres and a mule was broken. The wealth gap created then still exists today.", facts:["40 acres and a mule: promised, then revoked by President Johnson","Freedmen's Bureau: 4 million formerly enslaved people, no reparations","Black Wall Street (Tulsa, 1921): destroyed by white mob, 300 killed","Redlining (1930s): banks refused loans in Black neighbourhoods — effects last today"] },
+  { id:"tulsa",        name:"Black Wall Street — Tulsa",     region:"Oklahoma, USA",         lat:36.1,  lon:-95.9, type:"world",  startYear:1906,   era:"1906 CE",  wikiTitle:"Tulsa_race_massacre",           summary:"Greenwood, Tulsa was the wealthiest Black community in America. In 1921, a white mob — aided by the Oklahoma National Guard — burned it to the ground in 18 hours, killing up to 300 people. No one was charged.", facts:["Greenwood district: 35 blocks, 600 businesses, hospitals, law firms","May 31–June 1, 1921: destroyed in 18 hours","Up to 300 Black Americans killed — largest race massacre in US history","Bodies never found, no one charged, city tried to cover it up for 75 years"] },
+  { id:"native-am",    name:"Indigenous Americas",           region:"North America",         lat:44.0,  lon:-103.4,type:"indigenous",startYear:-15000,era:"15,000 BCE",wikiTitle:"Indigenous_peoples_of_the_Americas",summary:"Over 500 distinct nations inhabited the Americas before European contact. From the Haudenosaunee democracy that inspired the US Constitution to the Lakota Sioux of the Great Plains.", facts:["500+ distinct nations before European contact","Haudenosaunee (Iroquois) Confederacy inspired the US Constitution","90% of indigenous population killed by European disease and violence","570 federally recognised tribes in the US today — still fighting for sovereignty"] },
 ];
 
 const MIGRATIONS = [
-  { id:"s-spread",  label:"Southern African Spread",    from:[3.5,36.5],  to:[-22,21],    startYear:-100000, color:"#FFD700" },
-  { id:"w-spread",  label:"West African Spread",        from:[3.5,36.5],  to:[7.5,4.5],   startYear:-70000,  color:"#FFC200" },
-  { id:"nile",      label:"Nile Corridor",              from:[3.5,36.5],  to:[27,30.5],   startYear:-60000,  color:"#FFAA00" },
-  { id:"oot",       label:"Out of Africa — Coastal",    from:[3.5,36.5],  to:[12.4,92.9], startYear:-70000,  color:"#45D4D4" },
-  { id:"melanesia", label:"Into Melanesia",             from:[12.4,92.9], to:[-6,147],    startYear:-65000,  color:"#3DB8CC" },
-  { id:"bantu",     label:"Bantu Expansion",            from:[4,10],      to:[-20,31],    startYear:-3000,   color:"#FF8C00" },
-  { id:"transsah",  label:"Trans-Saharan Trade",        from:[13.5,-8],   to:[33,3],      startYear:-1000,   color:"#FFA040" },
-  { id:"indian",    label:"Indian Ocean Trade",         from:[-6.2,39.2], to:[14.8,74.5], startYear:700,     color:"#709AD8" },
-  { id:"s-carib",   label:"Middle Passage → Caribbean", from:[6.4,2.1],   to:[18.5,-72.5],startYear:1503,    color:"#E03030" },
-  { id:"s-braz",    label:"Middle Passage → Brazil",    from:[0,12],      to:[-12.9,-38.3],startYear:1502,   color:"#C82020" },
-  { id:"s-usa",     label:"Middle Passage → N. America",from:[7.5,4.5],   to:[32,-82],    startYear:1619,    color:"#B01010" },
-  { id:"col-congo", label:"Colonial Extraction",        from:[-4,24],     to:[50.8,4.4],  startYear:1885,    color:"#8B3030" },
-  { id:"panafrican",label:"Pan-African Movement",       from:[18.5,-72.5],to:[5.6,-0.2],  startYear:1920,    color:"#4CAF7D" },
-  { id:"mod-europe",label:"Modern African Diaspora",    from:[14,15],     to:[48.8,2.3],  startYear:1950,    color:"#708090" },
+  // ── Human Origins & Spread ────────────────────────────────
+  { id:"s-spread",    label:"Southern African Spread",       from:[3.5,36.5],   to:[-22,21],     startYear:-100000, color:"#FFD700" },
+  { id:"w-spread",    label:"West African Spread",           from:[3.5,36.5],   to:[7.5,4.5],    startYear:-70000,  color:"#FFC200" },
+  { id:"nile",        label:"Nile Corridor",                 from:[3.5,36.5],   to:[27,30.5],    startYear:-60000,  color:"#FFAA00" },
+  { id:"oot",         label:"Out of Africa — Coastal",       from:[3.5,36.5],   to:[12.4,92.9],  startYear:-70000,  color:"#45D4D4" },
+  { id:"melanesia",   label:"Into Melanesia",                from:[12.4,92.9],  to:[-6,147],     startYear:-65000,  color:"#3DB8CC" },
+  { id:"americas",    label:"Into the Americas",             from:[64.0,172.0], to:[44.0,-103.4],startYear:-15000,  color:"#7EC8A0" },
+  { id:"polynesia-m", label:"Polynesian Expansion",          from:[15.0,145.0], to:[-17.7,-149.4],startYear:-1000,  color:"#26A69A" },
+  { id:"nz",          label:"Settlement of New Zealand",     from:[-17.7,-149.4],to:[-41.3,174.8],startYear:1200,   color:"#2196F3" },
+
+  // ── African Civilisations & Trade ─────────────────────────
+  { id:"bantu",       label:"Bantu Expansion",               from:[4,10],       to:[-20,31],     startYear:-3000,   color:"#FF8C00" },
+  { id:"transsah",    label:"Trans-Saharan Trade",           from:[13.5,-8],    to:[33,3],       startYear:-1000,   color:"#FFA040" },
+  { id:"indian",      label:"Indian Ocean Trade",            from:[-6.2,39.2],  to:[14.8,74.5],  startYear:700,     color:"#709AD8" },
+
+  // ── Slave Trade Routes ─────────────────────────────────────
+  { id:"s-carib",     label:"Middle Passage → Caribbean",    from:[6.4,2.1],    to:[18.5,-72.5], startYear:1503,    color:"#E03030" },
+  { id:"s-braz",      label:"Middle Passage → Brazil",       from:[0,12],       to:[-12.9,-38.3],startYear:1502,    color:"#C82020" },
+  { id:"s-usa",       label:"Middle Passage → N. America",   from:[7.5,4.5],    to:[32,-82],     startYear:1619,    color:"#B01010" },
+
+  // ── Ancient Empires & Conquest ────────────────────────────
+  { id:"alexander",   label:"Alexander's Conquests",         from:[37.9,23.7],  to:[27.2,78.0],  startYear:-334,    color:"#9B59B6" },
+  { id:"silk",        label:"Silk Road — East to West",      from:[35.8,104.2], to:[41.9,12.5],  startYear:-200,    color:"#E6A817" },
+  { id:"mongol-exp",  label:"Mongol Expansion",              from:[47.9,106.9], to:[33.3,44.4],  startYear:1206,    color:"#795548" },
+  { id:"crusades",    label:"The Crusades",                  from:[48.9,2.3],   to:[31.8,35.2],  startYear:1096,    color:"#F44336" },
+
+  // ── Age of Exploration ────────────────────────────────────
+  { id:"columbus",    label:"Columbus to Americas",          from:[40.4,-3.7],  to:[18.5,-72.5], startYear:1492,    color:"#FF5722" },
+  { id:"vasco",       label:"Vasco da Gama — Around Africa", from:[38.7,-9.1],  to:[10.0,76.3],  startYear:1497,    color:"#FF7043" },
+  { id:"magellan",    label:"First Circumnavigation",        from:[40.4,-3.7],  to:[-13.5,-71.9],startYear:1519,    color:"#FF8A65" },
+
+  // ── Colonial Extraction ───────────────────────────────────
+  { id:"col-congo",   label:"Colonial Extraction — Congo",   from:[-4,24],      to:[50.8,4.4],   startYear:1885,    color:"#8B3030" },
+  { id:"british-india",label:"British India Trade",          from:[27.2,78.0],  to:[51.5,-0.1],  startYear:1600,    color:"#6D4C41" },
+
+  // ── Modern Movements ─────────────────────────────────────
+  { id:"panafrican",  label:"Pan-African Movement",          from:[18.5,-72.5], to:[5.6,-0.2],   startYear:1920,    color:"#4CAF7D" },
+  { id:"mod-europe",  label:"Modern African Diaspora",       from:[14,15],      to:[48.8,2.3],   startYear:1950,    color:"#708090" },
 ];
 
 // ── TIMELINE DATA ─────────────────────────────────────────────
@@ -454,7 +491,7 @@ function ExploreSection({ T, theme }) {
     <div style={{height:"100%",display:"flex",flexDirection:"column",background:T.bg,overflow:"hidden"}}>
       <div style={{background:T.surface,borderBottom:`1px solid ${T.border}`,padding:"7px 14px",display:"flex",alignItems:"center",gap:6,flexShrink:0,flexWrap:"wrap"}}>
         <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.1em",textTransform:"uppercase",color:T.inkLight,fontWeight:600}}>Type</span>
-        {[["all","All"],["origin","Origins"],["civilization","Civilizations"],["indigenous","Indigenous"],["diaspora","Diaspora & Migration"],["accountability","Power & Accountability"],["world","World History"]].map(([v,l])=>{
+        {[["all","All"],["origin","Human Origins"],["civilization","Ancient Civilizations"],["world","World Empires"],["empire","Empires"],["islamic","Islamic World"],["indigenous","Indigenous Peoples"],["diaspora","Diaspora & Migration"],["accountability","Power & Accountability"]].map(([v,l])=>{
           const ac=v==="all"?T.accent:TYPE_META[v]?.color||T.accent,on=filterType===v;
           return <div key={v} onClick={()=>setFilterType(v)} style={{padding:"3px 10px",borderRadius:20,border:`1px solid ${on?ac+"60":T.border}`,background:on?ac+"18":"transparent",color:on?ac:T.inkLight,fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.08em",textTransform:"uppercase",fontWeight:on?600:400,cursor:"pointer",transition:"all 0.15s",whiteSpace:"nowrap"}}>{l}</div>;
         })}
@@ -1130,12 +1167,18 @@ function InvestigateSection({ T, nodes: propNodes, edges: propEdges, setNodes: s
     setSelEdge(null);
   };
 
+  const rafRef = useRef(null);
+
   const onMouseMove = (e) => {
     if (!dragging) return;
-    const rect = svgRef.current.getBoundingClientRect();
-    const x = Math.max(70, Math.min(rect.width - 70, e.clientX - rect.left - dragOffset.current.x));
-    const y = Math.max(30, Math.min(rect.height - 30, e.clientY - rect.top - dragOffset.current.y));
-    setNodes(prev => prev.map(n => n.id === dragging ? {...n, x, y} : n));
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    rafRef.current = requestAnimationFrame(() => {
+      const rect = svgRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      const x = Math.max(80, Math.min(rect.width - 80, e.clientX - rect.left - dragOffset.current.x));
+      const y = Math.max(30, Math.min(rect.height - 30, e.clientY - rect.top - dragOffset.current.y));
+      setNodes(prev => prev.map(n => n.id === dragging ? {...n, x, y} : n));
+    });
   };
 
   const addNode = () => {
@@ -1174,9 +1217,9 @@ function InvestigateSection({ T, nodes: propNodes, edges: propEdges, setNodes: s
     const dx = t.x - f.x, dy = t.y - f.y;
     const len = Math.sqrt(dx*dx + dy*dy) || 1;
     const nx = dx/len, ny = dy/len;
-    // Offset start/end by node half-width (approx 70px)
-    const sx = f.x + nx*72, sy = f.y + ny*22;
-    const ex = t.x - nx*72, ey = t.y - ny*22;
+    // Offset by new node half-width (75px) + a bit
+    const sx = f.x + nx*78, sy = f.y + ny*24;
+    const ex = t.x - nx*78, ey = t.y - ny*24;
     // Slight curve
     const mx = (sx+ex)/2 - ny*30, my = (sy+ey)/2 + nx*30;
     return { path:`M${sx},${sy} Q${mx},${my} ${ex},${ey}`, mx, my };
@@ -1318,46 +1361,78 @@ function InvestigateSection({ T, nodes: propNodes, edges: propEdges, setNodes: s
             const meta    = NODE_TYPES[node.type] || NODE_TYPES.person;
             const isSel   = selNode === node.id;
             const isFrom  = connecting === node.id;
-            const W=130, H=42, rx=10;
+            const W=150, H=46, rx=11;
+            const scale   = dragging===node.id ? 1.05 : isSel ? 1.03 : 1;
             return (
               <g key={node.id}
-                transform={`translate(${node.x - W/2}, ${node.y - H/2})`}
-                onMouseDown={e=>onNodeMouseDown(e, node.id)}
-                style={{cursor:dragging===node.id?"grabbing":"grab"}}>
+                transform={`translate(${node.x - W/2}, ${node.y - H/2}) scale(${scale})`}
+                style={{
+                  cursor: dragging===node.id ? "grabbing" : "grab",
+                  transformOrigin:`${W/2}px ${H/2}px`,
+                  transition: dragging===node.id ? "none" : "transform 0.15s ease",
+                  filter: isSel ? `drop-shadow(0 4px 12px ${meta.color}50)` : dragging===node.id ? `drop-shadow(0 6px 16px ${meta.color}40)` : "none",
+                }}
+                onMouseDown={e=>onNodeMouseDown(e, node.id)}>
 
-                {/* Selection glow */}
+                {/* Outer glow ring when selected or connecting */}
                 {(isSel||isFrom) && (
-                  <rect x={-3} y={-3} width={W+6} height={H+6} rx={rx+3}
-                    fill="none" stroke={isFrom?T.info:meta.color} strokeWidth="2" opacity="0.5"
+                  <rect x={-4} y={-4} width={W+8} height={H+8} rx={rx+4}
+                    fill="none" stroke={isFrom?T.info:meta.color} strokeWidth="1.5"
+                    opacity="0.6" strokeDasharray={isFrom?"4 2":"none"}
                     style={isFrom?{animation:"node-pulse 1.2s ease-in-out infinite"}:{}}/>
                 )}
 
+                {/* Card shadow */}
+                <rect x={2} y={3} width={W} height={H} rx={rx}
+                  fill="rgba(0,0,0,0.15)"/>
+
                 {/* Card background */}
                 <rect width={W} height={H} rx={rx}
-                  fill={isDark?`${meta.color}18`:`${meta.color}12`}
-                  stroke={meta.color} strokeWidth={isSel?2:1.5}/>
+                  fill={isDark?`${meta.color}20`:`${meta.color}14`}
+                  stroke={isSel?meta.color:isDark?`${meta.color}60`:`${meta.color}80`}
+                  strokeWidth={isSel?2:1.5}/>
 
                 {/* Icon box */}
-                <rect x={0} y={0} width={38} height={H} rx={rx}
-                  fill={`${meta.color}30`}/>
-                <text x={19} y={H/2+6} textAnchor="middle"
-                  style={{fontSize:16,pointerEvents:"none",userSelect:"none"}}>
+                <rect x={0} y={0} width={42} height={H} rx={rx}
+                  fill={`${meta.color}35`}/>
+                {/* Clip right side of icon box */}
+                <rect x={rx} y={0} width={42-rx} height={H}
+                  fill={`${meta.color}35`}/>
+                <text x={21} y={H/2+6} textAnchor="middle"
+                  style={{fontSize:17,pointerEvents:"none",userSelect:"none"}}>
                   {meta.icon}
                 </text>
 
                 {/* Divider */}
-                <line x1={38} y1={6} x2={38} y2={H-6} stroke={`${meta.color}50`} strokeWidth="1"/>
+                <line x1={42} y1={7} x2={42} y2={H-7}
+                  stroke={`${meta.color}40`} strokeWidth="1"/>
 
-                {/* Label */}
-                <text x={W/2+19/2} y={H/2-3} textAnchor="middle"
-                  style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:700,fill:isDark?"#FCF9F7":"#231E18",pointerEvents:"none",userSelect:"none"}}>
-                  {node.label.length>14?node.label.slice(0,13)+"…":node.label}
+                {/* Label — truncate smartly */}
+                <text x={42+(W-42)/2} y={H/2-4} textAnchor="middle"
+                  style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:700,
+                    fill:isDark?"#F5F3EE":"#1A1610",pointerEvents:"none",userSelect:"none",
+                    letterSpacing:"0.01em"}}>
+                  {node.label.length>16 ? node.label.slice(0,15)+"…" : node.label}
                 </text>
-                {/* Type label */}
-                <text x={W/2+19/2} y={H/2+10} textAnchor="middle"
-                  style={{fontFamily:"'DM Sans',sans-serif",fontSize:8,fill:meta.color,pointerEvents:"none",userSelect:"none",letterSpacing:"0.06em",textTransform:"uppercase"}}>
+                {/* Type badge */}
+                <text x={42+(W-42)/2} y={H/2+9} textAnchor="middle"
+                  style={{fontFamily:"'DM Sans',sans-serif",fontSize:8,fill:meta.color,
+                    pointerEvents:"none",userSelect:"none",letterSpacing:"0.07em",
+                    textTransform:"uppercase",fontWeight:600}}>
                   {meta.label}
                 </text>
+
+                {/* Connection count badge */}
+                {edges.filter(e=>e.from===node.id||e.to===node.id).length > 0 && (
+                  <>
+                    <circle cx={W-6} cy={6} r={8} fill={meta.color}/>
+                    <text x={W-6} y={10} textAnchor="middle"
+                      style={{fontFamily:"'DM Sans',sans-serif",fontSize:8,fontWeight:700,
+                        fill:"#fff",pointerEvents:"none",userSelect:"none"}}>
+                      {edges.filter(e=>e.from===node.id||e.to===node.id).length}
+                    </text>
+                  </>
+                )}
               </g>
             );
           })}
@@ -1488,7 +1563,7 @@ function Home({ T, onNavigate }) {
               </div>
             </div>
             <div style={{padding:"20px 24px",flex:1}}>
-              <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:13,color:T.inkMid,lineHeight:1.8,margin:"0 0 20px"}}>300 million students worldwide have no access to quality history education. Severus changes that — free AI-powered investigation of human history for any student on any device. Starting with the African story. Expanding to all of human history.</p>
+              <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:13,color:T.inkMid,lineHeight:1.8,margin:"0 0 20px"}}>300 million students worldwide have no access to quality history education. Severus changes that — free AI-powered investigation of world history for any student on any device. From the Mongol Empire to the Haitian Revolution, from Ancient Mesopotamia to the Silk Road. Every civilisation. Every story.</p>
               <div style={{display:"flex",gap:10}}>
                 <button onClick={()=>onNavigate("explore")} style={{display:"flex",alignItems:"center",gap:8,padding:"10px 20px",background:T.accent,border:"none",borderRadius:7,color:"#fff",fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:700,cursor:"pointer",textTransform:"uppercase",letterSpacing:"0.04em"}} onMouseEnter={e=>e.currentTarget.style.background=T.accentMid} onMouseLeave={e=>e.currentTarget.style.background=T.accent}>Start Investigating <Ic n="arrowR" s={14} c="#fff"/></button>
                 <button onClick={()=>onNavigate("research")} style={{padding:"10px 18px",background:"transparent",border:`1px solid ${T.border}`,borderRadius:7,color:T.inkMid,fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500,cursor:"pointer"}} onMouseEnter={e=>{e.currentTarget.style.borderColor=T.inkLight;e.currentTarget.style.color=T.ink;}} onMouseLeave={e=>{e.currentTarget.style.borderColor=T.border;e.currentTarget.style.color=T.inkMid;}}>Ask the AI →</button>

@@ -11,13 +11,21 @@ const AGENTS = {
 
 const SUGGESTIONS = [
   "What caused the fall of the Roman Empire?",
-  "How did the Silk Road connect the ancient world?",
+  "How did the Mongol Empire connect East and West?",
   "Who was Mansa Musa — the wealthiest person in history?",
-  "What was Black Wall Street and what happened to it?",
+  "How did the Silk Road shape the ancient world?",
+  "What caused the French Revolution?",
   "How did 600 Spanish soldiers destroy the Aztec Empire?",
+  "What was the Islamic Golden Age and why did it end?",
+  "How did the Black Death reshape medieval Europe?",
   "What was the Ottoman Empire and why did it collapse?",
+  "How did Polynesian navigators settle the Pacific?",
   "Trace the Benin Bronzes from Nigeria to the British Museum",
-  "How did the slave trade fund modern banking institutions?",
+  "What caused the Haitian Revolution — the only successful slave revolt?",
+  "How did the Viking Age reshape Europe?",
+  "What was the Byzantine Empire's role in preserving knowledge?",
+  "How did the transatlantic slave trade fund modern banking?",
+  "What caused the fall of the Maya civilization?",
 ];
 
 // ── Tool call block (collapsible) ─────────────────────────────
@@ -84,8 +92,10 @@ function AgentCard({ agentId, output, toolCalls, showReasoning, T }) {
 // ── Image card ────────────────────────────────────────────────
 function ImageCard({ image, index, T }) {
   const [big, setBig] = useState(false);
-  if (!image?.image_b64) return null;
-  const src = `data:${image.mime_type||"image/png"};base64,${image.image_b64}`;
+  if (!image?.src) return null;
+
+  const isWikimedia = image.type === "url";
+  const sourceLabel = isWikimedia ? "Wikimedia Commons" : (image.model || "Imagen 4 Fast");
 
   return (
     <>
@@ -93,28 +103,43 @@ function ImageCard({ image, index, T }) {
         <div style={{ display:"flex", alignItems:"center", gap:10, padding:"11px 16px", borderBottom:`1px solid ${T.border}`, background:"rgba(155,89,182,0.08)" }}>
           <span style={{ fontSize:18 }}>🎨</span>
           <span style={{ fontFamily:"'DM Sans',sans-serif", fontSize:11, fontWeight:700, color:"#9B59B6", textTransform:"uppercase", letterSpacing:"0.08em" }}>
-            Generated Image · Scene {index + 1}
+            Visual · {isWikimedia ? "Found" : "Generated"} · Scene {index + 1}
           </span>
-          <span style={{ marginLeft:"auto", fontFamily:"'DM Sans',sans-serif", fontSize:10, color:"#9B59B6" }}>{image.model||"Imagen 4 Fast"}</span>
+          <span style={{ marginLeft:"auto", fontFamily:"'DM Sans',sans-serif", fontSize:10, color:"#9B59B6" }}>{sourceLabel}</span>
         </div>
-        <img src={src} alt="" onClick={()=>setBig(true)} style={{ width:"100%", maxHeight:340, objectFit:"cover", display:"block", cursor:"zoom-in" }}/>
-        {(image.prompt_used||image.prompt) && (
-          <div style={{ padding:"8px 14px", borderTop:`1px solid ${T.border}` }}>
+        <img src={image.src} alt="" onClick={()=>setBig(true)}
+          style={{ width:"100%", maxHeight:340, objectFit:"cover", display:"block", cursor:"zoom-in" }}
+          referrerPolicy="no-referrer"
+        />
+        {/* Caption row */}
+        <div style={{ padding:"8px 14px", borderTop:`1px solid ${T.border}` }}>
+          {isWikimedia && image.title && (
+            <p style={{ fontFamily:"'DM Sans',sans-serif", fontSize:10, color:T.ink, margin:"0 0 3px", fontWeight:500 }}>{image.title}</p>
+          )}
+          {isWikimedia && image.attribution && (
+            <p style={{ fontFamily:"'DM Sans',sans-serif", fontSize:9, color:T.inkFaint, margin:"0 0 2px" }}
+              dangerouslySetInnerHTML={{ __html: image.attribution.slice(0,200) }}/>
+          )}
+          {isWikimedia && image.license && (
+            <p style={{ fontFamily:"'DM Sans',sans-serif", fontSize:9, color:T.inkFaint, margin:0 }}>{image.license}</p>
+          )}
+          {!isWikimedia && image.prompt_used && (
             <p style={{ fontFamily:"'DM Sans',sans-serif", fontSize:10, color:T.inkLight, margin:0, fontStyle:"italic", lineHeight:1.5 }}>
-              {(image.prompt_used||image.prompt||"").slice(0,180)}…
+              {(image.prompt_used).slice(0,180)}…
             </p>
-          </div>
-        )}
+          )}
+        </div>
       </div>
       {big && (
         <div onClick={()=>setBig(false)} style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.93)", zIndex:9999, display:"flex", alignItems:"center", justifyContent:"center", cursor:"zoom-out" }}>
-          <img src={src} alt="" style={{ maxWidth:"92vw", maxHeight:"92vh", objectFit:"contain", borderRadius:8 }}/>
+          <img src={image.src} alt="" style={{ maxWidth:"92vw", maxHeight:"92vh", objectFit:"contain", borderRadius:8 }} referrerPolicy="no-referrer"/>
           <div style={{ position:"absolute", top:20, right:28, color:"rgba(255,255,255,0.5)", fontSize:28, cursor:"pointer" }}>✕</div>
         </div>
       )}
     </>
   );
 }
+
 
 // ── Video card ────────────────────────────────────────────────
 function VideoCard({ data, T }) {
@@ -205,22 +230,58 @@ function LoadingState({ stage, T }) {
 // ── Parse images from visualizer output ──────────────────────
 function extractImages(vizOutput) {
   if (!vizOutput) return [];
-  const scenes = vizOutput?.scenes || [];
-  return scenes
-    .filter(s => s.type === "generate_image" && s.result?.image_b64)
-    .map(s => ({
-      image_b64:   s.result.image_b64,
-      mime_type:   s.result.mime_type || "image/png",
-      prompt_used: s.input?.prompt || s.result.prompt_used || "",
-      model:       s.result.model || "Imagen 4 Fast",
-    }));
+  return (vizOutput?.scenes || [])
+    .filter(s => {
+      const r = s.result || {};
+      // New format: fetch_node_image returns image_url or image_b64
+      if (r.image_url) return true;
+      if (r.image_b64) return true;
+      // Old format: wikimedia returns url, generated returns image_b64
+      if (s.type === "wikimedia_image" && r.url) return true;
+      if (s.type === "generate_image" && r.image_b64) return true;
+      return false;
+    })
+    .map(s => {
+      const r = s.result || {};
+
+      // New format — image_url (Wikipedia or Wikimedia)
+      if (r.image_url) {
+        return {
+          src:         r.image_url,
+          type:        "url",
+          title:       r.alt || s.input?.query || "",
+          source:      r.source === "wikipedia" ? "Wikipedia" : "Wikimedia Commons",
+          attribution: "",
+          license:     "",
+        };
+      }
+
+      // Old wikimedia format
+      if (s.type === "wikimedia_image" && r.url) {
+        return {
+          src:         r.url,
+          type:        "url",
+          title:       r.title || "",
+          attribution: r.attribution || "",
+          license:     r.license || "",
+          source:      "Wikimedia Commons",
+        };
+      }
+
+      // Generated image (base64) — new or old format
+      return {
+        src:         `data:${r.mime_type || "image/png"};base64,${r.image_b64}`,
+        type:        "generated",
+        prompt_used: s.input?.prompt || r.prompt_used || "",
+        model:       r.model || "Imagen 4 Fast",
+        source:      "AI Generated",
+      };
+    });
 }
 
-function extractVideos(vizOutput) {
-  if (!vizOutput) return [];
-  return (vizOutput?.scenes || [])
-    .filter(s => s.type === "generate_video_prompt" && s.result?.video_prompt)
-    .map(s => s.result);
+// Video generation is halted — returns empty
+function extractVideos(_vizOutput) {
+  return [];
 }
 
 function extractToolCalls(events, agentName) {
@@ -288,6 +349,44 @@ function parseConnectionsForBoard(result, question) {
 }
 
 
+// ── Memory system ─────────────────────────────────────────────
+const MEMORY_KEY = "severus_learning_memory";
+const MAX_MEMORY = 20;
+
+function loadMemory() {
+  try { return JSON.parse(localStorage.getItem(MEMORY_KEY) || "[]"); }
+  catch { return []; }
+}
+
+function saveToMemory(entry) {
+  try {
+    const mem = loadMemory();
+    mem.unshift(entry);
+    localStorage.setItem(MEMORY_KEY, JSON.stringify(mem.slice(0, MAX_MEMORY)));
+  } catch {}
+}
+
+function buildPastContext(currentQuestion, memory) {
+  if (!memory.length) return "";
+  const qWords = currentQuestion.toLowerCase().split(/\s+/).filter(w => w.length > 3);
+  const related = memory.filter(m => {
+    const mText = (m.topics || []).join(" ").toLowerCase();
+    return qWords.some(w => mText.includes(w));
+  });
+  const recent = memory.slice(0, 3);
+  const combined = [...new Map([...related, ...recent].map(m => [m.question, m])).values()].slice(0, 5);
+  if (!combined.length) return "";
+  return combined.map(m => m.topics?.join(", ")).filter(Boolean).join("; ");
+}
+
+function extractTopics(result) {
+  const text = (result?.historian_output || "") + " " + (result?.investigator_output || "");
+  const skip = new Set(["The","This","That","These","Their","There","They","Its","Our","His","Her","Key","Note","Source","Also","From","With","When","Where"]);
+  return [...new Set(text.match(/\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+){0,2})\b/g) || [])]
+    .filter(m => !m.split(" ").some(w => skip.has(w)) && m.length > 3)
+    .slice(0, 8);
+}
+
 // ── Main component ────────────────────────────────────────────
 export default function ResearchSection({ T, onPushToBoard, onNavigate, savedState, onSaveState }) {
   const [question,      setQuestion]      = useState(savedState?.question || "");
@@ -297,17 +396,16 @@ export default function ResearchSection({ T, onPushToBoard, onNavigate, savedSta
   const [stage,         setStage]         = useState("historian");
   const [result,        setResult]        = useState(savedState?.result || null);
   const [error,         setError]         = useState(null);
-  const bottomRef = useRef(null);
+  const [memory,        setMemory]        = useState(() => loadMemory());
+  const bottomRef  = useRef(null);
   const stageTimer = useRef(null);
 
   useEffect(() => () => clearInterval(stageTimer.current), []);
   useEffect(() => { bottomRef.current?.scrollIntoView({behavior:"smooth"}); }, [result]);
 
-  // Animate through stages while loading
   const startStageAnimation = () => {
     const stages = ["historian","investigator","visualizer","guide"];
-    // Approximate timings based on observed run times
-    const delays  = [0, 15000, 30000, 45000];
+    const delays  = [0, 12000, 26000, 42000];
     delays.forEach((d, i) => {
       setTimeout(() => { if (stageTimer.current !== null) setStage(stages[i]); }, d);
     });
@@ -319,15 +417,22 @@ export default function ResearchSection({ T, onPushToBoard, onNavigate, savedSta
     setError(null);
     setResult(null);
     setStage("historian");
-    stageTimer.current = 1; // mark active
-
+    stageTimer.current = 1;
     startStageAnimation();
+
+    const currentMemory = loadMemory();
+    const pastContext = buildPastContext(q, currentMemory);
 
     try {
       const res = await fetch(`${API_URL}/research`, {
         method:  "POST",
         headers: { "Content-Type": "application/json" },
-        body:    JSON.stringify({ question: q, narrative_depth: depth, show_reasoning: true }),
+        body:    JSON.stringify({
+          question: q,
+          narrative_depth: depth,
+          show_reasoning: true,
+          past_context: pastContext,
+        }),
       });
 
       if (!res.ok) {
@@ -338,6 +443,14 @@ export default function ResearchSection({ T, onPushToBoard, onNavigate, savedSta
       const data = await res.json();
       stageTimer.current = null;
       setResult(data);
+
+      // Save to memory
+      const topics = extractTopics(data);
+      if (topics.length) {
+        saveToMemory({ question: q, topics, timestamp: Date.now() });
+        setMemory(loadMemory());
+      }
+
       if (onSaveState) onSaveState({ question: q, depth, result: data });
 
     } catch (e) {
@@ -348,7 +461,6 @@ export default function ResearchSection({ T, onPushToBoard, onNavigate, savedSta
     }
   };
 
-  // Derived display data
   const images    = result ? extractImages(result.visualizer_output)   : [];
   const videos    = result ? extractVideos(result.visualizer_output)   : [];
   const allEvents = result?.events || [];
@@ -438,13 +550,12 @@ export default function ResearchSection({ T, onPushToBoard, onNavigate, savedSta
                 <AgentCard agentId="visualizer" output={result.visualizer_output.summary} toolCalls={extractToolCalls(allEvents,"visualizer")} showReasoning={showReasoning} T={T}/>
               )}
               {images.map((img,i) => <ImageCard key={i} image={img} index={i} T={T}/>)}
-              {videos.map((vid,i) => <VideoCard key={i} data={vid} T={T}/>)}
 
               {/* Guide narrative */}
-              <GuideCard narrative={result.guide_narrative} depth={depth} T={T}/>
+              <GuideCard narrative={result.guide_narrative || result.teacher_output} depth={depth} T={T}/>
 
               {/* Map to PI Board — with AI-generated preview */}
-              {result.guide_narrative && onPushToBoard && (() => {
+              {(result.guide_narrative || result.teacher_output) && onPushToBoard && (() => {
                 const {nodes: piNodes, edges: piEdges} = parseConnectionsForBoard(result, question);
                 if (piNodes.length === 0) return null;
                 const NODE_COLORS = { person:"#009AD8", place:"#E05A2B", event:"#9B59B6", institution:"#4CAF7D", trade:"#E6A817", ship:"#E03030", document:"#708090" };
@@ -548,7 +659,35 @@ export default function ResearchSection({ T, onPushToBoard, onNavigate, savedSta
               </div>
               {images.map((img,i)=>(
                 <div key={i} style={{ borderRadius:7, overflow:"hidden", marginBottom:7, border:`1px solid ${T.border}`, cursor:"pointer" }}>
-                  <img src={`data:${img.mime_type||"image/png"};base64,${img.image_b64}`} alt="" style={{ width:"100%", height:65, objectFit:"cover", display:"block" }}/>
+                  <img src={img.src} alt="" style={{ width:"100%", height:65, objectFit:"cover", display:"block" }} referrerPolicy="no-referrer"/>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Memory panel */}
+          {memory.length > 0 && (
+            <div style={{ padding:"10px 14px", borderTop:`1px solid ${T.border}` }}>
+              <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:8 }}>
+                <div style={{ fontFamily:"'DM Sans',sans-serif", fontSize:9, letterSpacing:"0.1em", textTransform:"uppercase", color:T.accent, fontWeight:600 }}>
+                  📚 Prior Knowledge
+                </div>
+                <button onClick={()=>{ localStorage.removeItem("severus_learning_memory"); setMemory([]); }}
+                  style={{ background:"transparent", border:"none", color:T.inkFaint, fontSize:9, cursor:"pointer", fontFamily:"'DM Sans',sans-serif" }}>
+                  Clear
+                </button>
+              </div>
+              {memory.slice(0,5).map((m,i) => (
+                <div key={i} style={{ marginBottom:6, padding:"5px 8px", background:T.card, border:`1px solid ${T.border}`, borderRadius:6, cursor:"pointer" }}
+                  onClick={()=>{ setQuestion(m.question); }}>
+                  <div style={{ fontFamily:"'DM Sans',sans-serif", fontSize:10, color:T.ink, marginBottom:2, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>
+                    {m.question.slice(0,40)}{m.question.length>40?"…":""}
+                  </div>
+                  <div style={{ display:"flex", flexWrap:"wrap", gap:3 }}>
+                    {(m.topics||[]).slice(0,3).map((t,j) => (
+                      <span key={j} style={{ fontFamily:"'DM Sans',sans-serif", fontSize:8, color:T.accent, background:T.accent+"15", padding:"1px 5px", borderRadius:10 }}>{t}</span>
+                    ))}
+                  </div>
                 </div>
               ))}
             </div>
