@@ -5,6 +5,7 @@ import anthropic
 from utils import create_with_retry
 from tools.external_apis import search_slavevoyages
 from tools.knowledge_base import search_knowledge_base, get_connections
+from core.config import settings
 
 SYSTEM = """You are The Investigator for the Severus World History Platform.
 
@@ -127,7 +128,7 @@ async def run_investigator(state: dict) -> dict:
 
     for _ in range(8):
         resp = create_with_retry(client, 
-            model="claude-sonnet-4-20250514",
+            model=settings.ANTHROPIC_AI_MODEL,
             max_tokens=2000,
             system=SYSTEM,
             tools=TOOLS,

@@ -1,0 +1,281 @@
+<mxfile host="65bd71144e">
+    <diagram id="k9g_9AWYuI8wDzs7QAeU" name="Page-1">
+        <mxGraphModel dx="3280" dy="2003" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="title" value="Severus — Universal Learning Engine" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=22;fontStyle=1;fontColor=#1A1610;" parent="1" vertex="1">
+                    <mxGeometry x="400" y="-40" width="700" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="question" value="&quot;How did the universe begin?&quot;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;fontStyle=2;" parent="1" vertex="1">
+                    <mxGeometry x="560" y="140" width="380" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;" parent="1" target="question" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="750" y="110" as="sourcePoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="router_bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f0e6ff;strokeColor=#9B59B6;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="380" y="220" width="740" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="router_title" value="⚡ SUBJECT ROUTER" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontStyle=1;fontColor=#9B59B6;" parent="1" vertex="1">
+                    <mxGeometry x="395" y="225" width="200" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="router_desc" value="Classifies every incoming question before any agent runs" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#666666;" parent="1" vertex="1">
+                    <mxGeometry x="395" y="245" width="350" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="r1" value="📚 Subject&#xa;History / Biology&#xa;Chemistry / Law..." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9B59B6;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="395" y="270" width="120" height="65" as="geometry"/>
+                </mxCell>
+                <mxCell id="r2" value="🎯 Question Type&#xa;Causal / Conceptual&#xa;Biographical / Process" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9B59B6;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="525" y="270" width="130" height="65" as="geometry"/>
+                </mxCell>
+                <mxCell id="r3" value="🛠 Tools to Use&#xa;Web Search / Wikipedia&#xa;PubMed / Wolfram..." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9B59B6;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="665" y="270" width="130" height="65" as="geometry"/>
+                </mxCell>
+                <mxCell id="r4" value="🎨 Visualizer Mode&#xa;Historical Image&#xa;Diagram / None" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9B59B6;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="805" y="270" width="120" height="65" as="geometry"/>
+                </mxCell>
+                <mxCell id="r5" value="📖 Narrative Style&#xa;Documentary&#xa;Step-by-step / Analytical" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9B59B6;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="935" y="270" width="130" height="65" as="geometry"/>
+                </mxCell>
+                <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;" parent="1" source="question" target="router_bg" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="learner_bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="220" width="290" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="learner_title" value="👤 LEARNER PROFILE" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=12;fontStyle=1;fontColor=#2d7a2d;" parent="1" vertex="1">
+                    <mxGeometry x="70" y="215" width="200" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="lp1" value="📋 Concepts Encountered" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="70" y="245" width="180" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="lp2" value="📊 Confidence per Concept" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="70" y="280" width="180" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="lp3" value="🔗 Prior Knowledge Links" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="70" y="315" width="180" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="ke_bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="1160" y="220" width="240" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="ke_title" value="🧠 KNOWLEDGE ENGINE" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=12;fontStyle=1;fontColor=#b46504;" parent="1" vertex="1">
+                    <mxGeometry x="1175" y="225" width="220" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="ke1" value="🌐 Web Search (Tavily)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="1205" y="250" width="160" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="ke2" value="📖 Wikipedia REST API" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="1205" y="285" width="160" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="ke3" value="🗂 Entity + Concept Graph" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="1205" y="320" width="160" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" parent="1" source="router_bg" target="learner_bg" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e4" style="edgeStyle=orthogonalEdgeStyle;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" parent="1" source="router_bg" target="ke_bg" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pipeline_bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;strokeWidth=2;dashed=1;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="420" width="1420" height="240" as="geometry"/>
+                </mxCell>
+                <mxCell id="pipeline_title" value="⚙️ AGENT PIPELINE" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=12;fontStyle=1;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="75" y="420" width="200" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="pipeline_sub" value="Configurable per subject — agents, tools and order defined by Subject Router" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=10;fontColor=#666666;" parent="1" vertex="1">
+                    <mxGeometry x="75" y="445" width="500" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="agent1" value="🔬 RESEARCHER&#xa;&#xa;Web search + Wikipedia&#xa;+ User history&#xa;&#xa;Outputs: structured JSON&#xa;facts, timeline, entities,&#xa;image subjects" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;fontStyle=0;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="475" width="180" height="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="agent2" value="🔗 CONNECTOR&#xa;&#xa;Entity graph lookup&#xa;+ Web search for&#xa;modern legacy&#xa;&#xa;Outputs: connections,&#xa;PI board JSON" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="420" y="475" width="180" height="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="agent3" value="🎨 VISUALIZER&#xa;&#xa;Imagen 4 Fast&#xa;(historical image /&#xa;scientific diagram)&#xa;&#xa;Outputs: base64 image,&#xa;video prompt" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9B59B6;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="760" y="475" width="180" height="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="agent4" value="🧭 NARRATOR&#xa;&#xa;Synthesizes all&#xa;agent outputs into&#xa;a subject-appropriate&#xa;narrative&#xa;&#xa;Outputs: full story" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="1155" y="475" width="180" height="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="parallel_label" value="PARALLEL" style="text;html=1;strokeColor=#999999;fillColor=#ffffff;align=center;fontSize=9;fontStyle=1;fontColor=#999999;dashed=1;" parent="1" vertex="1">
+                    <mxGeometry x="590" y="535" width="220" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="parallel_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#999999;dashed=1;strokeWidth=1;" parent="1" vertex="1">
+                    <mxGeometry x="405" y="467.5" width="545" height="155" as="geometry"/>
+                </mxCell>
+                <mxCell id="ea1" style="edgeStyle=orthogonalEdgeStyle;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" parent="1" source="agent1" target="agent2" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ea1b" style="edgeStyle=orthogonalEdgeStyle;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" parent="1" source="agent1" target="agent3" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="290" y="545"/>
+                            <mxPoint x="290" y="545"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="ea2" style="edgeStyle=orthogonalEdgeStyle;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" parent="1" source="agent2" target="agent4" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ea3" style="edgeStyle=orthogonalEdgeStyle;exitX=1;exitY=0.5;" parent="1" source="agent3" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="1090" y="545" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="er1" style="edgeStyle=orthogonalEdgeStyle;exitX=0.5;exitY=1;" parent="1" source="router_bg" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="40" y="390" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="750" y="390"/>
+                            <mxPoint x="170" y="390"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="elp" style="edgeStyle=orthogonalEdgeStyle;exitX=0.5;exitY=1;entryX=0;entryY=0.5;" parent="1" source="learner_bg" target="agent1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="185" y="390"/>
+                            <mxPoint x="30" y="390"/>
+                            <mxPoint x="30" y="545"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="eke" style="edgeStyle=orthogonalEdgeStyle;exitX=0.5;exitY=1;entryX=0.5;entryY=0;exitDx=0;exitDy=0;entryDx=0;entryDy=0;" parent="1" source="ke_bg" target="examples_bg" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="output_bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="700" width="1490" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="output_title" value="📤 OUTPUT LAYER" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=12;fontStyle=1;fontColor=#b85450;" parent="1" vertex="1">
+                    <mxGeometry x="75" y="705" width="200" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="o1" value="📋 Facts + Timeline&#xa;Structured, sourced" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="730" width="190" height="65" as="geometry"/>
+                </mxCell>
+                <mxCell id="o2" value="🔗 Connection Map&#xa;PI Board JSON" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="290" y="730" width="190" height="65" as="geometry"/>
+                </mxCell>
+                <mxCell id="o3" value="🖼 Generated Visuals&#xa;Images + Video prompts" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="500" y="730" width="190" height="65" as="geometry"/>
+                </mxCell>
+                <mxCell id="o4" value="📖 Narrative Story&#xa;Subject-appropriate style" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="710" y="730" width="190" height="65" as="geometry"/>
+                </mxCell>
+                <mxCell id="o5" value="🗺 Updated Learner&#xa;Profile + Concept Graph" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="920" y="730" width="190" height="65" as="geometry"/>
+                </mxCell>
+                <mxCell id="o6" value="💡 Prerequisite Flags&#xa;What to study next" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="1130" y="730" width="190" height="65" as="geometry"/>
+                </mxCell>
+                <mxCell id="o7" value="🏫 Teacher Dashboard&#xa;Class progress signals" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="1340" y="730" width="190" height="65" as="geometry"/>
+                </mxCell>
+                <mxCell id="eout" style="edgeStyle=orthogonalEdgeStyle;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" parent="1" source="agent4" target="output_bg" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1245" y="670"/>
+                            <mxPoint x="805" y="670"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="eout3" style="edgeStyle=orthogonalEdgeStyle;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" parent="1" source="agent3" target="output_bg" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="850" y="670"/>
+                            <mxPoint x="805" y="670"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="db_bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="110" y="870" width="1390" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="db_title" value="🗄 DATABASE LAYER (Supabase / Postgres)" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=12;fontStyle=1;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="125" y="877.5" width="400" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="db1" value="concepts&#xa;Entity + concept nodes" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="130" y="900" width="140" height="85" as="geometry"/>
+                </mxCell>
+                <mxCell id="db2" value="concept edges&lt;br&gt;Relationships + labels" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="290" y="900" width="140" height="85" as="geometry"/>
+                </mxCell>
+                <mxCell id="db3" value="users&#xa;Learner accounts" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="450" y="900" width="140" height="85" as="geometry"/>
+                </mxCell>
+                <mxCell id="db4" value="sessions&#xa;Every research session" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="607.5" y="902.5" width="140" height="85" as="geometry"/>
+                </mxCell>
+                <mxCell id="db5" value="learner concepts&lt;br&gt;Confidence per concept" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="770" y="902.5" width="140" height="85" as="geometry"/>
+                </mxCell>
+                <mxCell id="db6" value="subjects&#xa;Subject configurations" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="930" y="900" width="140" height="85" as="geometry"/>
+                </mxCell>
+                <mxCell id="db7" value="institutions&#xa;School accounts" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="1090" y="900" width="140" height="85" as="geometry"/>
+                </mxCell>
+                <mxCell id="db8" value="curricula&#xa;Required concept sequences" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="1250" y="900" width="170" height="85" as="geometry"/>
+                </mxCell>
+                <mxCell id="edb" style="edgeStyle=orthogonalEdgeStyle;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" parent="1" source="output_bg" target="db_bg" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="efeedback" value="Updates learner profile&#xa;after each session" style="edgeStyle=orthogonalEdgeStyle;exitX=0;exitY=0.5;entryX=0;entryY=0.5;dashed=1;endArrow=block;startArrow=none;" parent="1" source="db_bg" target="learner_bg" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="110" y="945"/>
+                            <mxPoint x="-30" y="945"/>
+                            <mxPoint x="-30" y="285"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="examples_bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f0f0f0;strokeColor=#999999;dashed=1;" parent="1" vertex="1">
+                    <mxGeometry x="1135" y="430" width="290" height="220" as="geometry"/>
+                </mxCell>
+                <mxCell id="examples_title" value="📌 Subject Examples" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;fontStyle=1;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="1150" y="435" width="200" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="ex1" value="📜 History → Documentary narrative, Wikipedia, historical images" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=9;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="1150" y="460" width="260" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="ex2" value="🔬 Biology → Process explanation, PubMed, scientific diagrams" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=9;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="1150" y="495" width="260" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="ex3" value="⚖️ Law → Analytical style, case law DB, no visualizer" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=9;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="1150" y="530" width="260" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="ex4" value="➗ Maths → Step-by-step, Wolfram Alpha, no visualizer" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=9;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="1150" y="565" width="260" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="ex5" value="💊 Medicine → Clinical style, PubMed, anatomical diagrams" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=9;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="1150" y="600" width="260" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend_bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#cccccc;" parent="1" vertex="1">
+                    <mxGeometry x="110" y="1030" width="710" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="leg1" value="⬛ Agent Pipeline" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=10;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="125" y="1038" width="120" height="24" as="geometry"/>
+                </mxCell>
+                <mxCell id="leg2" value="🟦 Researcher / Research" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=10;fontColor=#6c8ebf;" parent="1" vertex="1">
+                    <mxGeometry x="250" y="1038" width="150" height="24" as="geometry"/>
+                </mxCell>
+                <mxCell id="leg3" value="🟩 Learner / Memory" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=10;fontColor=#82b366;" parent="1" vertex="1">
+                    <mxGeometry x="405" y="1038" width="130" height="24" as="geometry"/>
+                </mxCell>
+                <mxCell id="leg4" value="🟧 Knowledge Sources" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=10;fontColor=#d79b00;" parent="1" vertex="1">
+                    <mxGeometry x="540" y="1038" width="150" height="24" as="geometry"/>
+                </mxCell>
+                <mxCell id="leg5" value="🟥 Output / Institutional" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=10;fontColor=#b85450;" parent="1" vertex="1">
+                    <mxGeometry x="660" y="1038" width="160" height="24" as="geometry"/>
+                </mxCell>
+                <mxCell id="2" style="edgeStyle=none;html=1;entryX=0.302;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="agent2" target="output_bg">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="" style="html=1;verticalLabelPosition=bottom;align=center;labelBackgroundColor=#ffffff;verticalAlign=top;strokeWidth=2;strokeColor=#0080F0;shadow=0;dashed=0;shape=mxgraph.ios7.icons.user;" vertex="1" parent="1">
+                    <mxGeometry x="707.5" y="10" width="87.5" height="90" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
