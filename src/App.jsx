@@ -256,6 +256,7 @@ const SECTIONS = [
   { id:"explore",     label:"Explore",     icon:"globe",   colorKey:"info",    tagline:"The Interactive Globe",   status:"active" },
   { id:"timeline",    label:"Timeline",    icon:"clock",   colorKey:"accent",  tagline:"315,000 BCE → Present",   status:"active" },
   { id:"learn",       label:"Learn",       icon:"book",    colorKey:"info",    tagline:"People & Civilizations",  status:"active" },
+  { id:"vr",          label:"VR Explorer", icon:"vr",      colorKey:"success", tagline:"Immersive History",       status:"active" },
   { id:"investigate", label:"Investigate", icon:"connect", colorKey:"slate",   tagline:"The PI Board",            status:"active" },
   { id:"research",    label:"Research",    icon:"ai",      colorKey:"success", tagline:"AI Research Suite",       status:"active" },
 ];
@@ -288,6 +289,10 @@ function Ic({ n, s=16, c="currentColor", sw=1.6 }) {
     link:   <><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></>,
     warning:<><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></>,
     check:  <path d="M5 13l4 4L19 7"/>,
+    vr:     <><rect x="2" y="8" width="20" height="10" rx="4"/><circle cx="8.5" cy="13" r="2"/><circle cx="15.5" cy="13" r="2"/><path d="M2 11h20"/></>,
+    cube:   <><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></>,
+    settings:<><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></>,
+    key:    <><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 017.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></>,
   };
   return <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round" style={st}>{P[n]}</svg>;
 }
@@ -1166,6 +1171,198 @@ function ContributionsTab({ T, search="", setSearch }) {
 }
 
 
+// ── NODE INFO PANEL ───────────────────────────────────────────
+// Shows Wikipedia image + summary + AI context when a node is selected.
+
+function NodeInfoPanel({ node, nodes, edges, T }) {
+  const [wikiImg,   setWikiImg]   = useState(null);
+  const [wikiSum,   setWikiSum]   = useState("");
+  const [wikiLoading, setWikiLoading] = useState(false);
+  const [aiContext, setAiContext]  = useState(null);
+  const [aiLoading, setAiLoading] = useState(false);
+  const meta = NODE_TYPES[node.type] || NODE_TYPES.person;
+
+  // ── Wikipedia fetch ──────────────────────────────────────────
+  useEffect(() => {
+    setWikiImg(null); setWikiSum(""); setAiContext(null);
+    setWikiLoading(true);
+    fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(node.label.replace(/ /g,"_"))}`)
+      .then(r => r.ok ? r.json() : null)
+      .then(d => {
+        if (d?.thumbnail?.source) setWikiImg(d.thumbnail.source.replace(/\/\d+px-/,"/360px-"));
+        if (d?.extract)           setWikiSum(d.extract.slice(0, 340));
+      })
+      .catch(() => {})
+      .finally(() => setWikiLoading(false));
+  }, [node.id]);
+
+  // ── AI context fetch ─────────────────────────────────────────
+  useEffect(() => {
+    const nodeEdges = edges.filter(e => e.from === node.id || e.to === node.id);
+    if (nodeEdges.length === 0) return;
+    setAiContext(null);
+    setAiLoading(true);
+
+    const storedKey = getStoredKey();
+    if (!storedKey) {
+      setAiContext("NO_KEY");
+      setAiLoading(false);
+      return;
+    }
+
+    const connectionLines = nodeEdges.map(edge => {
+      const otherId = edge.from === node.id ? edge.to : edge.from;
+      const other   = nodes.find(n => n.id === otherId);
+      const dir     = edge.from === node.id ? "connects TO" : "connected FROM";
+      return other ? `• ${node.label} ${dir} "${other.label}" (${edge.label})` : null;
+    }).filter(Boolean).join("\n");
+
+    const allLabels = nodes.map(n => n.label).join(", ");
+
+    fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": storedKey,
+        "anthropic-version": "2023-06-01",
+        "anthropic-dangerous-direct-browser-access": "true",
+      },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 400,
+        messages: [{ role: "user", content:
+          `You are an expert world historian on the Severus History platform.
+
+A researcher clicked on "${node.label}" (type: ${node.type}) on their investigation board.
+
+All nodes on this board: ${allLabels}
+
+This node's connections:
+${connectionLines}
+
+Reply with EXACTLY these 3 sections (under 180 words total):
+
+BACKGROUND
+2 sentences: what is ${node.label} historically?
+
+ROLE IN INVESTIGATION
+2 sentences: why does this node appear here? What does it connect?
+
+KEY INSIGHT
+One sharp sentence: the most surprising or important thing about this node.`
+        }],
+      }),
+    })
+      .then(r => r.json())
+      .then(d => { const t = d.content?.[0]?.text; if (t) setAiContext(t); })
+      .catch(() => {})
+      .finally(() => setAiLoading(false));
+  }, [node.id, edges.length]);
+
+  // Parse sections
+  const sections = (() => {
+    if (!aiContext) return null;
+    const bg      = aiContext.match(/BACKGROUND\s*\n([\s\S]*?)(?=\n\s*ROLE IN|$)/i)?.[1]?.trim();
+    const role    = aiContext.match(/ROLE IN INVESTIGATION\s*\n([\s\S]*?)(?=\n\s*KEY INSIGHT|$)/i)?.[1]?.trim();
+    const insight = aiContext.match(/KEY INSIGHT\s*\n([\s\S]*?)$/i)?.[1]?.trim();
+    return { bg, role, insight };
+  })();
+
+  const Shimmer = () => (
+    <div style={{height:12,borderRadius:4,marginBottom:6,
+      background: T.name==="dark"?"rgba(255,255,255,0.06)":"rgba(0,0,0,0.06)",
+      animation:"shimmer 1.4s ease-in-out infinite"}}/>
+  );
+
+  return (
+    <>
+      <style>{`@keyframes shimmer{0%,100%{opacity:.4}50%{opacity:.9}}`}</style>
+
+      {/* Wikipedia image header */}
+      <div style={{height:110,background:`linear-gradient(135deg,${meta.color}30,${meta.color}08)`,position:"relative",flexShrink:0,overflow:"hidden"}}>
+        {wikiImg && (
+          <img src={wikiImg} alt={node.label}
+            style={{width:"100%",height:"100%",objectFit:"cover",objectPosition:"center top",filter:"brightness(0.75)"}}
+            onError={e=>e.target.style.display="none"}/>
+        )}
+        {wikiLoading && !wikiImg && (
+          <div style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center"}}>
+            <span style={{fontSize:28,opacity:0.4}}>{meta.icon}</span>
+          </div>
+        )}
+        <div style={{position:"absolute",inset:0,background:"linear-gradient(to top,rgba(0,0,0,0.8),transparent 55%)"}}/>
+        <div style={{position:"absolute",bottom:8,left:10,right:10,display:"flex",alignItems:"center",gap:6}}>
+          <span style={{fontSize:15}}>{meta.icon}</span>
+          <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:8,fontWeight:700,color:"rgba(255,255,255,0.8)",textTransform:"uppercase",letterSpacing:"0.08em",background:meta.color+"70",padding:"2px 7px",borderRadius:20}}>{meta.label}</span>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div style={{flex:1,overflowY:"auto",padding:"12px 14px"}}>
+        <h3 style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:700,color:T.ink,margin:"0 0 4px"}}>{node.label}</h3>
+
+        {/* Wikipedia summary */}
+        {(wikiLoading || wikiSum) && (
+          <div style={{marginBottom:12}}>
+            <div style={{display:"flex",alignItems:"center",gap:5,marginBottom:5}}>
+              <div style={{width:3,height:11,background:"#00BCD4",borderRadius:2}}/>
+              <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.1em",textTransform:"uppercase",color:"#00BCD4",fontWeight:600}}>Wikipedia</span>
+            </div>
+            {wikiLoading && !wikiSum ? <><Shimmer/><Shimmer/></> :
+              <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.inkMid,lineHeight:1.7,margin:0}}>{wikiSum}{wikiSum && "…"}</p>}
+          </div>
+        )}
+
+        {/* AI Background */}
+        {(aiLoading || (sections?.bg && aiContext !== "NO_KEY")) && (
+          <div style={{marginBottom:10}}>
+            <div style={{display:"flex",alignItems:"center",gap:5,marginBottom:5}}>
+              <div style={{width:3,height:11,background:meta.color,borderRadius:2}}/>
+              <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.1em",textTransform:"uppercase",color:meta.color,fontWeight:600}}>Background</span>
+            </div>
+            {aiLoading && !sections?.bg ? <><Shimmer/><Shimmer/></> :
+              <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.inkMid,lineHeight:1.7,margin:0}}>{sections?.bg}</p>}
+          </div>
+        )}
+
+        {/* AI Role */}
+        {(aiLoading || (sections?.role && aiContext !== "NO_KEY")) && (
+
+          <div style={{marginBottom:10,padding:"9px 11px",background:meta.color+"12",border:`1px solid ${meta.color}30`,borderRadius:8}}>
+            <div style={{display:"flex",alignItems:"center",gap:5,marginBottom:5}}>
+              <div style={{width:3,height:11,background:meta.color,borderRadius:2}}/>
+              <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.1em",textTransform:"uppercase",color:meta.color,fontWeight:600}}>Role in this board</span>
+            </div>
+            {aiLoading && !sections?.role ? <Shimmer/> :
+              <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.ink,lineHeight:1.7,margin:0,fontStyle:"italic"}}>{sections?.role}</p>}
+          </div>
+        )}
+
+        {/* AI Key insight */}
+        {sections?.insight && aiContext !== "NO_KEY" && (
+          <div style={{marginBottom:10,padding:"8px 10px",background:T.accentDim,border:`1px solid ${T.accent}30`,borderRadius:8,display:"flex",gap:7,alignItems:"flex-start"}}>
+            <span style={{fontSize:14,flexShrink:0}}>💡</span>
+            <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.ink,lineHeight:1.65,margin:0}}>{sections.insight}</p>
+          </div>
+        )}
+
+        {/* No key prompt */}
+        {aiContext === "NO_KEY" && edges.filter(e=>e.from===node.id||e.to===node.id).length > 0 && (
+          <div style={{marginBottom:10,padding:"10px 12px",background:T.accentDim,border:`1px solid ${T.accent}40`,borderRadius:8}}>
+            <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:600,color:T.accent,marginBottom:4}}>Add your API key for AI analysis</div>
+            <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:T.inkMid,margin:0,lineHeight:1.6}}>Click <b>Add Key</b> in the top bar to get Background, Role, and Key Insight for every node.</p>
+          </div>
+        )}
+        {!aiLoading && !aiContext && edges.filter(e=>e.from===node.id||e.to===node.id).length===0 && (
+          <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:T.inkFaint,fontStyle:"italic",lineHeight:1.6}}>
+            Connect this node to others to get AI analysis of its role in the investigation.
+          </p>
+        )}
+      </div>
+    </>
+  );
+}
+
 // ── INVESTIGATE — MODERN PI BOARD ────────────────────────────
 
 const NODE_TYPES = {
@@ -1529,26 +1726,27 @@ function InvestigateSection({ T, nodes: propNodes, edges: propEdges, setNodes: s
           {panelTab==="info"&&(
             <div style={{flex:1,overflowY:"auto"}}>
               {selNodeData&&(
-                <div style={{animation:"fade-in 0.2s ease"}}>
-                  {/* Node header with colour */}
-                  {(()=>{
-                    const meta=NODE_TYPES[selNodeData.type]||NODE_TYPES.person;
-                    const nodeEdges=edges.filter(e=>e.from===selNodeData.id||e.to===selNodeData.id);
-                    return (
-                      <>
-                        <div style={{height:70,background:`linear-gradient(135deg,${meta.color}30,${meta.color}10)`,display:"flex",alignItems:"center",gap:10,padding:"0 14px",borderBottom:`1px solid ${T.border}`,position:"relative"}}>
-                          <span style={{fontSize:22}}>{meta.icon}</span>
-                          <div style={{flex:1,minWidth:0}}>
-                            <div style={{fontFamily:"'Playfair Display',serif",fontSize:14,fontWeight:700,color:T.ink,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{selNodeData.label}</div>
-                            <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,color:meta.color,fontWeight:600,textTransform:"uppercase",letterSpacing:"0.07em"}}>{meta.label}</div>
-                          </div>
-                          <button onClick={()=>setSelNode(null)} style={{position:"absolute",top:8,right:8,width:20,height:20,borderRadius:"50%",background:"rgba(0,0,0,0.3)",border:"none",color:"rgba(255,255,255,0.7)",fontSize:10,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}>✕</button>
-                        </div>
-                        <div style={{padding:"12px 14px"}}>
+                <div style={{display:"flex",flexDirection:"column",height:"100%",animation:"fade-in 0.2s ease",overflow:"hidden"}}>
+
+                  {/* Wikipedia image + AI context */}
+                  <NodeInfoPanel node={selNodeData} nodes={nodes} edges={edges} T={T}/>
+
+                  {/* Divider */}
+                  <div style={{borderTop:`1px solid ${T.border}`,flexShrink:0}}/>
+
+                  {/* Connections + Notes + Actions */}
+                  <div style={{overflowY:"auto",padding:"10px 14px",flexShrink:0}}>
+                    {(()=>{
+                      const meta=NODE_TYPES[selNodeData.type]||NODE_TYPES.person;
+                      const nodeEdges=edges.filter(e=>e.from===selNodeData.id||e.to===selNodeData.id);
+                      return (
+                        <>
+                          <button onClick={()=>setSelNode(null)} style={{position:"absolute",top:8,right:8,width:20,height:20,borderRadius:"50%",background:"rgba(0,0,0,0.3)",border:"none",color:"rgba(255,255,255,0.7)",fontSize:10,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",zIndex:5}}>✕</button>
+
                           {/* Connections */}
                           {nodeEdges.length>0&&(
                             <>
-                              <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.1em",textTransform:"uppercase",color:T.inkFaint,marginBottom:8,fontWeight:600}}>
+                              <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.1em",textTransform:"uppercase",color:T.inkFaint,marginBottom:7,fontWeight:600}}>
                                 Connections ({nodeEdges.length})
                               </div>
                               {nodeEdges.map((edge,i)=>{
@@ -1559,10 +1757,10 @@ function InvestigateSection({ T, nodes: propNodes, edges: propEdges, setNodes: s
                                 if(!other) return null;
                                 return (
                                   <div key={i} onClick={()=>setSelNode(other.id)}
-                                    style={{display:"flex",alignItems:"center",gap:7,marginBottom:6,padding:"7px 9px",background:T.card,border:`1px solid ${T.border}`,borderRadius:8,borderLeft:`2.5px solid ${otherMeta.color}`,cursor:"pointer",transition:"all 0.15s"}}
+                                    style={{display:"flex",alignItems:"center",gap:7,marginBottom:5,padding:"6px 8px",background:T.card,border:`1px solid ${T.border}`,borderRadius:7,borderLeft:`2.5px solid ${otherMeta.color}`,cursor:"pointer",transition:"background 0.12s"}}
                                     onMouseEnter={e=>e.currentTarget.style.background=T.cardHov}
                                     onMouseLeave={e=>e.currentTarget.style.background=T.card}>
-                                    <span style={{fontSize:13}}>{otherMeta.icon}</span>
+                                    <span style={{fontSize:12}}>{otherMeta.icon}</span>
                                     <div style={{flex:1,minWidth:0}}>
                                       <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:600,color:T.ink,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{dir} {other.label}</div>
                                       <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,color:otherMeta.color,fontStyle:"italic"}}>{edge.label}</div>
@@ -1574,14 +1772,14 @@ function InvestigateSection({ T, nodes: propNodes, edges: propEdges, setNodes: s
                           )}
 
                           {/* Notes */}
-                          <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.1em",textTransform:"uppercase",color:T.inkFaint,margin:"12px 0 6px",fontWeight:600}}>Notes</div>
-                          <textarea value={selNodeData.note||""} rows={3}
+                          <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.1em",textTransform:"uppercase",color:T.inkFaint,margin:"10px 0 5px",fontWeight:600}}>Notes</div>
+                          <textarea value={selNodeData.note||""} rows={2}
                             onChange={e=>setNodes(prev=>prev.map(n=>n.id===selNodeData.id?{...n,note:e.target.value}:n))}
                             placeholder="Add investigation notes…"
-                            style={{width:"100%",padding:"8px 10px",background:T.card,border:`1px solid ${T.border}`,borderRadius:7,fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.ink,resize:"vertical",outline:"none",caretColor:T.accent,lineHeight:1.6,boxSizing:"border-box"}}/>
+                            style={{width:"100%",padding:"7px 9px",background:T.card,border:`1px solid ${T.border}`,borderRadius:7,fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.ink,resize:"none",outline:"none",caretColor:T.accent,lineHeight:1.55,boxSizing:"border-box"}}/>
 
                           {/* Actions */}
-                          <div style={{display:"flex",gap:6,marginTop:10}}>
+                          <div style={{display:"flex",gap:6,marginTop:8}}>
                             <button onClick={()=>setConnecting(selNodeData.id)}
                               style={{flex:1,padding:"6px",background:T.info+"18",border:`1px solid ${T.info}40`,borderRadius:6,color:T.info,fontFamily:"'DM Sans',sans-serif",fontSize:10,fontWeight:600,cursor:"pointer"}}>
                               🔗 Connect
@@ -1591,10 +1789,10 @@ function InvestigateSection({ T, nodes: propNodes, edges: propEdges, setNodes: s
                               🗑 Delete
                             </button>
                           </div>
-                        </div>
-                      </>
-                    );
-                  })()}
+                        </>
+                      );
+                    })()}
+                  </div>
                 </div>
               )}
 
@@ -1697,6 +1895,405 @@ function InvestigateSection({ T, nodes: propNodes, edges: propEdges, setNodes: s
 }
 
 
+
+// ── VR EXPLORER ───────────────────────────────────────────────
+
+// Phase 1: verified free .glb models (Sketchfab CC / public domain)
+// Phase 2: equirectangular panorama fallback (Wikimedia / public 360°)
+// Phase 3 (out of scope): AI-generated reconstruction
+
+const VR_SITES = [
+  {
+    id: "great-pyramid",
+    name: "Great Pyramid of Giza",
+    region: "Egypt",
+    era: "2560 BCE",
+    type: "civilization",
+    description: "The last surviving Wonder of the Ancient World. Built over 20 years by tens of thousands of workers, it remained the tallest structure on Earth for 3,800 years. Its internal chambers and precise astronomical alignment still baffle engineers today.",
+    // Phase 1: Sketchfab embed (free, CC license)
+    sketchfabId: "b59cb8e3b7e94244a5bbf04e4fb09870",
+    // Phase 2: equirectangular panorama from Wikimedia
+    panoramaUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Kheops-Pyramid.jpg/2560px-Kheops-Pyramid.jpg",
+    thumbnail: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Kheops-Pyramid.jpg/640px-Kheops-Pyramid.jpg",
+    facts: ["Originally 146.5 metres tall — tallest structure for 3,800 years","Built with ~2.3 million stone blocks, some weighing 80 tonnes","Astronomically aligned — faces true north within 0.05 degrees","Internal temperature constant at 20°C regardless of outside temperature"],
+    wikiUrl: "https://en.wikipedia.org/wiki/Great_Pyramid_of_Giza",
+  },
+  {
+    id: "colosseum",
+    name: "The Colosseum — Rome",
+    region: "Italy",
+    era: "80 CE",
+    type: "world",
+    description: "The largest amphitheatre ever built, holding up to 80,000 spectators. Gladiatorial combat, animal hunts, public executions, and mock sea battles were staged here. The engineering — retractable awning, 80 entrances, numbered seating — influenced stadium design for 2,000 years.",
+    sketchfabId: "3e30b4af0c7f43c88fe72b08cfa1489d",
+    panoramaUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Colosseo_2020.jpg/2560px-Colosseo_2020.jpg",
+    thumbnail: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Colosseo_2020.jpg/640px-Colosseo_2020.jpg",
+    facts: ["Held 50,000–80,000 spectators","Built in just 8–10 years (70–80 CE)","Had 80 entrances — crowds could empty in minutes","Underground hypogeum held animals, gladiators, and stage machinery"],
+    wikiUrl: "https://en.wikipedia.org/wiki/Colosseum",
+  },
+  {
+    id: "machu-picchu",
+    name: "Machu Picchu",
+    region: "Peru",
+    era: "1450 CE",
+    type: "world",
+    description: "The Inca citadel sits at 2,430 metres above sea level in the Andes. Built without mortar, its stones fit so precisely that a knife blade cannot pass between them. Abandoned during the Spanish conquest, it was unknown to the outside world until 1911.",
+    sketchfabId: "0e4e63a10ef94be4b4e27abd0e33a95b",
+    panoramaUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Machu_Picchu%2C_Peru.jpg/2560px-Machu_Picchu%2C_Peru.jpg",
+    thumbnail: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Machu_Picchu%2C_Peru.jpg/640px-Machu_Picchu%2C_Peru.jpg",
+    facts: ["Built at 2,430 metres — above the clouds","Stones fit without mortar, knife-blade precision","Earthquake-resistant design — stones 'dance' during tremors","Rediscovered by Hiram Bingham in 1911, unknown to outside world for centuries"],
+    wikiUrl: "https://en.wikipedia.org/wiki/Machu_Picchu",
+  },
+  {
+    id: "parthenon",
+    name: "The Parthenon — Athens",
+    region: "Greece",
+    era: "432 BCE",
+    type: "world",
+    description: "The temple of Athena on the Athenian Acropolis is the most influential building in Western architecture. Its seemingly straight lines are actually subtly curved — the columns bulge slightly and lean inward — optical illusions that make it appear perfectly straight from a distance.",
+    sketchfabId: "3a8f44b67bef42e8b5e17dd51b6bcd28",
+    panoramaUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/The_Parthenon_in_Athens.jpg/2560px-The_Parthenon_in_Athens.jpg",
+    thumbnail: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/The_Parthenon_in_Athens.jpg/640px-The_Parthenon_in_Athens.jpg",
+    facts: ["Has no perfectly straight lines — all subtly curved to appear straight","46 outer columns, each slightly different to appear identical","Held a 12-metre ivory and gold statue of Athena inside","The Elgin Marbles were removed by Britain in 1801 — Greece demands their return"],
+    wikiUrl: "https://en.wikipedia.org/wiki/Parthenon",
+  },
+  {
+    id: "angkor-wat",
+    name: "Angkor Wat",
+    region: "Cambodia",
+    era: "1150 CE",
+    type: "world",
+    description: "The world's largest religious monument — a temple city covering 402 acres. Built by the Khmer Empire as a Hindu temple, later converted to Buddhist use. Its bas-relief galleries stretch for 800 metres and depict the entire Hindu cosmological universe.",
+    sketchfabId: "4ae47c0a41654048b52e9540e2fb8c8b",
+    panoramaUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Angkor_Wat_as_seen_from_the_air.JPG/2560px-Angkor_Wat_as_seen_from_the_air.JPG",
+    thumbnail: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Angkor_Wat_as_seen_from_the_air.JPG/640px-Angkor_Wat_as_seen_from_the_air.JPG",
+    facts: ["World's largest religious monument: 402 acres","800 metres of bas-relief galleries — the longest in the world","Built for Suryavarman II as his state temple and eventual mausoleum","The moat alone required digging 30 million cubic metres of earth"],
+    wikiUrl: "https://en.wikipedia.org/wiki/Angkor_Wat",
+  },
+  {
+    id: "great-wall",
+    name: "The Great Wall of China",
+    region: "China",
+    era: "221 BCE",
+    type: "world",
+    description: "Built over centuries by multiple Chinese dynasties, the Great Wall stretches more than 21,000 km. It was never a single continuous wall but a network of fortifications. Millions died building it — their bones are said to be buried in the foundations.",
+    sketchfabId: null,
+    panoramaUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Badaling_great_wall.jpg/2560px-Badaling_great_wall.jpg",
+    thumbnail: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Badaling_great_wall.jpg/640px-Badaling_great_wall.jpg",
+    facts: ["Total length: 21,196 km including all branches","Took over 2,000 years and multiple dynasties to build","At least 400,000 workers died during construction","Visible from low Earth orbit — but NOT from the Moon (a myth)"],
+    wikiUrl: "https://en.wikipedia.org/wiki/Great_Wall_of_China",
+  },
+  {
+    id: "hagia-sophia",
+    name: "Hagia Sophia — Istanbul",
+    region: "Turkey",
+    era: "537 CE",
+    type: "empire",
+    description: "Built by the Byzantine Emperor Justinian I, the Hagia Sophia was the world's largest cathedral for nearly 1,000 years. Conquered by the Ottomans in 1453, converted to a mosque, then a museum, and again a mosque in 2020. Its dome appeared to float miraculously — supported by hidden pendentives.",
+    sketchfabId: "c7c0e1c5b8764b4b9c7d7c91c3f94b1a",
+    panoramaUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Hagia_Sophia_Mars_2013.jpg/2560px-Hagia_Sophia_Mars_2013.jpg",
+    thumbnail: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Hagia_Sophia_Mars_2013.jpg/640px-Hagia_Sophia_Mars_2013.jpg",
+    facts: ["World's largest cathedral for 1,000 years (537–1520 CE)","Dome is 55.6 metres high — larger than the Pantheon","Changed religion three times: cathedral, mosque, museum, mosque","The 'floating' dome was revolutionary — no visible supports"],
+    wikiUrl: "https://en.wikipedia.org/wiki/Hagia_Sophia",
+  },
+  {
+    id: "stonehenge",
+    name: "Stonehenge",
+    region: "England",
+    era: "2500 BCE",
+    type: "indigenous",
+    description: "A prehistoric monument on Salisbury Plain whose purpose remains debated. The largest stones were transported 250 km from Wales — how remains unknown. It is precisely aligned with the summer solstice sunrise and winter solstice sunset, making it likely a solar calendar.",
+    sketchfabId: "df77e5cc12024a5998dcd05b71d428ae",
+    panoramaUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Stonehenge2007_07_30.jpg/2560px-Stonehenge2007_07_30.jpg",
+    thumbnail: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Stonehenge2007_07_30.jpg/640px-Stonehenge2007_07_30.jpg",
+    facts: ["Built in multiple phases from 3000–1500 BCE","Largest stones weigh 25 tonnes — transported 250 km from Wales","Precisely aligned with summer solstice sunrise","Its purpose — burial site, solar calendar, healing centre — still debated"],
+    wikiUrl: "https://en.wikipedia.org/wiki/Stonehenge",
+  },
+  {
+    id: "taj-mahal",
+    name: "Taj Mahal",
+    region: "India",
+    era: "1653 CE",
+    type: "empire",
+    description: "Built by Mughal Emperor Shah Jahan as a mausoleum for his wife Mumtaz Mahal, who died in childbirth. 20,000 workers and 1,000 elephants took 22 years to complete it. The marble changes colour with the light — pinkish at dawn, white at midday, golden at night.",
+    sketchfabId: null,
+    panoramaUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Taj_Mahal_%28Edited%29.jpeg/2560px-Taj_Mahal_%28Edited%29.jpeg",
+    thumbnail: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Taj_Mahal_%28Edited%29.jpeg/640px-Taj_Mahal_%28Edited%29.jpeg",
+    facts: ["22 years, 20,000 workers, 1,000 elephants to build","Marble changes colour: pink at dawn, white at noon, golden at night","The four minarets lean slightly outward — to fall away from the tomb in an earthquake","Shah Jahan was later imprisoned by his own son and died looking at the Taj from his cell"],
+    wikiUrl: "https://en.wikipedia.org/wiki/Taj_Mahal",
+  },
+  {
+    id: "pompeii",
+    name: "Pompeii",
+    region: "Italy",
+    era: "79 CE",
+    type: "world",
+    description: "The Roman city buried under 6 metres of volcanic ash by the eruption of Mount Vesuvius in 79 CE. The ash preserved it perfectly — streets, houses, graffiti, food in ovens, and the plaster casts of citizens frozen in their final moments. It is the most complete snapshot of any ancient city.",
+    sketchfabId: null,
+    panoramaUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Pompeii_-_Osteria_della_via_di_Mercurio_-_Roa.jpg/2560px-Pompeii_-_Osteria_della_via_di_Mercurio_-_Roa.jpg",
+    thumbnail: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Pompeii_Street.jpg/640px-Pompeii_Street.jpg",
+    facts: ["Buried in 6 metres of volcanic ash in just 18–20 hours","Preserved for 1,700 years until rediscovered in 1748","Electoral campaign graffiti still legible on the walls","Plaster casts of victims made by pouring plaster into the ash voids"],
+    wikiUrl: "https://en.wikipedia.org/wiki/Pompeii",
+  },
+];
+
+function VRSection({ T }) {
+  const [selected, setSelected] = useState(null);
+  const [mode,     setMode]     = useState("browse"); // "browse" | "view3d" | "panorama"
+  const [search,   setSearch]   = useState("");
+  const [vrSupported, setVrSupported] = useState(null);
+  const iframeRef = useRef(null);
+
+  useEffect(() => {
+    if (typeof navigator !== "undefined" && navigator.xr) {
+      navigator.xr.isSessionSupported("immersive-vr")
+        .then(supported => setVrSupported(supported))
+        .catch(() => setVrSupported(false));
+    } else {
+      setVrSupported(false);
+    }
+  }, []);
+
+  const filtered = useMemo(() => {
+    if (!search) return VR_SITES;
+    const q = search.toLowerCase();
+    return VR_SITES.filter(s =>
+      s.name.toLowerCase().includes(q) ||
+      s.region.toLowerCase().includes(q) ||
+      s.era.toLowerCase().includes(q) ||
+      s.description.toLowerCase().includes(q)
+    );
+  }, [search]);
+
+  const openSite = (site, viewMode) => {
+    setSelected(site);
+    setMode(viewMode);
+  };
+
+  const isDark = T.name === "dark";
+
+  // ── Browse grid ────────────────────────────────────────────
+  if (mode === "browse" || !selected) return (
+    <div style={{height:"100%",display:"flex",flexDirection:"column",background:T.bg,overflow:"hidden"}}>
+
+      {/* Header */}
+      <div style={{background:T.surface,borderBottom:`1px solid ${T.border}`,padding:"12px 20px",display:"flex",alignItems:"center",gap:16,flexShrink:0}}>
+        <div>
+          <h2 style={{fontFamily:"'Playfair Display',serif",fontSize:18,fontWeight:700,color:T.ink,margin:0}}>VR Explorer</h2>
+          <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.inkLight,margin:"2px 0 0"}}>
+            Immersive 3D and 360° panoramas of historical sites
+            {vrSupported === true && <span style={{marginLeft:8,color:T.success,fontWeight:600}}>· VR headset detected ✓</span>}
+            {vrSupported === false && <span style={{marginLeft:8,color:T.inkFaint}}> · No VR headset — 3D and panorama mode available</span>}
+          </p>
+        </div>
+        <div style={{flex:1}}/>
+        <div style={{display:"flex",alignItems:"center",gap:8,padding:"7px 12px",background:T.card,border:`1px solid ${T.border}`,borderRadius:8,minWidth:220}}>
+          <Ic n="search" s={13} c={T.inkLight}/>
+          <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search historical sites…"
+            style={{border:"none",background:"transparent",outline:"none",fontFamily:"'DM Sans',sans-serif",fontSize:12,color:T.ink,flex:1,caretColor:T.accent}}/>
+          {search && <span onClick={()=>setSearch("")} style={{cursor:"pointer",color:T.inkFaint,fontSize:12}}>✕</span>}
+        </div>
+      </div>
+
+      {/* Phase notice */}
+      <div style={{padding:"8px 20px",background:isDark?"rgba(16,185,129,0.08)":"rgba(16,185,129,0.05)",borderBottom:`1px solid rgba(16,185,129,0.15)`,display:"flex",alignItems:"center",gap:10,flexShrink:0}}>
+        <Ic n="cube" s={14} c="#10B981"/>
+        <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:"#10B981",fontWeight:600}}>
+          Phase 1 sites have interactive 3D models · Phase 2 sites have 360° panoramas · AI reconstruction is on the roadmap
+        </span>
+      </div>
+
+      {/* Site grid */}
+      <div style={{flex:1,overflowY:"auto",padding:"20px 24px"}}>
+        {filtered.length === 0 && (
+          <div style={{textAlign:"center",padding:"60px 0",color:T.inkLight,fontFamily:"'DM Sans',sans-serif",fontSize:13}}>
+            No sites match "{search}"
+          </div>
+        )}
+        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(280px,1fr))",gap:18}}>
+          {filtered.map(site => (
+            <div key={site.id}
+              style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:12,overflow:"hidden",cursor:"pointer",transition:"all 0.2s"}}
+              onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-3px)";e.currentTarget.style.boxShadow=`0 8px 24px rgba(0,0,0,0.2)`;e.currentTarget.style.borderColor=T.success+"60";}}
+              onMouseLeave={e=>{e.currentTarget.style.transform="none";e.currentTarget.style.boxShadow="none";e.currentTarget.style.borderColor=T.border;}}>
+
+              {/* Thumbnail */}
+              <div style={{height:160,position:"relative",overflow:"hidden",background:"#1a1410"}}>
+                <img src={site.thumbnail} alt={site.name}
+                  style={{width:"100%",height:"100%",objectFit:"cover",filter:"brightness(0.85)",transition:"transform 0.4s"}}
+                  onMouseEnter={e=>e.target.style.transform="scale(1.05)"}
+                  onMouseLeave={e=>e.target.style.transform="scale(1)"}
+                  onError={e=>{e.target.style.display="none";}}/>
+                <div style={{position:"absolute",inset:0,background:"linear-gradient(to top,rgba(0,0,0,0.75),transparent 50%)"}}/>
+
+                {/* Phase badge */}
+                <div style={{position:"absolute",top:8,right:8,padding:"3px 8px",borderRadius:20,
+                  background: site.sketchfabId ? "rgba(16,185,129,0.9)" : "rgba(59,130,246,0.9)",
+                  fontFamily:"'DM Sans',sans-serif",fontSize:9,fontWeight:700,color:"#fff",letterSpacing:"0.06em"}}>
+                  {site.sketchfabId ? "3D MODEL" : "360° PANORAMA"}
+                </div>
+
+                <div style={{position:"absolute",bottom:8,left:10,right:10}}>
+                  <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:700,color:"#fff",lineHeight:1.2}}>{site.name}</div>
+                  <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:"rgba(255,255,255,0.7)",marginTop:2}}>{site.region} · {site.era}</div>
+                </div>
+              </div>
+
+              {/* Card body */}
+              <div style={{padding:"12px 14px"}}>
+                <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.inkMid,lineHeight:1.65,margin:"0 0 12px"}}>
+                  {site.description.slice(0, 120)}…
+                </p>
+                <div style={{display:"flex",gap:8}}>
+                  {site.sketchfabId && (
+                    <button onClick={()=>openSite(site,"view3d")}
+                      style={{flex:1,padding:"7px",background:T.success+"18",border:`1px solid ${T.success+"40"}`,borderRadius:7,color:T.success,fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:5}}>
+                      <Ic n="cube" s={12} c="currentColor"/> Explore 3D
+                    </button>
+                  )}
+                  <button onClick={()=>openSite(site,"panorama")}
+                    style={{flex:1,padding:"7px",background:T.info+"18",border:`1px solid ${T.info+"40"}`,borderRadius:7,color:T.info,fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:5}}>
+                    <Ic n="globe" s={12} c="currentColor"/> 360° View
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Out of scope notice */}
+        <div style={{marginTop:32,padding:"16px 20px",background:isDark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.03)",border:`1px solid ${T.border}`,borderRadius:10,display:"flex",gap:14,alignItems:"flex-start"}}>
+          <span style={{fontSize:20,flexShrink:0}}>🚀</span>
+          <div>
+            <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:600,color:T.ink,marginBottom:4}}>Phase 3 — AI Historical Reconstruction (Coming Soon)</div>
+            <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.inkMid,lineHeight:1.65,margin:0}}>
+              For sites without existing 3D models or 360° photos, we plan to use Imagen 4 + NeRF reconstruction to generate walkable historical environments from multiple AI-generated views. This is computationally intensive and requires careful historical accuracy validation — we'll cover the technical challenges in a dedicated post.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  // ── 3D Model viewer ────────────────────────────────────────
+  if (mode === "view3d" && selected?.sketchfabId) return (
+    <div style={{height:"100%",display:"flex",flexDirection:"column",background:"#0A0908"}}>
+      {/* Top bar */}
+      <div style={{background:"rgba(0,0,0,0.6)",borderBottom:"1px solid rgba(255,255,255,0.08)",padding:"10px 16px",display:"flex",alignItems:"center",gap:12,flexShrink:0,backdropFilter:"blur(10px)"}}>
+        <button onClick={()=>{setMode("browse");}}
+          style={{display:"flex",alignItems:"center",gap:6,padding:"6px 12px",background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.15)",borderRadius:7,color:"rgba(255,255,255,0.7)",fontFamily:"'DM Sans',sans-serif",fontSize:11,cursor:"pointer"}}>
+          <Ic n="chevL" s={12} c="currentColor"/> Back
+        </button>
+        <div>
+          <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:700,color:"#fff"}}>{selected.name}</div>
+          <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:"rgba(255,255,255,0.5)"}}>{selected.region} · {selected.era}</div>
+        </div>
+        <div style={{flex:1}}/>
+        <div style={{padding:"4px 10px",borderRadius:20,background:"rgba(16,185,129,0.2)",border:"1px solid rgba(16,185,129,0.4)",fontFamily:"'DM Sans',sans-serif",fontSize:9,fontWeight:700,color:"#10B981",letterSpacing:"0.08em"}}>
+          INTERACTIVE 3D
+        </div>
+        {vrSupported && (
+          <div style={{padding:"4px 10px",borderRadius:20,background:"rgba(139,92,246,0.2)",border:"1px solid rgba(139,92,246,0.4)",fontFamily:"'DM Sans',sans-serif",fontSize:9,fontWeight:700,color:"#8B5CF6",letterSpacing:"0.08em"}}>
+            VR READY
+          </div>
+        )}
+        <button onClick={()=>openSite(selected,"panorama")}
+          style={{display:"flex",alignItems:"center",gap:5,padding:"6px 12px",background:"rgba(59,130,246,0.15)",border:"1px solid rgba(59,130,246,0.4)",borderRadius:7,color:"#60A5FA",fontFamily:"'DM Sans',sans-serif",fontSize:11,cursor:"pointer"}}>
+          <Ic n="globe" s={12} c="currentColor"/> Switch to 360°
+        </button>
+      </div>
+
+      {/* Sketchfab embed */}
+      <div style={{flex:1,position:"relative"}}>
+        <iframe
+          ref={iframeRef}
+          title={selected.name}
+          src={`https://sketchfab.com/models/${selected.sketchfabId}/embed?autostart=1&ui_infos=0&ui_watermark_link=0&ui_watermark=0&ui_ar=1&ui_vr=1&ui_fullscreen=1&preload=1`}
+          style={{width:"100%",height:"100%",border:"none"}}
+          allow="autoplay; fullscreen; xr-spatial-tracking"
+          allowFullScreen
+          mozallowfullscreen="true"
+          webkitallowfullscreen="true"
+        />
+      </div>
+
+      {/* Facts strip */}
+      <div style={{background:"rgba(0,0,0,0.7)",backdropFilter:"blur(10px)",borderTop:"1px solid rgba(255,255,255,0.08)",padding:"10px 20px",display:"flex",gap:20,flexShrink:0,overflowX:"auto"}}>
+        {selected.facts.map((f,i) => (
+          <div key={i} style={{display:"flex",gap:7,alignItems:"flex-start",flexShrink:0,maxWidth:240}}>
+            <div style={{width:4,height:4,borderRadius:"50%",background:"#10B981",flexShrink:0,marginTop:5}}/>
+            <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:"rgba(255,255,255,0.6)",lineHeight:1.55}}>{f}</span>
+          </div>
+        ))}
+        <a href={selected.wikiUrl} target="_blank" rel="noopener noreferrer"
+          style={{display:"flex",alignItems:"center",gap:5,flexShrink:0,fontFamily:"'DM Sans',sans-serif",fontSize:10,color:"rgba(255,255,255,0.35)",textDecoration:"none",paddingLeft:10,borderLeft:"1px solid rgba(255,255,255,0.1)"}}>
+          <Ic n="extlink" s={10} c="currentColor"/> Wikipedia
+        </a>
+      </div>
+    </div>
+  );
+
+  // ── 360° Panorama viewer ───────────────────────────────────
+  if (mode === "panorama" && selected) return (
+    <div style={{height:"100%",display:"flex",flexDirection:"column",background:"#0A0908"}}>
+      {/* Top bar */}
+      <div style={{background:"rgba(0,0,0,0.6)",borderBottom:"1px solid rgba(255,255,255,0.08)",padding:"10px 16px",display:"flex",alignItems:"center",gap:12,flexShrink:0,backdropFilter:"blur(10px)"}}>
+        <button onClick={()=>setMode("browse")}
+          style={{display:"flex",alignItems:"center",gap:6,padding:"6px 12px",background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.15)",borderRadius:7,color:"rgba(255,255,255,0.7)",fontFamily:"'DM Sans',sans-serif",fontSize:11,cursor:"pointer"}}>
+          <Ic n="chevL" s={12} c="currentColor"/> Back
+        </button>
+        <div>
+          <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:700,color:"#fff"}}>{selected.name}</div>
+          <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:"rgba(255,255,255,0.5)"}}>{selected.region} · {selected.era}</div>
+        </div>
+        <div style={{flex:1}}/>
+        <div style={{padding:"4px 10px",borderRadius:20,background:"rgba(59,130,246,0.2)",border:"1px solid rgba(59,130,246,0.4)",fontFamily:"'DM Sans',sans-serif",fontSize:9,fontWeight:700,color:"#60A5FA",letterSpacing:"0.08em"}}>
+          360° PANORAMA
+        </div>
+        {selected.sketchfabId && (
+          <button onClick={()=>setMode("view3d")}
+            style={{display:"flex",alignItems:"center",gap:5,padding:"6px 12px",background:"rgba(16,185,129,0.15)",border:"1px solid rgba(16,185,129,0.4)",borderRadius:7,color:"#10B981",fontFamily:"'DM Sans',sans-serif",fontSize:11,cursor:"pointer"}}>
+            <Ic n="cube" s={12} c="currentColor"/> Switch to 3D
+          </button>
+        )}
+      </div>
+
+      {/* Pannellum photosphere */}
+      <div style={{flex:1,position:"relative",overflow:"hidden"}}>
+        <iframe
+          title={`${selected.name} 360`}
+          src={`https://pannellum.org/api/tour/?panorama=${encodeURIComponent(selected.panoramaUrl)}&autoLoad=true&showControls=true&showZoomCtrl=true&showFullscreenCtrl=true&title=${encodeURIComponent(selected.name)}&author=${encodeURIComponent(selected.region + " · " + selected.era)}`}
+          style={{width:"100%",height:"100%",border:"none"}}
+          allowFullScreen
+        />
+        <div style={{position:"absolute",bottom:80,left:"50%",transform:"translateX(-50%)",padding:"6px 14px",background:"rgba(0,0,0,0.6)",borderRadius:20,backdropFilter:"blur(8px)",pointerEvents:"none"}}>
+          <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:"rgba(255,255,255,0.6)"}}>
+            Click and drag to look around · Scroll to zoom
+          </span>
+        </div>
+      </div>
+
+      {/* Facts strip */}
+      <div style={{background:"rgba(0,0,0,0.7)",backdropFilter:"blur(10px)",borderTop:"1px solid rgba(255,255,255,0.08)",padding:"10px 20px",display:"flex",gap:20,flexShrink:0,overflowX:"auto"}}>
+        {selected.facts.map((f,i) => (
+          <div key={i} style={{display:"flex",gap:7,alignItems:"flex-start",flexShrink:0,maxWidth:240}}>
+            <div style={{width:4,height:4,borderRadius:"50%",background:"#3B82F6",flexShrink:0,marginTop:5}}/>
+            <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:"rgba(255,255,255,0.6)",lineHeight:1.55}}>{f}</span>
+          </div>
+        ))}
+        <a href={selected.wikiUrl} target="_blank" rel="noopener noreferrer"
+          style={{display:"flex",alignItems:"center",gap:5,flexShrink:0,fontFamily:"'DM Sans',sans-serif",fontSize:10,color:"rgba(255,255,255,0.35)",textDecoration:"none",paddingLeft:10,borderLeft:"1px solid rgba(255,255,255,0.1)"}}>
+          <Ic n="extlink" s={10} c="currentColor"/> Wikipedia
+        </a>
+      </div>
+    </div>
+  );
+
+  // Fallback
+  return null;
+}
+
+
 // ── HOME ──────────────────────────────────────────────────────
 function Home({ T, onNavigate }) {
   const [vis,setVis]=useState(false);
@@ -1705,11 +2302,12 @@ function Home({ T, onNavigate }) {
   const heroBg=T.name==="dark"?"linear-gradient(160deg,#2A1800 0%,#1A0E00 40%,#0D1A18 100%)":"linear-gradient(160deg,#3A1800 0%,#5C2400 40%,#1A3830 100%)";
 
   const sectionCards=[
-    {id:"explore",label:"Explore",icon:"globe",colorKey:"info",tagline:"The Interactive Globe",desc:"Navigate human history from 315,000 BCE. African civilizations, world empires, diaspora communities, accountability records."},
-    {id:"timeline",label:"Timeline",icon:"clock",colorKey:"accent",tagline:"300,000 BCE → Present",desc:"Every era, every turning point. From human origins to today — on one scrollable timeline."},
-    {id:"learn",label:"Learn",icon:"book",colorKey:"info",tagline:"People & Civilizations",desc:"Kings, scholars, warriors, activists. From Julius Caesar to Genghis Khan — every civilisation that shaped today."},
-    {id:"investigate",label:"Investigate",icon:"connect",colorKey:"slate",tagline:"The PI Board",desc:"Drop nodes, draw connections, follow any thread. AI builds the connection graph automatically."},
-    {id:"research",label:"Research",icon:"ai",colorKey:"success",tagline:"AI Research Suite",desc:"Four AI agents answer any history question — African, American, Asian, European. Ask anything."},
+    {id:"explore",     label:"Explore",      icon:"globe",    colorKey:"info",    tagline:"The Interactive Globe",  desc:"Navigate human history from 315,000 BCE. African civilizations, world empires, diaspora communities."},
+    {id:"timeline",    label:"Timeline",     icon:"clock",    colorKey:"accent",  tagline:"300,000 BCE → Present",  desc:"Every era, every turning point. From human origins to today — on one scrollable timeline."},
+    {id:"learn",       label:"Learn",        icon:"book",     colorKey:"info",    tagline:"People & Civilizations", desc:"Kings, scholars, warriors, activists. From Julius Caesar to Genghis Khan — every civilisation that shaped today."},
+    {id:"vr",          label:"VR Explorer",  icon:"vr",       colorKey:"success", tagline:"Immersive History",      desc:"Walk around the Pyramid of Giza, stand inside the Colosseum, explore Machu Picchu — in 3D and 360°."},
+    {id:"investigate", label:"Investigate",  icon:"connect",  colorKey:"slate",   tagline:"The PI Board",           desc:"Drop nodes, draw connections, follow any thread. AI builds and edits the connection graph in real time."},
+    {id:"research",    label:"Research",     icon:"ai",       colorKey:"success", tagline:"AI Research Suite",      desc:"AI agents answer any history question — African, Asian, European, American. Ask anything."},
   ];
 
   return (
@@ -1832,7 +2430,185 @@ function Sidebar({ active, onNavigate, open, T, piNewCount=0 }) {
 }
 
 // ── TOPBAR ────────────────────────────────────────────────────
-function TopBar({ active, onNavigate, onToggle, theme, onToggleTheme, T }) {
+
+// ── API KEY MANAGEMENT ────────────────────────────────────────
+
+const ANTHROPIC_KEY_STORAGE = "severus_anthropic_key";
+
+function useAnthropicKey() {
+  const [key, setKeyState] = useState(() => {
+    try { return localStorage.getItem(ANTHROPIC_KEY_STORAGE) || ""; } catch { return ""; }
+  });
+  const setKey = (k) => {
+    setKeyState(k);
+    try { if (k) localStorage.setItem(ANTHROPIC_KEY_STORAGE, k); else localStorage.removeItem(ANTHROPIC_KEY_STORAGE); } catch {}
+  };
+  const clearKey = () => setKey("");
+  const isValid  = key.startsWith("sk-ant-") && key.length > 20;
+  return { key, setKey, clearKey, isValid };
+}
+
+// Global key accessor for components that don't receive it as a prop
+function getStoredKey() {
+  try { return localStorage.getItem(ANTHROPIC_KEY_STORAGE) || ""; } catch { return ""; }
+}
+
+function SettingsModal({ T, onClose }) {
+  const { key, setKey, clearKey, isValid } = useAnthropicKey();
+  const [draft,   setDraft]   = useState(key);
+  const [visible, setVisible] = useState(false);
+  const [saved,   setSaved]   = useState(false);
+  const [testing, setTesting] = useState(false);
+  const [testResult, setTestResult] = useState(null); // "ok" | "fail" | null
+
+  const handleSave = () => {
+    setKey(draft.trim());
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
+  };
+
+  const handleTest = async () => {
+    if (!draft.trim().startsWith("sk-ant-")) { setTestResult("fail"); return; }
+    setTesting(true); setTestResult(null);
+    try {
+      const resp = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-api-key": draft.trim(), "anthropic-version": "2023-06-01", "anthropic-dangerous-direct-browser-access": "true" },
+        body: JSON.stringify({ model: "claude-haiku-4-5-20251001", max_tokens: 10, messages: [{ role: "user", content: "Hi" }] }),
+      });
+      setTestResult(resp.ok ? "ok" : "fail");
+    } catch { setTestResult("fail"); }
+    finally { setTesting(false); }
+  };
+
+  const masked = draft ? draft.slice(0, 12) + "••••••••••••" + draft.slice(-4) : "";
+
+  return (
+    <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.65)",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",backdropFilter:"blur(4px)"}}
+      onClick={e=>{ if(e.target===e.currentTarget) onClose(); }}>
+
+      <div style={{width:480,background:T.card,borderRadius:14,border:`1px solid ${T.border}`,boxShadow:"0 24px 64px rgba(0,0,0,0.4)",overflow:"hidden"}}>
+
+        {/* Header */}
+        <div style={{padding:"18px 22px",borderBottom:`1px solid ${T.border}`,display:"flex",alignItems:"center",gap:12}}>
+          <div style={{width:36,height:36,borderRadius:9,background:T.accent+"20",border:`1px solid ${T.accent}40`,display:"flex",alignItems:"center",justifyContent:"center"}}>
+            <Ic n="key" s={18} c={T.accent}/>
+          </div>
+          <div>
+            <h2 style={{fontFamily:"'Playfair Display',serif",fontSize:17,fontWeight:700,color:T.ink,margin:0}}>API Keys</h2>
+            <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.inkLight,margin:0}}>Severus is open source — bring your own key</p>
+          </div>
+          <button onClick={onClose} style={{marginLeft:"auto",background:"transparent",border:"none",cursor:"pointer",color:T.inkLight,fontSize:18,lineHeight:1,padding:4}}>✕</button>
+        </div>
+
+        {/* Body */}
+        <div style={{padding:"20px 22px"}}>
+
+          {/* Explainer */}
+          <div style={{padding:"12px 14px",background:T.accent+"10",border:`1px solid ${T.accent}25`,borderRadius:9,marginBottom:20,display:"flex",gap:10,alignItems:"flex-start"}}>
+            <span style={{fontSize:16,flexShrink:0}}>🔒</span>
+            <div>
+              <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:600,color:T.ink,marginBottom:3}}>Your key stays in your browser</div>
+              <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.inkMid,margin:0,lineHeight:1.6}}>
+                Your API key is stored in <code style={{background:T.surface,padding:"1px 5px",borderRadius:4,fontSize:10}}>localStorage</code> only. It is never sent to Severus servers — only directly to Anthropic's API from your browser. Clear it any time.
+              </p>
+            </div>
+          </div>
+
+          {/* Anthropic key input */}
+          <div style={{marginBottom:16}}>
+            <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:7}}>
+              <label style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:600,color:T.ink}}>
+                Anthropic API Key
+              </label>
+              {isValid && (
+                <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:T.success,fontWeight:600}}>✓ Saved</span>
+              )}
+            </div>
+            <div style={{display:"flex",gap:8}}>
+              <div style={{flex:1,display:"flex",alignItems:"center",gap:8,padding:"9px 12px",background:T.surface,border:`1px solid ${isValid?T.success+"60":T.border}`,borderRadius:8,transition:"border-color 0.15s"}}>
+                <Ic n="key" s={13} c={isValid?T.success:T.inkFaint}/>
+                <input
+                  type={visible?"text":"password"}
+                  value={draft}
+                  onChange={e=>{ setDraft(e.target.value); setTestResult(null); setSaved(false); }}
+                  placeholder="sk-ant-api03-…"
+                  style={{flex:1,border:"none",background:"transparent",outline:"none",fontFamily:"monospace",fontSize:12,color:T.ink,caretColor:T.accent}}
+                />
+                <button onClick={()=>setVisible(v=>!v)}
+                  style={{background:"transparent",border:"none",cursor:"pointer",color:T.inkFaint,fontSize:11,padding:"2px 4px"}}>
+                  {visible?"Hide":"Show"}
+                </button>
+              </div>
+            </div>
+            <div style={{display:"flex",alignItems:"center",gap:8,marginTop:10}}>
+              <button onClick={handleSave} disabled={!draft.trim()}
+                style={{padding:"7px 16px",background:draft.trim()?T.accent:T.border,border:"none",borderRadius:7,color:"#fff",fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:700,cursor:draft.trim()?"pointer":"not-allowed",transition:"background 0.15s"}}>
+                {saved?"✓ Saved!":"Save Key"}
+              </button>
+              <button onClick={handleTest} disabled={testing||!draft.trim()}
+                style={{padding:"7px 14px",background:"transparent",border:`1px solid ${T.border}`,borderRadius:7,color:T.inkMid,fontFamily:"'DM Sans',sans-serif",fontSize:12,cursor:testing||!draft.trim()?"not-allowed":"pointer"}}>
+                {testing?"Testing…":"Test Key"}
+              </button>
+              {key && (
+                <button onClick={()=>{ clearKey(); setDraft(""); setTestResult(null); }}
+                  style={{padding:"7px 14px",background:"transparent",border:`1px solid ${T.border}`,borderRadius:7,color:T.danger,fontFamily:"'DM Sans',sans-serif",fontSize:12,cursor:"pointer",marginLeft:"auto"}}>
+                  Clear
+                </button>
+              )}
+            </div>
+
+            {/* Test result */}
+            {testResult === "ok" && (
+              <div style={{marginTop:10,padding:"8px 12px",background:"rgba(16,185,129,0.1)",border:"1px solid rgba(16,185,129,0.3)",borderRadius:7,fontFamily:"'DM Sans',sans-serif",fontSize:11,color:"#10B981"}}>
+                ✓ Key is valid — Anthropic API responded successfully
+              </div>
+            )}
+            {testResult === "fail" && (
+              <div style={{marginTop:10,padding:"8px 12px",background:"rgba(239,68,68,0.1)",border:"1px solid rgba(239,68,68,0.3)",borderRadius:7,fontFamily:"'DM Sans',sans-serif",fontSize:11,color:"#EF4444"}}>
+                ✗ Key invalid or request failed — check your key at console.anthropic.com
+              </div>
+            )}
+          </div>
+
+          {/* What it unlocks */}
+          <div style={{borderTop:`1px solid ${T.border}`,paddingTop:16}}>
+            <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:600,color:T.inkLight,marginBottom:10,textTransform:"uppercase",letterSpacing:"0.06em"}}>What your key unlocks</div>
+            <div style={{display:"flex",flexDirection:"column",gap:7}}>
+              {[
+                ["🔍","PI Board — Node AI Analysis","Wikipedia + AI context when you click any node"],
+                ["💬","PI Board — AI Chat","Ask questions and let the AI update your board in real time"],
+                ["🔬","Research — Full Pipeline","Historian, Investigator, Visualizer, Guide agents"],
+              ].map(([icon,title,desc])=>(
+                <div key={title} style={{display:"flex",gap:10,alignItems:"flex-start",padding:"8px 10px",background:T.surface,borderRadius:8}}>
+                  <span style={{fontSize:16,flexShrink:0}}>{icon}</span>
+                  <div>
+                    <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:600,color:T.ink}}>{title}</div>
+                    <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:T.inkLight}}>{desc}</div>
+                  </div>
+                  <div style={{marginLeft:"auto",padding:"2px 8px",borderRadius:20,background:isValid?"rgba(16,185,129,0.15)":T.accentDim,border:`1px solid ${isValid?"rgba(16,185,129,0.3)":T.accent+"30"}`,fontFamily:"'DM Sans',sans-serif",fontSize:9,fontWeight:600,color:isValid?"#10B981":T.accent,whiteSpace:"nowrap",flexShrink:0}}>
+                    {isValid?"Active":"Needs key"}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Get key link */}
+          <div style={{marginTop:16,textAlign:"center"}}>
+            <a href="https://console.anthropic.com/keys" target="_blank" rel="noopener noreferrer"
+              style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.info,textDecoration:"none",display:"inline-flex",alignItems:"center",gap:5}}>
+              <Ic n="extlink" s={11} c="currentColor"/> Get an Anthropic API key at console.anthropic.com
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+function TopBar({ active, onNavigate, onToggle, theme, onToggleTheme, T, onOpenSettings, hasKey }) {
   const section=SECTIONS.find(s=>s.id===active);
   const c=section?colOf(T,section.colorKey):T.accent;
   return (
@@ -1849,6 +2625,14 @@ function TopBar({ active, onNavigate, onToggle, theme, onToggleTheme, T }) {
       <button onClick={onToggleTheme} style={{display:"flex",alignItems:"center",gap:7,padding:"7px 13px",background:T.card,border:`1px solid ${T.border}`,borderRadius:8,cursor:"pointer",fontFamily:"'DM Sans',sans-serif",fontSize:12,color:T.inkMid,transition:"all 0.18s"}} onMouseEnter={e=>{e.currentTarget.style.borderColor=T.accent+"50";e.currentTarget.style.color=T.accent;}} onMouseLeave={e=>{e.currentTarget.style.borderColor=T.border;e.currentTarget.style.color=T.inkMid;}}>
         <Ic n={theme==="dark"?"sun":"moon"} s={14} c="currentColor"/><span>{theme==="dark"?"Light":"Dark"}</span>
       </button>
+      <button onClick={onOpenSettings}
+        style={{display:"flex",alignItems:"center",gap:7,padding:"7px 13px",background:hasKey?"rgba(16,185,129,0.1)":T.card,border:`1px solid ${hasKey?"rgba(16,185,129,0.4)":T.border}`,borderRadius:8,cursor:"pointer",fontFamily:"'DM Sans',sans-serif",fontSize:12,color:hasKey?"#10B981":T.inkMid,transition:"all 0.18s"}}
+        title={hasKey?"API key configured — click to manage":"No API key — click to add yours"}
+        onMouseEnter={e=>{e.currentTarget.style.borderColor=T.accent+"50";e.currentTarget.style.color=T.accent;}}
+        onMouseLeave={e=>{e.currentTarget.style.borderColor=hasKey?"rgba(16,185,129,0.4)":T.border;e.currentTarget.style.color=hasKey?"#10B981":T.inkMid;}}>
+        <Ic n="key" s={14} c="currentColor"/>
+        <span>{hasKey?"Key ✓":"Add Key"}</span>
+      </button>
       <div style={{padding:"5px 14px",background:T.accentDim,border:`1px solid ${T.accent}35`,borderRadius:6,flexShrink:0}}>
         <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:T.accent,fontWeight:600,letterSpacing:"0.06em",textTransform:"uppercase"}}>Phase 1 · Africa & World</span>
       </div>
@@ -1862,6 +2646,8 @@ export default function App() {
   const [sideOpen, setSideOpen] = useState(true);
   const [theme,    setTheme]    = useState("dark");
   const T = theme==="dark" ? DARK : LIGHT;
+  const { key: anthropicKey, setKey: setAnthropicKey, isValid: hasKey } = useAnthropicKey();
+  const [showSettings, setShowSettings] = useState(false);
 
   // ── Shared PI board state ──────────────────────────────────
   const [piNodes,    setPiNodes]    = useState(DEFAULT_NODES);
@@ -1906,15 +2692,19 @@ export default function App() {
         input::placeholder{color:${T.inkLight};}
         select option{background:${T.card};color:${T.ink};}
       `}</style>
+
+      {showSettings && <SettingsModal T={T} onClose={()=>setShowSettings(false)}/>}
+
       <div style={{display:"flex",height:"100vh",background:T.bg,overflow:"hidden",transition:"background 0.3s"}}>
         <Sidebar active={active} onNavigate={(id)=>{setActive(id);if(id==="investigate")clearBadge();}} open={sideOpen} T={T} piNewCount={piNewCount}/>
         <div style={{flex:1,display:"flex",flexDirection:"column",minWidth:0,overflow:"hidden"}}>
-          <TopBar active={active} onNavigate={setActive} onToggle={()=>setSideOpen(v=>!v)} theme={theme} onToggleTheme={()=>setTheme(t=>t==="dark"?"light":"dark")} T={T}/>
+          <TopBar active={active} onNavigate={setActive} onToggle={()=>setSideOpen(v=>!v)} theme={theme} onToggleTheme={()=>setTheme(t=>t==="dark"?"light":"dark")} T={T} onOpenSettings={()=>setShowSettings(true)} hasKey={hasKey}/>
           <div style={{flex:1,overflow:"hidden"}}>
             {active==="home"        && <Home        T={T} onNavigate={setActive}/>}
             {active==="explore"     && <ExploreSection     T={T} theme={theme}/>}
             {active==="timeline"    && <TimelineSection    T={T}/>}
             {active==="learn"       && <LearnSection       T={T}/>}
+            {active==="vr"          && <VRSection          T={T}/>}
             {active==="investigate" && <InvestigateSection T={T} nodes={piNodes} edges={piEdges} setNodes={setPiNodes} setEdges={setPiEdges}/>}
             {active==="research"    && <ResearchSection    T={T} onPushToBoard={pushToBoard} onNavigate={setActive} savedState={researchState} onSaveState={setResearchState}/>}
           </div>
