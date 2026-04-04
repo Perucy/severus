@@ -30,7 +30,7 @@ const ERAS = [
   { id:"slavetrade",   label:"Colonialism",          year:1500    },
   { id:"colonial",     label:"Revolutions",          year:1750    },
   { id:"independence", label:"World Wars",           year:1900    },
-  { id:"present",      label:"Modern Era",           year:1945    },
+  { id:"present",      label:"Modern Era",           year:2025    },
 ];
 
 const TYPE_META = {
