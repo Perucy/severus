@@ -249,45 +249,15 @@ const PEOPLE = [
   { id:"hirohito",       name:"Hirohito — Emperor Shōwa",dates:"1901–1989",  region:"Japan",                 role:"Emperor",                     wikiTitle:"Hirohito",              desc:"Emperor of Japan during World War II and the subsequent transformation into a constitutional democracy. His reign spanned the Pacific War, nuclear bombing of Hiroshima and Nagasaki, Japan's surrender, and the extraordinary economic recovery that made Japan one of the world's largest economies.", legacy:"Reigned for 63 years — one of the longest in Japanese history — and witnessed Japan's complete transformation." },
 ];
 
-// ── ACCOUNTABILITY RECORDS ────────────────────────────────────
-const ACCOUNTABILITY = {
-  ships: [
-    { name:"Zong", year:1781, owner:"Luke Collingwood / Gregson Syndicate", route:"West Africa → Jamaica", cargo:"442 enslaved Africans", incident:"Captain threw 132 living enslaved Africans overboard to claim insurance money. The resulting court case — which treated the murders as property damage — helped spark the British abolition movement.", source:"Zong massacre, 1781 — National Archives UK" },
-    { name:"Brooks", year:1788, owner:"Joseph Brooks Jr.", route:"Liverpool → West Africa → Caribbean", cargo:"Up to 609 enslaved Africans", incident:"The Brooks became the face of the abolitionist movement when Thomas Clarkson published a diagram showing 482 humans packed into its hold like cargo. The image shocked Britain.", source:"Regulated Slave Trade Act 1788 — Wilberforce House Museum" },
-    { name:"Henrietta Marie", year:1700, owner:"London merchant consortium", route:"London → West Africa → Jamaica", cargo:"190–200 enslaved Africans", incident:"Sank on its return voyage in 1700. Found by divers in 1972 — the most complete slave ship ever recovered. Now a memorial site in the Florida Keys.", source:"Mel Fisher Maritime Museum — Key West, FL" },
-    { name:"Amistad", year:1839, owner:"José Ruiz & Pedro Montez", route:"Havana → Puerto Príncipe, Cuba", cargo:"53 enslaved Africans from Sierra Leone", incident:"Captives led by Sengbe Pieh seized the ship. US Supreme Court ruled them free in 1841. Became a landmark case in the abolitionist movement.", source:"United States v. The Amistad, 40 U.S. 518 (1841)" },
-    { name:"Clotilda", year:1860, owner:"Timothy Meaher (Alabama)", route:"Ouidah, Benin → Mobile, Alabama", cargo:"110 enslaved Africans", incident:"The LAST slave ship to bring enslaved Africans to the United States — 52 years after the trade was made illegal. Meaher never faced justice. Survivors founded Africatown, Alabama.", source:"Smithsonian Magazine, 2019 — wreck confirmed by archaeologists" },
-  ],
-  companies: [
-    { name:"Royal African Company", founded:1660, founders:"Duke of York (King James II), Charles II", hq:"London, England", enslaved:"100,000+", profit:"Monopoly on all English slave trade 1672–1698", modern:"Dissolved 1752. Wealth seeded City of London banking families.", source:"UCL Legacies of British Slave-ownership Database" },
-    { name:"Dutch West India Company", founded:1621, founders:"Dutch Republic (States General)", hq:"Amsterdam, Netherlands", enslaved:"500,000+", profit:"Controlled Atlantic slave trade for most of 17th century", modern:"Dissolved 1791. Amsterdam's wealth directly traced to slave trade profits.", source:"Dutch National Archives — DWIC records" },
-    { name:"Compagnie des Indes", founded:1664, founders:"Louis XIV of France / Jean Talon", hq:"Paris, France", enslaved:"1,000,000+", profit:"Supplied all French Caribbean colonies with enslaved Africans", modern:"Dissolved 1794. Families enriched include ancestors of modern French aristocracy.", source:"Archives nationales d'outre-mer, Aix-en-Provence" },
-    { name:"South Sea Company", founded:1711, founders:"British government / Robert Harley", hq:"London, England", enslaved:"Contract for 4,800/year to Spanish Americas", profit:"The South Sea Bubble (1720) was partly driven by slave trade speculation", modern:"Its collapse ruined thousands of British investors. Slave trade speculation caused the first major financial crisis.", source:"Bank of England Archive; House of Commons Journal" },
-  ],
-  families: [
-    { name:"Gladstone Family", country:"UK", enslaved:"2,508 people across 9 plantations", location:"Demerara & Jamaica", compensation:"£106,769 (≈ £83M today) paid to family upon abolition", connection:"William Gladstone, British Prime Minister 1868–1894, was son of slave-owner John Gladstone.", modern:"The Gladstone family received more compensation for their 'property' than any other British family.", source:"UCL Slave Ownership Database, T71/885" },
-    { name:"Lascelles/Harewood Family", country:"UK", enslaved:"2,648 people, 47 plantations", location:"Barbados primarily", compensation:"£26,309 upon abolition", connection:"Ancestors of Diana, Princess of Wales. Harewood House in Yorkshire was built with slave trade wealth.", modern:"Harewood House publicly acknowledged its slave trade origins in 2020.", source:"UCL Database; Harewood House Trust statement 2020" },
-    { name:"Brown Family (Brown University)", country:"USA", enslaved:"Captain James Brown transported hundreds across the Middle Passage", location:"Rhode Island / West Africa", compensation:"N/A (pre-abolition wealth)", connection:"Nicholas Brown Jr. donated to the college that bears the family name.", modern:"Brown University issued a 2006 report acknowledging its founding family's role in the slave trade.", source:"Brown University Steering Committee Report, 2006" },
-    { name:"DeWolf Family", country:"USA", enslaved:"10,000+ over 3 generations", location:"Bristol, Rhode Island", compensation:"None — largest slave-trading family in US history", connection:"James DeWolf became a US Senator. Family members are alive today and have publicly acknowledged the history.", modern:"The documentary 'Traces of the Trade' (2008) follows DeWolf descendants reckoning with this history.", source:"Traces of the Trade documentary; Bristol Historical Society" },
-  ],
-  institutions: [
-    { name:"Lloyd's of London", type:"Insurance", founded:1688, role:"Insured enslaved people as livestock/cargo — the financial backbone of the trade", modern:"Still exists. One of world's largest insurance markets.", acknowledged:true, source:"Lloyd's public statement, June 2020" },
-    { name:"Barclays Bank", type:"Banking", founded:1736, role:"Founded by Quaker families (Barclays, Freame) who profited from slave trade financing", modern:"FTSE 100 bank. Net assets > £1 trillion.", acknowledged:false, source:"Barclays Group Archives; Prof. Nick Draper, UCL" },
-    { name:"HSBC", type:"Banking", founded:1865, role:"Predecessor banks (Midland Bank) financed slave-worked cotton plantations in the American South", modern:"One of world's largest banks. Assets > $3 trillion.", acknowledged:false, source:"HSBC Group History; Cotton trade financing records" },
-    { name:"Harvard University", type:"Education", founded:1636, role:"Founders and early donors were slave traders and slave owners. Enslaved people worked on campus.", modern:"$50bn+ endowment. Report published 2022: 'Harvard & the Legacy of Slavery'.", acknowledged:true, source:"Harvard & the Legacy of Slavery Report, 2022" },
-    { name:"Yale University", type:"Education", founded:1701, role:"Named after Elihu Yale — a slave trader and Governor of the East India Company.", modern:"$40bn+ endowment.", acknowledged:true, source:"Yale & Slavery Research Project, 2020" },
-  ],
-};
 
 // ── SECTIONS NAV ──────────────────────────────────────────────
 const SECTIONS = [
   { id:"home",        label:"Home",        icon:"home",    colorKey:"accent" },
-  { id:"explore",     label:"Explore",     icon:"globe",   colorKey:"info",    tagline:"The Interactive Globe",        status:"active" },
-  { id:"timeline",    label:"Timeline",    icon:"clock",   colorKey:"accent",  tagline:"315,000 BCE → Present",         status:"active" },
-  { id:"learn",       label:"Learn",       icon:"book",    colorKey:"info",    tagline:"People & Civilizations",        status:"active" },
-  { id:"reckon",      label:"Reckon",      icon:"scale",   colorKey:"reckon",  tagline:"Truth & Accountability",        status:"active" },
-  { id:"investigate", label:"Investigate", icon:"connect", colorKey:"slate",   tagline:"The PI Board",                  status:"active" },
-  { id:"research",    label:"Research",    icon:"ai",      colorKey:"success", tagline:"AI Research Suite",             status:"active" },
+  { id:"explore",     label:"Explore",     icon:"globe",   colorKey:"info",    tagline:"The Interactive Globe",   status:"active" },
+  { id:"timeline",    label:"Timeline",    icon:"clock",   colorKey:"accent",  tagline:"315,000 BCE → Present",   status:"active" },
+  { id:"learn",       label:"Learn",       icon:"book",    colorKey:"info",    tagline:"People & Civilizations",  status:"active" },
+  { id:"investigate", label:"Investigate", icon:"connect", colorKey:"slate",   tagline:"The PI Board",            status:"active" },
+  { id:"research",    label:"Research",    icon:"ai",      colorKey:"success", tagline:"AI Research Suite",       status:"active" },
 ];
 
 // ── ICONS ─────────────────────────────────────────────────────
@@ -323,7 +293,7 @@ function Ic({ n, s=16, c="currentColor", sw=1.6 }) {
 }
 
 function colOf(T, key) {
-  return ({accent:T.accent,info:T.info,success:T.success,slate:T.slate,reckon:T.danger})[key]||T.accent;
+  return ({accent:T.accent,info:T.info,success:T.success,slate:T.slate})[key]||T.accent;
 }
 
 function Counter({ to, suffix="", delay=0 }) {
@@ -897,108 +867,201 @@ function TimelineSection({ T }) {
 
 // ── LEARN SECTION ─────────────────────────────────────────────
 function LearnSection({ T }) {
-  const [tab,        setTab]       = useState("people");
-  const [search,     setSearch]    = useState("");
-  const [sel,        setSel]       = useState(null);
-  const [regionFilter, setRegionFilter] = useState("all");
+  const [tab,          setTab]         = useState("people");
+  const [search,       setSearch]      = useState("");
+  const [sel,          setSel]         = useState(null);
+  const [regionFilter, setRegionFilter]= useState("all");
+  const [wikiResults,  setWikiResults] = useState([]);
+  const [wikiLoading,  setWikiLoading] = useState(false);
+  const [wikiSel,      setWikiSel]     = useState(null); // selected wiki result shown in detail panel
 
-  // All location types that represent civilizations (not just type="civilization")
   const CIVI_TYPES = new Set(["civilization","world","empire","islamic","origin"]);
 
-  const REGION_OPTIONS = useMemo(() => {
-    if (tab === "people") {
-      const regions = [...new Set(PEOPLE.map(p => p.region?.split(",")[0]?.split("/")[0]?.trim()).filter(Boolean))].sort();
-      return ["all", ...regions];
-    }
-    const regions = [...new Set(
-      LOCATIONS.filter(l => CIVI_TYPES.has(l.type)).map(l => l.region?.split(",")[0]?.trim()).filter(Boolean)
-    )].sort();
-    return ["all", ...regions];
-  }, [tab]);
+  const REGION_GROUPS = [
+    ["all","All"],["Africa","Africa"],["Asia","Asia"],
+    ["Europe","Europe"],["Americas","Americas"],["Middle East","Middle East"],["Pacific","Pacific"],
+  ];
 
   const filtered = useMemo(() => {
+    if (tab === "contributions") return [];
     const src = tab === "people"
       ? PEOPLE
       : LOCATIONS.filter(l => CIVI_TYPES.has(l.type));
-
     return src.filter(item => {
-      const name    = item.name?.toLowerCase() || "";
-      const role    = (item.role || item.era || "").toLowerCase();
-      const region  = (item.region || "").toLowerCase();
-      const desc    = (item.desc || item.summary || "").toLowerCase();
-      const q       = search.toLowerCase();
-      const matchSearch = !q || name.includes(q) || role.includes(q) || region.includes(q) || desc.includes(q);
-      const matchRegion = regionFilter === "all" || (item.region || "").toLowerCase().includes(regionFilter.toLowerCase());
+      const q = search.toLowerCase();
+      const matchSearch = !q ||
+        (item.name||"").toLowerCase().includes(q) ||
+        (item.role||item.era||"").toLowerCase().includes(q) ||
+        (item.region||"").toLowerCase().includes(q) ||
+        (item.desc||item.summary||"").toLowerCase().includes(q);
+      const matchRegion = regionFilter === "all" ||
+        (item.region||"").toLowerCase().includes(regionFilter.toLowerCase());
       return matchSearch && matchRegion;
     });
   }, [tab, search, regionFilter]);
 
-  // Region shorthand for filter chips
-  const REGION_GROUPS = [
-    ["all","All"],
-    ["Africa","Africa"],
-    ["Asia","Asia"],
-    ["Europe","Europe"],
-    ["Americas","Americas"],
-    ["Middle East","Middle East"],
-    ["Pacific","Pacific"],
-  ];
+  // Live Wikipedia search — fires when local results are empty and query >= 3 chars
+  useEffect(() => {
+    if (tab === "contributions" || search.length < 3 || filtered.length > 0) {
+      setWikiResults([]); setWikiLoading(false); return;
+    }
+    setWikiLoading(true);
+    const timer = setTimeout(async () => {
+      try {
+        const category = tab === "people" ? "person biography" : "civilization history empire";
+        const resp = await fetch(
+          `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(search + " " + category)}&srlimit=6&format=json&origin=*`
+        );
+        const data = await resp.json();
+        const pages = data.query?.search || [];
+        const summaries = await Promise.all(
+          pages.slice(0, 6).map(async p => {
+            try {
+              const r = await fetch(
+                `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(p.title.replace(/ /g,"_"))}`
+              );
+              return r.ok ? r.json() : null;
+            } catch { return null; }
+          })
+        );
+        setWikiResults(summaries.filter(Boolean).map(s => ({
+          id:        `wiki-${s.pageid}`,
+          name:      s.title,
+          region:    s.description || "Wikipedia",
+          desc:      s.extract?.slice(0, 300) || "",
+          summary:   s.extract?.slice(0, 300) || "",
+          thumbnail: s.thumbnail?.source || "",
+          wikiTitle: s.title.replace(/ /g, "_"),
+          url:       s.content_urls?.desktop?.page || "",
+          type:      "wiki",
+          role:      s.description || "",
+          dates:     "",
+        })));
+      } catch { setWikiResults([]); }
+      finally  { setWikiLoading(false); }
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [search, tab, filtered.length]);
+
+  const displayItems = filtered.length > 0 ? filtered : wikiResults;
+  const showingWiki  = filtered.length === 0 && wikiResults.length > 0;
+  const activeSel    = sel || wikiSel;
 
   return (
     <div style={{height:"100%",display:"flex",flexDirection:"column",background:T.bg,overflow:"hidden"}}>
-      {/* Tabs + search */}
+
+      {/* ── Header: tabs + search ─────────────────────────────── */}
       <div style={{background:T.surface,borderBottom:`1px solid ${T.border}`,padding:"0 16px",display:"flex",alignItems:"center",gap:12,flexShrink:0}}>
         {[["people","People & Figures"],["civilizations","Civilizations & Empires"],["contributions","Contributions"]].map(([v,l])=>(
-          <button key={v} onClick={()=>{setTab(v);setSel(null);setRegionFilter("all");}} style={{padding:"12px 4px",background:"transparent",border:"none",borderBottom:tab===v?`2px solid ${T.accent}`:"2px solid transparent",color:tab===v?T.accent:T.inkLight,fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:tab===v?600:400,cursor:"pointer",letterSpacing:"0.04em",whiteSpace:"nowrap"}}>{l}</button>
+          <button key={v} onClick={()=>{setTab(v);setSel(null);setWikiSel(null);setSearch("");setRegionFilter("all");setWikiResults([]);}}
+            style={{padding:"12px 4px",background:"transparent",border:"none",borderBottom:tab===v?`2px solid ${T.accent}`:"2px solid transparent",color:tab===v?T.accent:T.inkLight,fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:tab===v?600:400,cursor:"pointer",letterSpacing:"0.04em",whiteSpace:"nowrap"}}>{l}</button>
         ))}
         <div style={{flex:1}}/>
-        <div style={{display:"flex",alignItems:"center",gap:8,padding:"6px 12px",background:T.card,border:`1px solid ${T.border}`,borderRadius:8,minWidth:200}}>
-          <Ic n="search" s={13} c={T.inkLight}/>
-          <input value={search} onChange={e=>setSearch(e.target.value)} placeholder={`Search ${tab === "people" ? "people" : tab === "civilizations" ? "civilizations" : "contributions"}…`} style={{border:"none",background:"transparent",outline:"none",fontFamily:"'DM Sans',sans-serif",fontSize:12,color:T.ink,flex:1,caretColor:T.accent}}/>
-          {search && <span onClick={()=>setSearch("")} style={{cursor:"pointer",color:T.inkFaint,fontSize:12}}>✕</span>}
-        </div>
+        {tab !== "contributions" && (
+          <div style={{display:"flex",alignItems:"center",gap:8,padding:"6px 12px",background:T.card,border:`1px solid ${search?T.accent+"50":T.border}`,borderRadius:8,minWidth:220,transition:"border-color 0.15s"}}>
+            <Ic n="search" s={13} c={search?T.accent:T.inkLight}/>
+            <input
+              value={search} onChange={e=>{setSearch(e.target.value);setSel(null);setWikiSel(null);}}
+              placeholder={`Search ${tab === "people" ? "people, roles, regions" : "civilizations, empires, regions"}… or anything on Wikipedia`}
+              style={{border:"none",background:"transparent",outline:"none",fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.ink,flex:1,caretColor:T.accent}}
+            />
+            {wikiLoading && <span style={{fontSize:11,color:T.inkFaint,animation:"spin 1s linear infinite",display:"inline-block"}}>⟳</span>}
+            {search && !wikiLoading && <span onClick={()=>{setSearch("");setWikiResults([]);}} style={{cursor:"pointer",color:T.inkFaint,fontSize:12}}>✕</span>}
+          </div>
+        )}
       </div>
 
-      {/* Region filter pills — only for people + civilizations tabs */}
+      {/* ── Region filter + status bar ───────────────────────── */}
       {tab !== "contributions" && (
-        <div style={{background:T.surface,borderBottom:`1px solid ${T.border}`,padding:"6px 16px",display:"flex",gap:6,flexWrap:"wrap",flexShrink:0}}>
+        <div style={{background:T.surface,borderBottom:`1px solid ${T.border}`,padding:"6px 16px",display:"flex",gap:6,alignItems:"center",flexShrink:0}}>
           {REGION_GROUPS.map(([v,l]) => {
             const on = regionFilter === v;
             return (
               <div key={v} onClick={()=>setRegionFilter(v)}
-                style={{padding:"3px 10px",borderRadius:20,border:`1px solid ${on?T.accent+"60":T.border}`,background:on?T.accentDim:"transparent",color:on?T.accent:T.inkLight,fontFamily:"'DM Sans',sans-serif",fontSize:10,cursor:"pointer",letterSpacing:"0.04em",transition:"all 0.15s",whiteSpace:"nowrap"}}>
+                style={{padding:"3px 10px",borderRadius:20,border:`1px solid ${on?T.accent+"60":T.border}`,background:on?T.accentDim:"transparent",color:on?T.accent:T.inkLight,fontFamily:"'DM Sans',sans-serif",fontSize:10,cursor:"pointer",transition:"all 0.15s",whiteSpace:"nowrap"}}>
                 {l}
               </div>
             );
           })}
           <div style={{flex:1}}/>
-          <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:T.inkLight,alignSelf:"center"}}>
-            <span style={{color:T.accent,fontWeight:700}}>{filtered.length}</span> results
-          </span>
+          {showingWiki && (
+            <div style={{display:"flex",alignItems:"center",gap:5,padding:"2px 8px",borderRadius:20,background:"#00BCD420",border:"1px solid #00BCD440"}}>
+              <span style={{fontSize:10}}>🔍</span>
+              <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,color:"#00BCD4",fontWeight:600}}>
+                {wikiResults.length} Wikipedia results for "{search}"
+              </span>
+            </div>
+          )}
+          {!showingWiki && (
+            <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:T.inkLight}}>
+              <span style={{color:T.accent,fontWeight:700}}>{filtered.length}</span> results
+            </span>
+          )}
         </div>
       )}
 
+      {/* ── Content ──────────────────────────────────────────── */}
       <div style={{flex:1,display:"flex",overflow:"hidden"}}>
-        {tab==="contributions"
-          ? <ContributionsTab T={T}/>
+        {tab === "contributions"
+          ? <ContributionsTab T={T} search={search} setSearch={setSearch}/>
           : <>
               <div style={{flex:1,overflowY:"auto",padding:"20px 24px"}}>
-                {filtered.length === 0 ? (
-                  <div style={{textAlign:"center",padding:"60px 0",color:T.inkLight,fontFamily:"'DM Sans',sans-serif",fontSize:13}}>
-                    No results for "{search}" in {regionFilter !== "all" ? regionFilter : "any region"}
+
+                {/* Loading state */}
+                {wikiLoading && filtered.length === 0 && (
+                  <div style={{textAlign:"center",padding:"40px 0",color:T.inkLight,fontFamily:"'DM Sans',sans-serif",fontSize:13,display:"flex",flexDirection:"column",alignItems:"center",gap:12}}>
+                    <span style={{fontSize:24,animation:"spin 1s linear infinite",display:"inline-block"}}>⟳</span>
+                    Searching Wikipedia for "{search}"…
                   </div>
-                ) : (
+                )}
+
+                {/* No results at all */}
+                {!wikiLoading && search.length >= 3 && displayItems.length === 0 && (
+                  <div style={{textAlign:"center",padding:"60px 0",color:T.inkLight,fontFamily:"'DM Sans',sans-serif",fontSize:13}}>
+                    Nothing found for "{search}" — try a different spelling or broader term
+                  </div>
+                )}
+
+                {/* Section header when showing wiki results */}
+                {showingWiki && (
+                  <div style={{marginBottom:16,padding:"10px 14px",background:"#00BCD412",border:"1px solid #00BCD430",borderRadius:8,display:"flex",alignItems:"center",gap:8}}>
+                    <span style={{fontSize:16}}>🔍</span>
+                    <div>
+                      <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:600,color:"#00BCD4"}}>Results from Wikipedia</div>
+                      <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:T.inkLight}}>Not in Severus yet — found live from Wikipedia. Click to read more.</div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Card grid */}
+                {displayItems.length > 0 && (
                   <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(220px,1fr))",gap:16}}>
-                    {filtered.map(item=>(
-                      <PersonCard key={item.id} item={item} tab={tab} T={T} selected={sel?.id===item.id} onClick={()=>setSel(s=>s?.id===item.id?null:item)}/>
+                    {displayItems.map(item => (
+                      <PersonCard key={item.id} item={item} tab={tab} T={T}
+                        selected={activeSel?.id === item.id}
+                        onClick={()=>{
+                          if (item.type === "wiki") {
+                            setWikiSel(s => s?.id === item.id ? null : item);
+                            setSel(null);
+                          } else {
+                            setSel(s => s?.id === item.id ? null : item);
+                            setWikiSel(null);
+                          }
+                        }}
+                      />
                     ))}
                   </div>
                 )}
               </div>
-              {sel&&<LearnDetailPanel item={sel} tab={tab} T={T} onClose={()=>setSel(null)}/>}
+
+              {/* Detail panel */}
+              {activeSel && (
+                <LearnDetailPanel item={activeSel} tab={tab} T={T} onClose={()=>{setSel(null);setWikiSel(null);}}/>
+              )}
             </>
         }
       </div>
+      <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
     </div>
   );
 }
@@ -1056,7 +1119,7 @@ function LearnDetailPanel({ item, tab, T, onClose }) {
   );
 }
 
-function ContributionsTab({ T }) {
+function ContributionsTab({ T, search="", setSearch }) {
   const contribs = [
     { cat:"Mathematics", icon:"📐", items:["Egyptian Rhind Papyrus (1550 BCE): world's earliest algebra and geometry","Indian mathematicians invented zero — transforming all of mathematics","Islamic scholars (Al-Khwarizmi, 820 CE) invented algebra — the word comes from Arabic","Greek geometry + Indian numbers + Arab algebra = modern mathematics"] },
     { cat:"Medicine", icon:"🏥", items:["Ebers Papyrus (1550 BCE): 700 medical treatments — world's oldest medical text","Edwin Smith Papyrus: first surgical text — described brain, spinal cord, nervous system","Imhotep (2650 BCE): first named physician in history — later deified","Ancient Nubians: tetracycline found in bones, suggesting antibiotic brewing"] },
@@ -1067,10 +1130,23 @@ function ContributionsTab({ T }) {
     { cat:"Science & Innovation", icon:"🔬", items:["Gunpowder, compass, paper, printing press: all invented in China","Islamic scholars invented algebra, optics, and made the first accurate maps","Coffee discovered in Ethiopia — the drink that fuelled the Enlightenment and Industrial Revolution","The Scientific Revolution (1543–1687): Copernicus, Galileo, Newton — built on Islamic and Greek foundations"] },
     { cat:"Politics & Law", icon:"⚖️", items:["Magna Carta (1215): first document establishing rule of law — foundation of all democracies","Haudenosaunee (Iroquois) Confederacy inspired the US Constitution's federal structure","Athenian democracy (507 BCE): first government by the people — though only free men counted","The UN Declaration of Human Rights (1948): shaped by thinkers from 58 nations, not just the West"] },
   ];
+  const q = search.toLowerCase();
+  const filtered = q
+    ? contribs.map(c => ({
+        ...c,
+        items: c.items.filter(item => item.toLowerCase().includes(q) || c.cat.toLowerCase().includes(q))
+      })).filter(c => c.items.length > 0)
+    : contribs;
+
   return (
     <div style={{flex:1,overflowY:"auto",padding:"20px 24px"}}>
+      {q && filtered.length === 0 && (
+        <div style={{textAlign:"center",padding:"60px 0",color:T.inkLight,fontFamily:"'DM Sans',sans-serif",fontSize:13}}>
+          Nothing found for "{search}" in contributions
+        </div>
+      )}
       <div style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:16}}>
-        {contribs.map((c,i)=>(
+        {filtered.map((c,i)=>(
           <div key={i} style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:10,padding:"18px"}}>
             <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:12}}>
               <span style={{fontSize:20}}>{c.icon}</span>
@@ -1089,766 +1165,527 @@ function ContributionsTab({ T }) {
   );
 }
 
-// ── RECKON SECTION ────────────────────────────────────────────
-function ReckonSection({ T }) {
-  const [tab,  setTab]  = useState("ships");
-  const [sel,  setSel]  = useState(null);
 
-  const tabs=[["ships","Historic Ships"],["companies","Companies"],["families","Families"],["institutions","Institutions"]];
-  const data={ships:ACCOUNTABILITY.ships,companies:ACCOUNTABILITY.companies,families:ACCOUNTABILITY.families,institutions:ACCOUNTABILITY.institutions};
-  const items=data[tab]||[];
+// ── INVESTIGATE — MODERN PI BOARD ────────────────────────────
 
-  return (
-    <div style={{height:"100%",display:"flex",flexDirection:"column",background:T.bg,overflow:"hidden"}}>
-      <div style={{background:T.surface,borderBottom:`1px solid ${T.border}`,padding:"12px 16px 0",flexShrink:0}}>
-        <div style={{display:"flex",alignItems:"flex-start",gap:12,marginBottom:12}}>
-          <div style={{padding:"6px 10px",background:T.danger+"20",border:`1px solid ${T.danger}40`,borderRadius:6}}>
-            <Ic n="warning" s={14} c={T.danger}/>
-          </div>
-          <div>
-            <h2 style={{fontFamily:"'Playfair Display',Georgia,serif",fontSize:18,fontWeight:700,color:T.ink,margin:"0 0 3px"}}>Power, Wealth & Accountability</h2>
-            <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:T.inkMid,margin:0}}>Named individuals, companies, and institutions. Who built empires. Who profited. Every entry is sourced.</p>
-          </div>
-        </div>
-        <div style={{display:"flex",gap:0}}>
-          {tabs.map(([v,l])=>(
-            <button key={v} onClick={()=>{setTab(v);setSel(null);}} style={{padding:"8px 16px",background:"transparent",border:"none",borderBottom:tab===v?`2px solid ${T.danger}`:"2px solid transparent",color:tab===v?T.danger:T.inkLight,fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:tab===v?600:400,cursor:"pointer",letterSpacing:"0.04em"}}>{l}</button>
-          ))}
-        </div>
-      </div>
-
-      <div style={{flex:1,display:"flex",overflow:"hidden"}}>
-        <div style={{flex:1,overflowY:"auto",padding:"20px 24px"}}>
-          {items.map((item,i)=>{
-            const isSel=sel===i;
-            return (
-              <div key={i} onClick={()=>setSel(isSel?null:i)} style={{background:isSel?T.cardHov:T.card,border:`1px solid ${isSel?T.danger+"50":T.border}`,borderRadius:10,padding:"16px 18px",marginBottom:12,cursor:"pointer",transition:"all 0.2s",borderLeft:isSel?`3px solid ${T.danger}`:"3px solid transparent"}}>
-                <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:8}}>
-                  <div>
-                    <h3 style={{fontFamily:"'Playfair Display',Georgia,serif",fontSize:16,fontWeight:700,color:T.ink,margin:"0 0 3px"}}>{item.name}</h3>
-                    <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
-                      {item.year&&<span style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:T.accent}}>{item.year}</span>}
-                      {item.founded&&<span style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:T.accent}}>Founded {item.founded}</span>}
-                      {item.country&&<span style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:T.inkLight}}>{item.country}</span>}
-                      {item.type&&<span style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:T.info}}>{item.type}</span>}
-                    </div>
-                  </div>
-                  {item.acknowledged!==undefined&&<div style={{padding:"2px 8px",borderRadius:20,background:item.acknowledged?"rgba(76,175,125,0.15)":"rgba(224,48,48,0.15)",border:`1px solid ${item.acknowledged?"rgba(76,175,125,0.4)":"rgba(224,48,48,0.4)"}`,fontFamily:"'DM Sans',sans-serif",fontSize:9,fontWeight:600,letterSpacing:"0.06em",color:item.acknowledged?"#4CAF7D":T.danger,whiteSpace:"nowrap"}}>
-                    {item.acknowledged?"Acknowledged":"Not Acknowledged"}
-                  </div>}
-                </div>
-
-                {tab==="ships"&&<><div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:10}}>
-                  {[["Owner",item.owner],["Route",item.route],["Cargo",item.cargo]].map(([k,v])=>(
-                    <div key={k}><div style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,color:T.inkFaint,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:2}}>{k}</div><div style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:T.inkMid}}>{v}</div></div>
-                  ))}
-                </div></>}
-
-                {tab==="companies"&&<div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:10}}>
-                  {[["Founders",item.founders],["HQ",item.hq],["Enslaved",item.enslaved],["Legacy",item.modern]].map(([k,v])=>(
-                    <div key={k}><div style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,color:T.inkFaint,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:2}}>{k}</div><div style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:T.inkMid}}>{v}</div></div>
-                  ))}
-                </div>}
-
-                {tab==="families"&&<div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:10}}>
-                  {[["Enslaved",item.enslaved],["Location",item.location],["Compensation",item.compensation]].map(([k,v])=>(
-                    <div key={k}><div style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,color:T.inkFaint,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:2}}>{k}</div><div style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:T.inkMid}}>{v}</div></div>
-                  ))}
-                </div>}
-
-                {isSel&&<>
-                  <div style={{paddingTop:10,borderTop:`1px solid ${T.border}`,marginTop:4}}>
-                    <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:T.inkMid,lineHeight:1.75,margin:"0 0 8px"}}>{item.incident||item.role||item.connection}</p>
-                    {item.modern&&tab!=="companies"&&<p style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:T.ink,lineHeight:1.75,margin:"0 0 8px",fontStyle:"italic"}}>{item.modern}</p>}
-                    <div style={{display:"flex",alignItems:"center",gap:6,padding:"6px 10px",background:T.surface,borderRadius:6,border:`1px solid ${T.border}`}}>
-                      <Ic n="extlink" s={11} c={T.inkLight}/>
-                      <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:T.inkLight}}>{item.source}</span>
-                    </div>
-                  </div>
-                </>}
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Sidebar info */}
-        <div style={{width:240,borderLeft:`1px solid ${T.border}`,background:T.surface,padding:"16px",overflowY:"auto",flexShrink:0}}>
-          <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.1em",textTransform:"uppercase",color:T.inkFaint,marginBottom:12,fontWeight:600}}>Sources</div>
-          {[
-            {name:"UCL Legacies of British Slave-ownership",url:"https://www.ucl.ac.uk/lbs/"},
-            {name:"SlaveVoyages.org — 36,000+ documented voyages",url:"https://www.slavevoyages.org/"},
-            {name:"National Archives UK — slave trade records",url:"https://www.nationalarchives.gov.uk/"},
-            {name:"Trans-Atlantic Slave Trade Database",url:"https://www.slavevoyages.org/"},
-          ].map((s,i)=>(
-            <div key={i} style={{marginBottom:10,paddingBottom:10,borderBottom:`1px solid ${T.border}`}}>
-              <a href={s.url} target="_blank" rel="noopener noreferrer" style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.info,lineHeight:1.55,textDecoration:"none"}}>{s.name}</a>
-            </div>
-          ))}
-          <div style={{marginTop:12,padding:"12px",background:T.danger+"10",border:`1px solid ${T.danger}25`,borderRadius:8}}>
-            <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:T.danger,fontWeight:600,marginBottom:6}}>A Note on This Data</div>
-            <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.inkMid,lineHeight:1.65,margin:0}}>Every entry here is sourced to public records, academic databases, or institutional acknowledgements. This is not accusation — it is documented history.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-
-// ── NODE DETAIL PANEL ─────────────────────────────────────────
-function NodeDetailPanel({ node, edges, nodes, T, onClose, onConnect, onDelete, onUpdateNote }) {
-  const [note,      setNote]      = useState(node.note || "");
-  const [wikiImg,   setWikiImg]   = useState(null);
-  const [wikiSum,   setWikiSum]   = useState("");
-  const [aiContext, setAiContext]  = useState(null);
-  const [aiLoading, setAiLoading] = useState(false);
-  const meta      = NODE_TYPES[node.type] || NODE_TYPES.person;
-  const nodeEdges = edges.filter(e => e.from === node.id || e.to === node.id);
-
-  // Wikipedia
-  useEffect(() => {
-    setNote(node.note || "");
-    setWikiImg(null); setWikiSum(""); setAiContext(null);
-    fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(node.label)}`)
-      .then(r => r.ok ? r.json() : null)
-      .then(d => {
-        if (d?.thumbnail?.source) setWikiImg(d.thumbnail.source.replace(/\/\d+px-/, "/320px-"));
-        if (d?.extract) setWikiSum(d.extract.slice(0, 280));
-      }).catch(() => {});
-  }, [node.id]);
-
-  // AI context — fires when node selected and has edges
-  useEffect(() => {
-    if (nodeEdges.length === 0) return;
-    setAiContext(null);
-    setAiLoading(true);
-
-    const connectionLines = nodeEdges.map(edge => {
-      const otherId = edge.from === node.id ? edge.to : edge.from;
-      const other   = nodes.find(n => n.id === otherId);
-      const dir     = edge.from === node.id ? "connects TO" : "is connected FROM";
-      return other ? `- ${node.label} ${dir} "${other.label}" (relationship: "${edge.label}")` : null;
-    }).filter(Boolean).join("\n");
-
-    const allLabels = nodes.map(n => n.label).join(", ");
-
-    fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 500,
-        messages: [{ role: "user", content:
-          `You are an expert on world history for the Severus History Investigation Platform — covering all civilisations, empires, peoples, and events across human history.
-
-A researcher is examining the node "${node.label}" (type: ${node.type}) on a PI board investigation diagram.
-
-All nodes in this diagram: ${allLabels}
-
-This node's connections:
-${connectionLines}
-
-Respond with exactly these 3 sections (keep total response under 200 words):
-
-BACKGROUND
-2 sentences: What is ${node.label} historically?
-
-ROLE IN DIAGRAM
-2 sentences: Why does this node appear in THIS investigation? What does it represent here?
-
-CONNECTIONS
-One line per connection explaining why that relationship matters historically. Format: "→ [Other Node]: [explanation]"` }],
-      }),
-    })
-      .then(r => r.json())
-      .then(d => { const t = d.content?.[0]?.text; if (t) setAiContext(t); })
-      .catch(() => {})
-      .finally(() => setAiLoading(false));
-  }, [node.id, nodeEdges.length]);
-
-  // Parse sections from AI response
-  const sections = (() => {
-    if (!aiContext) return null;
-    const bg   = aiContext.match(/BACKGROUND\s*\n([\s\S]*?)(?=\n\s*ROLE IN|$)/i)?.[1]?.trim();
-    const role = aiContext.match(/ROLE IN DIAGRAM\s*\n([\s\S]*?)(?=\n\s*CONNECTIONS|$)/i)?.[1]?.trim();
-    const conn = aiContext.match(/CONNECTIONS\s*\n([\s\S]*?)$/i)?.[1]?.trim();
-    return { bg, role, conn };
-  })();
-
-  // Match AI connection lines to edges
-  const getEdgeExplanation = (otherLabel) => {
-    if (!sections?.conn) return null;
-    const lines = sections.conn.split("\n").filter(l => l.trim());
-    return lines.find(l => l.toLowerCase().includes(otherLabel.toLowerCase().split(" ")[0]))
-      ?.replace(/^→\s*[^:]+:\s*/,"").replace(/^[-•*]\s*/,"").trim() || null;
-  };
-
-  const Shimmer = () => (
-    <div style={{ height:14, borderRadius:4, marginBottom:5,
-      background: T.name==="dark"?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.06)",
-      animation:"shimmer 1.4s ease-in-out infinite" }}/>
-  );
-
-  return (
-    <div style={{ flex:1, display:"flex", flexDirection:"column", overflow:"hidden" }}>
-      {/* Header */}
-      <div style={{ height:110, background:`linear-gradient(135deg,${meta.color}35,${meta.color}10)`,
-        position:"relative", flexShrink:0, overflow:"hidden" }}>
-        {wikiImg && <img src={wikiImg} alt="" style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"center top", filter:"brightness(0.8)" }}/>}
-        <div style={{ position:"absolute", inset:0, background:"linear-gradient(to top,rgba(0,0,0,0.75),transparent 50%)" }}/>
-        <button onClick={onClose} style={{ position:"absolute", top:8, right:8, width:22, height:22, borderRadius:"50%", background:"rgba(0,0,0,0.55)", border:"1px solid rgba(255,255,255,0.2)", color:"rgba(255,255,255,0.7)", fontSize:11, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center" }}>✕</button>
-        <div style={{ position:"absolute", bottom:8, left:10, display:"flex", alignItems:"center", gap:6 }}>
-          <span style={{ fontSize:16 }}>{meta.icon}</span>
-          <span style={{ fontFamily:"'DM Sans',sans-serif", fontSize:8, fontWeight:700, color:"rgba(255,255,255,0.8)", textTransform:"uppercase", letterSpacing:"0.08em", background:meta.color+"60", padding:"2px 7px", borderRadius:20 }}>{meta.label}</span>
-        </div>
-      </div>
-
-      {/* Scrollable content */}
-      <div style={{ flex:1, overflowY:"auto", padding:"12px 14px" }}>
-        <h3 style={{ fontFamily:"'Playfair Display',serif", fontSize:15, fontWeight:700, color:T.ink, margin:"0 0 12px" }}>{node.label}</h3>
-
-        {/* Background */}
-        <div style={{ marginBottom:12 }}>
-          <div style={{ display:"flex", alignItems:"center", gap:5, marginBottom:6 }}>
-            <div style={{ width:3, height:12, background:meta.color, borderRadius:2 }}/>
-            <span style={{ fontFamily:"'DM Sans',sans-serif", fontSize:9, letterSpacing:"0.1em", textTransform:"uppercase", color:T.inkFaint, fontWeight:600 }}>Background</span>
-          </div>
-          {aiLoading && !sections?.bg ? <><Shimmer/><Shimmer/></>
-            : sections?.bg
-            ? <p style={{ fontFamily:"'DM Sans',sans-serif", fontSize:11, color:T.inkMid, lineHeight:1.75, margin:0 }}>{sections.bg}</p>
-            : wikiSum
-            ? <p style={{ fontFamily:"'DM Sans',sans-serif", fontSize:11, color:T.inkMid, lineHeight:1.75, margin:0 }}>{wikiSum}…</p>
-            : null}
-        </div>
-
-        {/* Role in diagram */}
-        {(aiLoading || sections?.role) && (
-          <div style={{ marginBottom:12, padding:"9px 11px", background:meta.color+"12", border:`1px solid ${meta.color}30`, borderRadius:8 }}>
-            <div style={{ display:"flex", alignItems:"center", gap:5, marginBottom:5 }}>
-              <div style={{ width:3, height:12, background:meta.color, borderRadius:2 }}/>
-              <span style={{ fontFamily:"'DM Sans',sans-serif", fontSize:9, letterSpacing:"0.1em", textTransform:"uppercase", color:meta.color, fontWeight:600 }}>Role in this investigation</span>
-            </div>
-            {aiLoading && !sections?.role ? <Shimmer/>
-              : <p style={{ fontFamily:"'DM Sans',sans-serif", fontSize:11, color:T.ink, lineHeight:1.75, margin:0, fontStyle:"italic" }}>{sections?.role}</p>}
-          </div>
-        )}
-
-        {/* Connections */}
-        <div style={{ fontFamily:"'DM Sans',sans-serif", fontSize:9, letterSpacing:"0.1em", textTransform:"uppercase", color:T.inkFaint, marginBottom:8, fontWeight:600 }}>
-          Connections ({nodeEdges.length})
-        </div>
-        {nodeEdges.length === 0
-          ? <p style={{ fontFamily:"'DM Sans',sans-serif", fontSize:11, color:T.inkLight, marginBottom:10 }}>None yet</p>
-          : <div style={{ marginBottom:12 }}>
-            {nodeEdges.map((edge, i) => {
-              const otherId   = edge.from === node.id ? edge.to : edge.from;
-              const other     = nodes.find(n => n.id === otherId);
-              const dir       = edge.from === node.id ? "→" : "←";
-              const otherMeta = NODE_TYPES[other?.type] || NODE_TYPES.place;
-              const explanation = other ? getEdgeExplanation(other.label) : null;
-              if (!other) return null;
-              return (
-                <div key={i} style={{ marginBottom:8, padding:"9px 10px", background:T.card,
-                  border:`1px solid ${T.border}`, borderRadius:8, borderLeft:`2.5px solid ${otherMeta.color}` }}>
-                  <div style={{ display:"flex", alignItems:"center", gap:6, marginBottom: explanation||aiLoading ? 5:0 }}>
-                    <span style={{ fontSize:13 }}>{otherMeta.icon}</span>
-                    <span style={{ fontFamily:"'DM Sans',sans-serif", fontSize:10, fontWeight:700, color:T.ink }}>{dir} {other.label}</span>
-                    <span style={{ fontFamily:"'DM Sans',sans-serif", fontSize:9, color:meta.color, fontStyle:"italic", marginLeft:2 }}>{edge.label}</span>
-                  </div>
-                  {aiLoading && !explanation
-                    ? <div style={{ height:12, borderRadius:3, background:T.name==="dark"?"rgba(255,255,255,0.04)":"rgba(0,0,0,0.04)", animation:"shimmer 1.4s ease-in-out infinite" }}/>
-                    : explanation
-                    ? <p style={{ fontFamily:"'DM Sans',sans-serif", fontSize:10, color:T.inkMid, lineHeight:1.6, margin:0 }}>{explanation}</p>
-                    : null}
-                </div>
-              );
-            })}
-          </div>
-        }
-
-        {/* Notes */}
-        <div style={{ fontFamily:"'DM Sans',sans-serif", fontSize:9, letterSpacing:"0.1em", textTransform:"uppercase", color:T.inkFaint, marginBottom:5, fontWeight:600 }}>Investigation Notes</div>
-        <textarea value={note} onChange={e=>setNote(e.target.value)} onBlur={()=>onUpdateNote(note)}
-          placeholder="Add your investigation notes…" rows={3}
-          style={{ width:"100%", padding:"8px 10px", background:T.card, border:`1px solid ${T.border}`,
-            borderRadius:7, fontFamily:"'DM Sans',sans-serif", fontSize:11, color:T.ink, resize:"vertical",
-            outline:"none", caretColor:T.accent, lineHeight:1.6, boxSizing:"border-box" }}/>
-
-        <div style={{ display:"flex", flexDirection:"column", gap:7, marginTop:10 }}>
-          <button onClick={onConnect} style={{ padding:"7px", background:T.info+"18", border:`1px solid ${T.info}40`, borderRadius:7, color:T.info, fontFamily:"'DM Sans',sans-serif", fontSize:11, fontWeight:600, cursor:"pointer", textTransform:"uppercase", letterSpacing:"0.04em" }}>
-            🔗 Connect from here
-          </button>
-          <button onClick={onDelete} style={{ padding:"7px", background:"transparent", border:`1px solid ${T.border}`, borderRadius:7, color:T.danger, fontFamily:"'DM Sans',sans-serif", fontSize:11, fontWeight:600, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", gap:5 }}>
-            <Ic n="trash" s={12} c={T.danger}/> Delete node
-          </button>
-        </div>
-      </div>
-      <style>{`@keyframes shimmer{0%,100%{opacity:0.4}50%{opacity:0.9}}`}</style>
-    </div>
-  );
-}
-
-// ── INVESTIGATE (PI BOARD) ────────────────────────────────────
 const NODE_TYPES = {
-  person:      { icon:"👤", color:"#009AD8", label:"Person"      },
-  place:       { icon:"🏛️", color:"#E05A2B", label:"Place"       },
-  event:       { icon:"⚡", color:"#9B59B6", label:"Event"       },
-  institution: { icon:"📖", color:"#4CAF7D", label:"Institution" },
-  trade:       { icon:"🐪", color:"#E6A817", label:"Trade"       },
-  ship:        { icon:"⚓", color:"#E03030", label:"Ship"        },
-  document:    { icon:"📜", color:"#708090", label:"Document"    },
+  person:      { icon:"👤", color:"#3B82F6", label:"Person"      },
+  event:       { icon:"⚡", color:"#8B5CF6", label:"Event"       },
+  institution: { icon:"🏛️", color:"#10B981", label:"Institution" },
+  concept:     { icon:"💡", color:"#F59E0B", label:"Concept"     },
+  place:       { icon:"📍", color:"#EF4444", label:"Place"       },
+  law:         { icon:"⚖️", color:"#EC4899", label:"Law"         },
 };
 
-const RELATION_LABELS = [
-  "Visited","Patronized","Founded","Traded with","Funded",
-  "Conquered","Enslaved","Insured","Connected to","Led","Built",
-  "Looted","Colonized","Resisted","Influenced",
-];
-
 const DEFAULT_NODES = [
-  { id:1, label:"Roman Empire",       type:"place",       x:220, y:160 },
-  { id:2, label:"Julius Caesar",      type:"person",      x:480, y:100 },
-  { id:3, label:"Silk Road",          type:"trade",       x:740, y:160 },
-  { id:4, label:"Byzantine Empire",   type:"place",       x:160, y:360 },
-  { id:5, label:"Ottoman Empire",     type:"institution", x:500, y:360 },
+  { id:"n1", label:"Roman Empire",     type:"institution", x:300, y:180, note:"" },
+  { id:"n2", label:"Julius Caesar",    type:"person",      x:520, y:100, note:"" },
+  { id:"n3", label:"Silk Road",        type:"concept",     x:720, y:200, note:"" },
+  { id:"n4", label:"Byzantine Empire", type:"institution", x:240, y:360, note:"" },
+  { id:"n5", label:"Ottoman Empire",   type:"institution", x:520, y:380, note:"" },
+];
+const DEFAULT_EDGES = [
+  {id:"e1",from:"n1",to:"n2",label:"led by"},
+  {id:"e2",from:"n1",to:"n3",label:"traded via"},
+  {id:"e3",from:"n1",to:"n4",label:"became"},
+  {id:"e4",from:"n4",to:"n5",label:"replaced by"},
 ];
 
-const DEFAULT_EDGES = [
-  {id:1,from:1,to:2,label:"Led by"},{id:2,from:1,to:3,label:"Traded via"},{id:3,from:3,to:5,label:"Connected to"},{id:4,from:1,to:4,label:"Became"},{id:5,from:4,to:5,label:"Replaced by"}
-];
+const API_URL_BOARD = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 function InvestigateSection({ T, nodes: propNodes, edges: propEdges, setNodes: setPropNodes, setEdges: setPropEdges }) {
-  const svgRef      = useRef(null);
-  const [nodes,     setNodesLocal]  = useState(propNodes || DEFAULT_NODES);
-  const [edges,     setEdgesLocal]  = useState(propEdges || DEFAULT_EDGES);
+  const svgRef = useRef(null);
+  const nextId = useRef(10);
+  const dragOffset = useRef({x:0,y:0});
+  const rafRef = useRef(null);
 
-  // Sync with shared state if provided
-  const setNodes = (val) => {
-    setNodesLocal(val);
-    if (setPropNodes) setPropNodes(val);
-  };
-  const setEdges = (val) => {
-    setEdgesLocal(val);
-    if (setPropEdges) setPropEdges(val);
-  };
+  const [nodes,      setNodesLocal]  = useState(propNodes || DEFAULT_NODES);
+  const [edges,      setEdgesLocal]  = useState(propEdges || DEFAULT_EDGES);
+  const [dragging,   setDragging]    = useState(null);
+  const [selNode,    setSelNode]     = useState(null);
+  const [selEdge,    setSelEdge]     = useState(null);
+  const [connecting, setConnecting]  = useState(null);
+  const [newLabel,   setNewLabel]    = useState("");
+  const [newType,    setNewType]     = useState("person");
+  const [search,     setSearch]      = useState("");
+  const [chatInput,  setChatInput]   = useState("");
+  const [chatHistory,setChatHistory] = useState([]);
+  const [chatLoading,setChatLoading] = useState(false);
+  const [panelTab,   setPanelTab]    = useState("info"); // "info" | "chat"
+  const chatEndRef = useRef(null);
 
-  // Sync in when props change (e.g. Research pushes new nodes)
-  useEffect(() => {
-    if (propNodes) setNodesLocal(propNodes);
-  }, [propNodes]);
-  useEffect(() => {
-    if (propEdges) setEdgesLocal(propEdges);
-  }, [propEdges]);
-  const [dragging,  setDragging]  = useState(null);
-  const [selNode,   setSelNode]   = useState(null);
-  const [selEdge,   setSelEdge]   = useState(null);
-  const [connecting,setConnecting]= useState(null); // node id we're connecting FROM
-  const [newLabel,  setNewLabel]  = useState("");
-  const [newType,   setNewType]   = useState("person");
-  const [relLabel,  setRelLabel]  = useState("Connected to");
-  const [layout,    setLayout]    = useState("free"); // free | radial | tree
-  const [search,    setSearch]    = useState("");
-  const [filterType,setFilterType]= useState("all");  // default: show everything
-  const dragOffset  = useRef({x:0,y:0});
-  const nextId      = useRef(6);
+  const setNodes = v => { setNodesLocal(v); if(setPropNodes) setPropNodes(v); };
+  const setEdges = v => { setEdgesLocal(v); if(setPropEdges) setPropEdges(v); };
 
-  // ── Layout engines ────────────────────────────────────────────
-  const applyLayout = (type) => {
-    setLayout(type);
-    const cx = 500, cy = 300, r = 220;
-    if (type === "radial") {
-      setNodes(prev => prev.map((n,i) => ({
-        ...n,
-        x: i===0 ? cx : cx + r * Math.cos((2*Math.PI*i)/prev.length - Math.PI/2),
-        y: i===0 ? cy : cy + r * Math.sin((2*Math.PI*i)/prev.length - Math.PI/2),
-      })));
-    } else if (type === "tree") {
-      setNodes(prev => prev.map((n,i) => ({
-        ...n,
-        x: 120 + (i % 4) * 220,
-        y: 120 + Math.floor(i / 4) * 180,
-      })));
-    }
-  };
+  useEffect(()=>{ if(propNodes) setNodesLocal(propNodes); },[propNodes]);
+  useEffect(()=>{ if(propEdges) setEdgesLocal(propEdges); },[propEdges]);
+  useEffect(()=>{ chatEndRef.current?.scrollIntoView({behavior:"smooth"}); },[chatHistory]);
 
-  // ── Drag ──────────────────────────────────────────────────────
+  const visNodes = useMemo(() =>
+    search ? nodes.filter(n=>n.label.toLowerCase().includes(search.toLowerCase())) : nodes
+  ,[nodes,search]);
+  const visIds = useMemo(()=>new Set(visNodes.map(n=>n.id)),[visNodes]);
+  const visEdges = useMemo(()=>edges.filter(e=>visIds.has(e.from)&&visIds.has(e.to)),[edges,visIds]);
+
+  const selNodeData = nodes.find(n=>n.id===selNode);
+  const selEdgeData = edges.find(e=>e.id===selEdge);
+  const isDark = T.name==="dark";
+
+  // ── Drag ────────────────────────────────────────────────────
   const onNodeMouseDown = (e, id) => {
     e.stopPropagation();
     if (connecting !== null) {
       if (connecting !== id) {
         setEdges(prev => {
-          const exists = prev.some(ed => (ed.from===connecting&&ed.to===id)||(ed.from===id&&ed.to===connecting));
-          if (exists) return prev;
-          return [...prev, { id: Date.now(), from: connecting, to: id, label: relLabel }];
+          if(prev.some(ed=>(ed.from===connecting&&ed.to===id)||(ed.from===id&&ed.to===connecting))) return prev;
+          return [...prev,{id:"e"+Date.now(),from:connecting,to:id,label:"related to"}];
         });
       }
-      setConnecting(null);
-      return;
+      setConnecting(null); return;
     }
     const rect = svgRef.current.getBoundingClientRect();
-    const node = nodes.find(n => n.id === id);
-    dragOffset.current = { x: e.clientX - rect.left - node.x, y: e.clientY - rect.top - node.y };
-    setDragging(id);
-    setSelNode(id);
-    setSelEdge(null);
+    const node = nodes.find(n=>n.id===id);
+    dragOffset.current = {x:e.clientX-rect.left-node.x, y:e.clientY-rect.top-node.y};
+    setDragging(id); setSelNode(id); setSelEdge(null);
   };
 
-  const rafRef = useRef(null);
-
-  const onMouseMove = (e) => {
-    if (!dragging) return;
-    if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    rafRef.current = requestAnimationFrame(() => {
-      const rect = svgRef.current?.getBoundingClientRect();
-      if (!rect) return;
-      const x = Math.max(80, Math.min(rect.width - 80, e.clientX - rect.left - dragOffset.current.x));
-      const y = Math.max(30, Math.min(rect.height - 30, e.clientY - rect.top - dragOffset.current.y));
-      setNodes(prev => prev.map(n => n.id === dragging ? {...n, x, y} : n));
+  const onMouseMove = e => {
+    if(!dragging) return;
+    cancelAnimationFrame(rafRef.current);
+    rafRef.current = requestAnimationFrame(()=>{
+      const rect = svgRef.current?.getBoundingClientRect(); if(!rect) return;
+      const x = Math.max(80,Math.min(rect.width-80, e.clientX-rect.left-dragOffset.current.x));
+      const y = Math.max(30,Math.min(rect.height-30, e.clientY-rect.top-dragOffset.current.y));
+      setNodes(prev=>prev.map(n=>n.id===dragging?{...n,x,y}:n));
     });
   };
 
   const addNode = () => {
-    if (!newLabel.trim()) return;
-    setNodes(prev => [...prev, { id: nextId.current++, label: newLabel.trim(), type: newType, x: 300 + Math.random()*200, y: 150 + Math.random()*200 }]);
+    if(!newLabel.trim()) return;
+    const id = "n"+(nextId.current++);
+    setNodes(prev=>[...prev,{id,label:newLabel.trim(),type:newType,x:300+Math.random()*300,y:150+Math.random()*200,note:""}]);
     setNewLabel("");
   };
 
-  const deleteNode = (id) => {
-    setNodes(prev => prev.filter(n => n.id !== id));
-    setEdges(prev => prev.filter(e => e.from !== id && e.to !== id));
+  const deleteNode = id => {
+    setNodes(prev=>prev.filter(n=>n.id!==id));
+    setEdges(prev=>prev.filter(e=>e.from!==id&&e.to!==id));
     setSelNode(null);
   };
 
-  const deleteEdge = (id) => {
-    setEdges(prev => prev.filter(e => e.id !== id));
-    setSelEdge(null);
+  // ── AI Chat with board mutations ────────────────────────────
+  const sendChat = async () => {
+    if(!chatInput.trim()||chatLoading) return;
+    const message = chatInput.trim();
+    setChatInput("");
+    const userMsg = {role:"user",content:message};
+    setChatHistory(h=>[...h,userMsg]);
+    setChatLoading(true);
+
+    // Get the question from research context or derive from board
+    const topicGuess = nodes.slice(0,3).map(n=>n.label).join(", ");
+
+    try {
+      const resp = await fetch(`${API_URL_BOARD}/chat`,{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+          question: topicGuess,
+          message,
+          nodes: nodes.map(n=>({id:n.id,label:n.label,type:n.type})),
+          edges: edges.map(e=>({from:e.from,to:e.to,label:e.label})),
+          subject: "history",
+          chat_history: chatHistory.slice(-8),
+        }),
+      });
+
+      if(resp.ok){
+        const data = await resp.json();
+        const aiMsg = {role:"assistant",content:data.text||""};
+        setChatHistory(h=>[...h,aiMsg]);
+
+        // Apply mutations to the live board
+        if(data.mutations?.length){
+          let newNodes = [...nodes];
+          let newEdges = [...edges];
+          data.mutations.forEach(mut=>{
+            if(mut.type==="add_node"&&mut.node){
+              const n = mut.node;
+              if(!newNodes.find(x=>x.id===n.id)){
+                newNodes = [...newNodes,{
+                  ...n,
+                  x: 200+Math.random()*500,
+                  y: 150+Math.random()*300,
+                  note:"",
+                }];
+              }
+            } else if(mut.type==="add_edge"&&mut.edge){
+              const e = mut.edge;
+              if(!newEdges.find(x=>x.from===e.from&&x.to===e.to)){
+                newEdges = [...newEdges,{id:"e"+Date.now()+Math.random(),from:e.from,to:e.to,label:e.label||"related to"}];
+              }
+            } else if(mut.type==="highlight"&&mut.node_id){
+              setSelNode(mut.node_id);
+            }
+          });
+          setNodes(newNodes);
+          setEdges(newEdges);
+          if(data.mutations.some(m=>m.type==="add_node"||m.type==="add_edge")){
+            setChatHistory(h=>[...h,{role:"system",content:`✦ Board updated — ${data.mutations.length} change${data.mutations.length!==1?"s":""} applied`}]);
+          }
+        }
+      } else {
+        setChatHistory(h=>[...h,{role:"assistant",content:"Could not reach the research backend. Check that it is running."}]);
+      }
+    } catch(err){
+      setChatHistory(h=>[...h,{role:"assistant",content:"Connection error: "+err.message}]);
+    } finally { setChatLoading(false); }
   };
 
-  // ── Filtered nodes ────────────────────────────────────────────
-  const visNodes = nodes.filter(n =>
-    (filterType === "all" || n.type === filterType) &&
-    (search === "" || n.label.toLowerCase().includes(search.toLowerCase()))
-  );
-  const visNodeIds = new Set(visNodes.map(n => n.id));
-  const visEdges = edges.filter(e => visNodeIds.has(e.from) && visNodeIds.has(e.to));
-
-  const selNodeData = nodes.find(n => n.id === selNode);
-  const selEdgeData = edges.find(e => e.id === selEdge);
-
-  // ── Arrow path between two nodes ─────────────────────────────
-  const edgePath = (edge) => {
-    const f = nodes.find(n => n.id === edge.from);
-    const t = nodes.find(n => n.id === edge.to);
-    if (!f || !t) return null;
-    const dx = t.x - f.x, dy = t.y - f.y;
-    const len = Math.sqrt(dx*dx + dy*dy) || 1;
-    const nx = dx/len, ny = dy/len;
-    // Offset by new node half-width (75px) + a bit
-    const sx = f.x + nx*78, sy = f.y + ny*24;
-    const ex = t.x - nx*78, ey = t.y - ny*24;
-    // Slight curve
-    const mx = (sx+ex)/2 - ny*30, my = (sy+ey)/2 + nx*30;
-    return { path:`M${sx},${sy} Q${mx},${my} ${ex},${ey}`, mx, my };
+  // ── Edge path ───────────────────────────────────────────────
+  const edgePath = edge => {
+    const f=nodes.find(n=>n.id===edge.from), t=nodes.find(n=>n.id===edge.to);
+    if(!f||!t) return null;
+    const dx=t.x-f.x, dy=t.y-f.y, len=Math.sqrt(dx*dx+dy*dy)||1;
+    const nx=dx/len, ny=dy/len;
+    const sx=f.x+nx*82, sy=f.y+ny*26, ex=t.x-nx*82, ey=t.y-ny*26;
+    const mx=(sx+ex)/2-ny*28, my=(sy+ey)/2+nx*28;
+    return {path:`M${sx},${sy} Q${mx},${my} ${ex},${ey}`,mx,my};
   };
 
-  const isDark = T.name === "dark";
+  const W=156, H=48, rx=12;
 
   return (
-    <div style={{height:"100%",display:"flex",flexDirection:"column",background:T.bg,overflow:"hidden"}}>
+    <div style={{height:"100%",display:"flex",flexDirection:"column",background:isDark?"#0A0908":"#F0EDE8",overflow:"hidden"}}>
       <style>{`
-        @keyframes dash-flow { to { stroke-dashoffset: -20; } }
-        @keyframes node-pulse { 0%,100%{opacity:0.6;transform:scale(1)} 50%{opacity:1;transform:scale(1.08)} }
+        @keyframes dash-flow{to{stroke-dashoffset:-20}}
+        @keyframes node-glow{0%,100%{opacity:.5}50%{opacity:1}}
+        @keyframes fade-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
       `}</style>
 
-      {/* ── Toolbar ─────────────────────────────────────────────── */}
+      {/* ── Toolbar ─────────────────────────────────────────── */}
       <div style={{background:T.surface,borderBottom:`1px solid ${T.border}`,padding:"8px 14px",display:"flex",alignItems:"center",gap:8,flexShrink:0,flexWrap:"wrap"}}>
-        {/* Add node */}
         <input value={newLabel} onChange={e=>setNewLabel(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addNode()}
-          placeholder="Node label…"
-          style={{padding:"6px 10px",background:T.card,border:`1px solid ${T.border}`,borderRadius:7,fontFamily:"'DM Sans',sans-serif",fontSize:12,color:T.ink,outline:"none",width:150,caretColor:T.accent}} />
+          placeholder="Add node…"
+          style={{padding:"6px 10px",background:T.card,border:`1px solid ${T.border}`,borderRadius:7,fontFamily:"'DM Sans',sans-serif",fontSize:12,color:T.ink,outline:"none",width:130,caretColor:T.accent}}/>
         <select value={newType} onChange={e=>setNewType(e.target.value)}
           style={{padding:"6px 8px",background:T.card,border:`1px solid ${T.border}`,borderRadius:7,fontFamily:"'DM Sans',sans-serif",fontSize:12,color:T.inkMid,outline:"none",cursor:"pointer"}}>
-          {Object.entries(NODE_TYPES).map(([k,v]) => <option key={k} value={k}>{v.icon} {v.label}</option>)}
+          {Object.entries(NODE_TYPES).map(([k,v])=><option key={k} value={k}>{v.icon} {v.label}</option>)}
         </select>
-        <button onClick={addNode}
-          style={{display:"flex",alignItems:"center",gap:5,padding:"6px 14px",background:T.accent,border:"none",borderRadius:7,color:"#fff",fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:700,cursor:"pointer"}}>
-          <Ic n="plus" s={13} c="#fff"/> New Node
+        <button onClick={addNode} style={{display:"flex",alignItems:"center",gap:5,padding:"6px 14px",background:T.accent,border:"none",borderRadius:7,color:"#fff",fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:700,cursor:"pointer"}}>
+          <Ic n="plus" s={13} c="#fff"/> Add
         </button>
-
         <div style={{width:1,height:20,background:T.border}}/>
-
-        {/* Relation label */}
-        <select value={relLabel} onChange={e=>setRelLabel(e.target.value)}
-          style={{padding:"6px 8px",background:T.card,border:`1px solid ${T.border}`,borderRadius:7,fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.inkMid,outline:"none",cursor:"pointer"}}>
-          {RELATION_LABELS.map(l => <option key={l} value={l}>{l}</option>)}
-        </select>
-
         <button onClick={()=>setConnecting(c=>c!==null?null:-1)}
           style={{display:"flex",alignItems:"center",gap:5,padding:"6px 14px",background:connecting!==null?T.info+"25":"transparent",border:`1px solid ${connecting!==null?T.info:T.border}`,borderRadius:7,color:connecting!==null?T.info:T.inkMid,fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:connecting!==null?700:400,cursor:"pointer",transition:"all 0.2s"}}>
-          <Ic n="link" s={13} c="currentColor"/> {connecting!==null?"Click target…":"Connect & Relate"}
+          <Ic n="link" s={13} c="currentColor"/> {connecting!==null?"Click target…":"Connect"}
         </button>
-
         <div style={{width:1,height:20,background:T.border}}/>
-
-        {/* Quick filters */}
-        <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:T.inkLight,letterSpacing:"0.06em",textTransform:"uppercase"}}>Filter:</span>
-        {[["all","All"],...Object.entries(NODE_TYPES).slice(0,4).map(([k,v])=>[k,v.icon+" "+v.label])].map(([v,l]) => {
-          const on = filterType===v;
-          return <div key={v} onClick={()=>setFilterType(v)} style={{padding:"3px 9px",borderRadius:20,background:on?T.accent+"22":"transparent",border:`1px solid ${on?T.accent+"50":T.border}`,color:on?T.accent:T.inkLight,fontFamily:"'DM Sans',sans-serif",fontSize:10,cursor:"pointer",whiteSpace:"nowrap"}}>{l}</div>;
-        })}
-
-        <div style={{width:1,height:20,background:T.border}}/>
-
-        {/* Search */}
         <div style={{display:"flex",alignItems:"center",gap:6,padding:"5px 10px",background:T.card,border:`1px solid ${T.border}`,borderRadius:7}}>
           <Ic n="search" s={12} c={T.inkLight}/>
-          <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search…"
-            style={{border:"none",background:"transparent",outline:"none",fontFamily:"'DM Sans',sans-serif",fontSize:12,color:T.ink,width:100,caretColor:T.accent}}/>
+          <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Filter nodes…"
+            style={{border:"none",background:"transparent",outline:"none",fontFamily:"'DM Sans',sans-serif",fontSize:12,color:T.ink,width:90,caretColor:T.accent}}/>
         </div>
-
         <div style={{flex:1}}/>
-
-        {/* Stats */}
         <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.inkLight}}>
           <span style={{color:T.accent,fontWeight:700}}>{visNodes.length}</span> nodes ·{" "}
-          <span style={{color:T.info,fontWeight:700}}>{visEdges.length}</span> connections
+          <span style={{color:T.info,fontWeight:700}}>{visEdges.length}</span> edges
         </span>
-
-        {/* Layout views */}
-        <div style={{display:"flex",alignItems:"center",gap:4,padding:"4px 8px",background:T.card,border:`1px solid ${T.border}`,borderRadius:7}}>
-          <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:T.inkLight,marginRight:4}}>Layout:</span>
-          {[
-            {id:"free",   icon:"⊙", tip:"Free drag"},
-            {id:"radial", icon:"◎", tip:"Radial"},
-            {id:"tree",   icon:"⊞", tip:"Grid"},
-          ].map(lv => (
-            <button key={lv.id} onClick={()=>applyLayout(lv.id)} title={lv.tip}
-              style={{width:24,height:24,borderRadius:5,border:`1px solid ${layout===lv.id?T.accent:T.border}`,background:layout===lv.id?T.accent+"22":"transparent",color:layout===lv.id?T.accent:T.inkLight,fontSize:13,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}>
-              {lv.icon}
-            </button>
-          ))}
-        </div>
       </div>
 
-      {/* ── Canvas + sidebar ──────────────────────────────────────── */}
+      {/* ── Canvas + sidebar ────────────────────────────────── */}
       <div style={{flex:1,display:"flex",overflow:"hidden"}}>
 
-        {/* SVG canvas */}
-        <svg ref={svgRef}
-          style={{flex:1,background:isDark?"#0C0B08":"#F5F3EE",cursor:dragging?"grabbing":connecting!==null?"crosshair":"default",overflow:"hidden"}}
+        {/* SVG board */}
+        <svg ref={svgRef} style={{flex:1,background:isDark?"#0C0B09":"#EDEAE4",cursor:dragging?"grabbing":connecting!==null?"crosshair":"default"}}
           onMouseMove={onMouseMove} onMouseUp={()=>setDragging(null)}
           onClick={e=>{if(e.target===svgRef.current){setSelNode(null);setSelEdge(null);}}}>
 
-          {/* Grid */}
           <defs>
-            <pattern id="pi-grid" width="32" height="32" patternUnits="userSpaceOnUse">
-              <path d="M32 0L0 0 0 32" fill="none" stroke={isDark?"rgba(255,255,255,0.04)":"rgba(0,0,0,0.06)"} strokeWidth="0.7"/>
+            <pattern id="pi-grid" width="28" height="28" patternUnits="userSpaceOnUse">
+              <path d="M28 0L0 0 0 28" fill="none" stroke={isDark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.05)"} strokeWidth="0.6"/>
             </pattern>
-            <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
-              <polygon points="0 0, 8 3, 0 6" fill={isDark?"rgba(255,255,255,0.25)":"rgba(0,0,0,0.25)"}/>
+            <filter id="node-shadow">
+              <feDropShadow dx="0" dy="2" stdDeviation="4" floodOpacity="0.3"/>
+            </filter>
+            <marker id="arr" markerWidth="7" markerHeight="6" refX="6" refY="3" orient="auto">
+              <polygon points="0 0,7 3,0 6" fill={isDark?"rgba(255,255,255,0.2)":"rgba(0,0,0,0.2)"}/>
             </marker>
-            <marker id="arrowhead-sel" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
-              <polygon points="0 0, 8 3, 0 6" fill={T.accent}/>
+            <marker id="arr-sel" markerWidth="7" markerHeight="6" refX="6" refY="3" orient="auto">
+              <polygon points="0 0,7 3,0 6" fill={T.accent}/>
             </marker>
           </defs>
           <rect width="100%" height="100%" fill="url(#pi-grid)"/>
 
-          {/* ── Edges ──────────────────────────────────────────── */}
-          {visEdges.map(edge => {
-            const ep = edgePath(edge);
-            if (!ep) return null;
-            const isSel = selEdge === edge.id;
-            const fromNode = nodes.find(n=>n.id===edge.from);
-            const edgeColor = isSel ? T.accent : fromNode ? NODE_TYPES[fromNode.type]?.color+"80" : isDark?"rgba(255,255,255,0.2)":"rgba(0,0,0,0.2)";
+          {/* Edges */}
+          {visEdges.map(edge=>{
+            const ep=edgePath(edge); if(!ep) return null;
+            const isSel=selEdge===edge.id;
+            const fromNode=nodes.find(n=>n.id===edge.from);
+            const edgeColor=isSel?T.accent:fromNode?NODE_TYPES[fromNode.type]?.color+"70":"rgba(150,150,150,0.4)";
             return (
               <g key={edge.id} onClick={e=>{e.stopPropagation();setSelEdge(isSel?null:edge.id);setSelNode(null);}}>
-                {/* Wider invisible hit area */}
-                <path d={ep.path} fill="none" stroke="transparent" strokeWidth="12" style={{cursor:"pointer"}}/>
-                {/* Visible edge */}
-                <path d={ep.path} fill="none"
-                  stroke={edgeColor} strokeWidth={isSel?2:1.5}
-                  strokeDasharray={isSel?"none":"6 3"}
-                  style={isSel?{}:{animation:"dash-flow 1s linear infinite"}}
-                  markerEnd={isSel?"url(#arrowhead-sel)":"url(#arrowhead)"}/>
-                {/* Relation label */}
-                <rect x={ep.mx-28} y={ep.my-9} width={56} height={18} rx={9}
-                  fill={isDark?"rgba(20,18,16,0.85)":"rgba(245,243,238,0.92)"}
-                  stroke={isSel?T.accent:isDark?"rgba(255,255,255,0.08)":"rgba(0,0,0,0.1)"} strokeWidth={isSel?1.5:1}/>
+                <path d={ep.path} fill="none" stroke="transparent" strokeWidth="14" style={{cursor:"pointer"}}/>
+                <path d={ep.path} fill="none" stroke={edgeColor} strokeWidth={isSel?2.5:1.5}
+                  strokeDasharray={isSel?"none":"5 3"}
+                  style={isSel?{}:{animation:"dash-flow 1.2s linear infinite"}}
+                  markerEnd={isSel?"url(#arr-sel)":"url(#arr)"}/>
+                <rect x={ep.mx-30} y={ep.my-9} width={60} height={18} rx={9}
+                  fill={isDark?"rgba(18,16,12,0.88)":"rgba(240,237,232,0.92)"}
+                  stroke={isSel?T.accent:isDark?"rgba(255,255,255,0.07)":"rgba(0,0,0,0.08)"} strokeWidth={isSel?1.5:1}/>
                 <text x={ep.mx} y={ep.my+4} textAnchor="middle"
-                  style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,fill:isSel?T.accent:isDark?"rgba(255,255,255,0.55)":"rgba(0,0,0,0.5)",pointerEvents:"none",letterSpacing:"0.04em"}}>
+                  style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,fill:isSel?T.accent:isDark?"rgba(255,255,255,0.45)":"rgba(0,0,0,0.45)",pointerEvents:"none",letterSpacing:"0.03em"}}>
                   {edge.label}
                 </text>
               </g>
             );
           })}
 
-          {/* ── Nodes ──────────────────────────────────────────── */}
-          {visNodes.map(node => {
-            const meta    = NODE_TYPES[node.type] || NODE_TYPES.person;
-            const isSel   = selNode === node.id;
-            const isFrom  = connecting === node.id;
-            const W=150, H=46, rx=11;
-            const scale   = dragging===node.id ? 1.05 : isSel ? 1.03 : 1;
+          {/* Nodes */}
+          {visNodes.map(node=>{
+            const meta=NODE_TYPES[node.type]||NODE_TYPES.person;
+            const isSel=selNode===node.id;
+            const isFrom=connecting===node.id;
+            const scale=dragging===node.id?1.06:isSel?1.04:1;
             return (
               <g key={node.id}
-                transform={`translate(${node.x - W/2}, ${node.y - H/2}) scale(${scale})`}
-                style={{
-                  cursor: dragging===node.id ? "grabbing" : "grab",
-                  transformOrigin:`${W/2}px ${H/2}px`,
-                  transition: dragging===node.id ? "none" : "transform 0.15s ease",
-                  filter: isSel ? `drop-shadow(0 4px 12px ${meta.color}50)` : dragging===node.id ? `drop-shadow(0 6px 16px ${meta.color}40)` : "none",
-                }}
-                onMouseDown={e=>onNodeMouseDown(e, node.id)}>
+                transform={`translate(${node.x-W/2},${node.y-H/2}) scale(${scale})`}
+                style={{cursor:dragging===node.id?"grabbing":"grab",transformOrigin:`${W/2}px ${H/2}px`,
+                  transition:dragging===node.id?"none":"transform 0.15s ease",
+                  filter:isSel?`drop-shadow(0 0 12px ${meta.color}60)`:"drop-shadow(0 2px 8px rgba(0,0,0,0.25))"}}
+                onMouseDown={e=>onNodeMouseDown(e,node.id)}>
 
-                {/* Outer glow ring when selected or connecting */}
-                {(isSel||isFrom) && (
-                  <rect x={-4} y={-4} width={W+8} height={H+8} rx={rx+4}
-                    fill="none" stroke={isFrom?T.info:meta.color} strokeWidth="1.5"
-                    opacity="0.6" strokeDasharray={isFrom?"4 2":"none"}
-                    style={isFrom?{animation:"node-pulse 1.2s ease-in-out infinite"}:{}}/>
+                {/* Glow ring when selected */}
+                {(isSel||isFrom)&&(
+                  <rect x={-5} y={-5} width={W+10} height={H+10} rx={rx+5}
+                    fill="none" stroke={isFrom?T.info:meta.color} strokeWidth="1.5" opacity="0.7"
+                    strokeDasharray={isFrom?"4 2":"none"}
+                    style={isFrom?{animation:"node-glow 1s ease-in-out infinite"}:{}}/>
                 )}
 
-                {/* Card shadow */}
-                <rect x={2} y={3} width={W} height={H} rx={rx}
-                  fill="rgba(0,0,0,0.15)"/>
-
-                {/* Card background */}
+                {/* Card */}
                 <rect width={W} height={H} rx={rx}
-                  fill={isDark?`${meta.color}20`:`${meta.color}14`}
-                  stroke={isSel?meta.color:isDark?`${meta.color}60`:`${meta.color}80`}
+                  fill={isDark?`rgba(22,20,16,0.95)`:`rgba(255,255,255,0.95)`}
+                  stroke={isSel?meta.color:isDark?`${meta.color}50`:`${meta.color}70`}
                   strokeWidth={isSel?2:1.5}/>
 
-                {/* Icon box */}
-                <rect x={0} y={0} width={42} height={H} rx={rx}
-                  fill={`${meta.color}35`}/>
-                {/* Clip right side of icon box */}
-                <rect x={rx} y={0} width={42-rx} height={H}
-                  fill={`${meta.color}35`}/>
-                <text x={21} y={H/2+6} textAnchor="middle"
-                  style={{fontSize:17,pointerEvents:"none",userSelect:"none"}}>
-                  {meta.icon}
-                </text>
+                {/* Coloured left strip */}
+                <rect width={44} height={H} rx={rx} fill={`${meta.color}25`}/>
+                <rect x={rx} y={0} width={44-rx} height={H} fill={`${meta.color}25`}/>
 
                 {/* Divider */}
-                <line x1={42} y1={7} x2={42} y2={H-7}
-                  stroke={`${meta.color}40`} strokeWidth="1"/>
+                <line x1={44} y1={6} x2={44} y2={H-6} stroke={`${meta.color}35`} strokeWidth="1"/>
 
-                {/* Label — truncate smartly */}
-                <text x={42+(W-42)/2} y={H/2-4} textAnchor="middle"
+                {/* Icon */}
+                <text x={22} y={H/2+7} textAnchor="middle" style={{fontSize:16,pointerEvents:"none",userSelect:"none"}}>{meta.icon}</text>
+
+                {/* Label */}
+                <text x={44+(W-44)/2} y={H/2-4} textAnchor="middle"
                   style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:700,
-                    fill:isDark?"#F5F3EE":"#1A1610",pointerEvents:"none",userSelect:"none",
-                    letterSpacing:"0.01em"}}>
-                  {node.label.length>16 ? node.label.slice(0,15)+"…" : node.label}
+                    fill:isDark?"#F5F1EC":"#1C1812",pointerEvents:"none",userSelect:"none"}}>
+                  {node.label.length>17?node.label.slice(0,16)+"…":node.label}
                 </text>
-                {/* Type badge */}
-                <text x={42+(W-42)/2} y={H/2+9} textAnchor="middle"
+                <text x={44+(W-44)/2} y={H/2+10} textAnchor="middle"
                   style={{fontFamily:"'DM Sans',sans-serif",fontSize:8,fill:meta.color,
-                    pointerEvents:"none",userSelect:"none",letterSpacing:"0.07em",
-                    textTransform:"uppercase",fontWeight:600}}>
+                    pointerEvents:"none",userSelect:"none",letterSpacing:"0.07em",textTransform:"uppercase",fontWeight:600}}>
                   {meta.label}
                 </text>
 
-                {/* Connection count badge */}
-                {edges.filter(e=>e.from===node.id||e.to===node.id).length > 0 && (
-                  <>
-                    <circle cx={W-6} cy={6} r={8} fill={meta.color}/>
-                    <text x={W-6} y={10} textAnchor="middle"
-                      style={{fontFamily:"'DM Sans',sans-serif",fontSize:8,fontWeight:700,
-                        fill:"#fff",pointerEvents:"none",userSelect:"none"}}>
-                      {edges.filter(e=>e.from===node.id||e.to===node.id).length}
-                    </text>
-                  </>
+                {/* Edge count badge */}
+                {edges.filter(e=>e.from===node.id||e.to===node.id).length>0&&(
+                  <><circle cx={W-7} cy={7} r={9} fill={meta.color}/>
+                  <text x={W-7} y={11} textAnchor="middle"
+                    style={{fontFamily:"'DM Sans',sans-serif",fontSize:8,fontWeight:700,fill:"#fff",pointerEvents:"none",userSelect:"none"}}>
+                    {edges.filter(e=>e.from===node.id||e.to===node.id).length}
+                  </text></>
                 )}
               </g>
             );
           })}
 
-          {/* "Connecting from" hint */}
-          {connecting !== null && connecting !== -1 && (
-            <text x="50%" y="96%" textAnchor="middle"
+          {/* Hint text */}
+          {connecting!=null&&connecting!==-1&&(
+            <text x="50%" y="95%" textAnchor="middle"
               style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,fill:T.info,pointerEvents:"none"}}>
-              Click any node to connect with "{relLabel}"  ·  Press Escape to cancel
-            </text>
-          )}
-          {connecting === -1 && (
-            <text x="50%" y="96%" textAnchor="middle"
-              style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,fill:T.info,pointerEvents:"none"}}>
-              Click a source node first
+              Click any node to connect · Escape to cancel
             </text>
           )}
         </svg>
 
-        {/* ── Detail sidebar ──────────────────────────────────────── */}
-        <div style={{width:220,borderLeft:`1px solid ${T.border}`,background:T.surface,display:"flex",flexDirection:"column",flexShrink:0,overflow:"hidden"}}>
-          {/* Node detail — rich panel */}
-          {selNodeData && (
-            <NodeDetailPanel
-              node={selNodeData}
-              edges={edges}
-              nodes={nodes}
-              T={T}
-              onClose={()=>setSelNode(null)}
-              onConnect={()=>setConnecting(selNodeData.id)}
-              onDelete={()=>deleteNode(selNodeData.id)}
-              onUpdateNote={(note)=>setNodes(prev=>prev.map(n=>n.id===selNodeData.id?{...n,note}:n))}
-            />
-          )}
+        {/* ── Right panel ──────────────────────────────────── */}
+        <div style={{width:280,borderLeft:`1px solid ${T.border}`,background:T.surface,display:"flex",flexDirection:"column",flexShrink:0,overflow:"hidden"}}>
 
-          {/* Edge detail */}
-          {selEdgeData && !selNodeData && (
-            <div style={{flex:1,overflowY:"auto",padding:"14px"}}>
-              <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:12}}>
-                <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.1em",textTransform:"uppercase",color:T.inkFaint,fontWeight:600}}>Selected Edge</span>
-                <button onClick={()=>setSelEdge(null)} style={{background:"transparent",border:"none",color:T.inkLight,cursor:"pointer",fontSize:14,lineHeight:1}}>✕</button>
-              </div>
-              {(() => {
-                const f = nodes.find(n=>n.id===selEdgeData.from);
-                const t = nodes.find(n=>n.id===selEdgeData.to);
-                if (!f||!t) return null;
+          {/* Panel tabs */}
+          <div style={{display:"flex",borderBottom:`1px solid ${T.border}`,flexShrink:0}}>
+            {[["info","🔍 Board"],["chat","💬 AI Chat"]].map(([v,l])=>(
+              <button key={v} onClick={()=>setPanelTab(v)}
+                style={{flex:1,padding:"10px 8px",background:"transparent",border:"none",borderBottom:panelTab===v?`2px solid ${T.accent}`:"2px solid transparent",color:panelTab===v?T.accent:T.inkLight,fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:panelTab===v?700:400,cursor:"pointer"}}>
+                {l}
+              </button>
+            ))}
+          </div>
+
+          {/* Board info panel */}
+          {panelTab==="info"&&(
+            <div style={{flex:1,overflowY:"auto"}}>
+              {selNodeData&&(
+                <div style={{animation:"fade-in 0.2s ease"}}>
+                  {/* Node header with colour */}
+                  {(()=>{
+                    const meta=NODE_TYPES[selNodeData.type]||NODE_TYPES.person;
+                    const nodeEdges=edges.filter(e=>e.from===selNodeData.id||e.to===selNodeData.id);
+                    return (
+                      <>
+                        <div style={{height:70,background:`linear-gradient(135deg,${meta.color}30,${meta.color}10)`,display:"flex",alignItems:"center",gap:10,padding:"0 14px",borderBottom:`1px solid ${T.border}`,position:"relative"}}>
+                          <span style={{fontSize:22}}>{meta.icon}</span>
+                          <div style={{flex:1,minWidth:0}}>
+                            <div style={{fontFamily:"'Playfair Display',serif",fontSize:14,fontWeight:700,color:T.ink,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{selNodeData.label}</div>
+                            <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,color:meta.color,fontWeight:600,textTransform:"uppercase",letterSpacing:"0.07em"}}>{meta.label}</div>
+                          </div>
+                          <button onClick={()=>setSelNode(null)} style={{position:"absolute",top:8,right:8,width:20,height:20,borderRadius:"50%",background:"rgba(0,0,0,0.3)",border:"none",color:"rgba(255,255,255,0.7)",fontSize:10,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}>✕</button>
+                        </div>
+                        <div style={{padding:"12px 14px"}}>
+                          {/* Connections */}
+                          {nodeEdges.length>0&&(
+                            <>
+                              <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.1em",textTransform:"uppercase",color:T.inkFaint,marginBottom:8,fontWeight:600}}>
+                                Connections ({nodeEdges.length})
+                              </div>
+                              {nodeEdges.map((edge,i)=>{
+                                const otherId=edge.from===selNodeData.id?edge.to:edge.from;
+                                const other=nodes.find(n=>n.id===otherId);
+                                const dir=edge.from===selNodeData.id?"→":"←";
+                                const otherMeta=NODE_TYPES[other?.type]||NODE_TYPES.person;
+                                if(!other) return null;
+                                return (
+                                  <div key={i} onClick={()=>setSelNode(other.id)}
+                                    style={{display:"flex",alignItems:"center",gap:7,marginBottom:6,padding:"7px 9px",background:T.card,border:`1px solid ${T.border}`,borderRadius:8,borderLeft:`2.5px solid ${otherMeta.color}`,cursor:"pointer",transition:"all 0.15s"}}
+                                    onMouseEnter={e=>e.currentTarget.style.background=T.cardHov}
+                                    onMouseLeave={e=>e.currentTarget.style.background=T.card}>
+                                    <span style={{fontSize:13}}>{otherMeta.icon}</span>
+                                    <div style={{flex:1,minWidth:0}}>
+                                      <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:600,color:T.ink,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{dir} {other.label}</div>
+                                      <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,color:otherMeta.color,fontStyle:"italic"}}>{edge.label}</div>
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </>
+                          )}
+
+                          {/* Notes */}
+                          <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.1em",textTransform:"uppercase",color:T.inkFaint,margin:"12px 0 6px",fontWeight:600}}>Notes</div>
+                          <textarea value={selNodeData.note||""} rows={3}
+                            onChange={e=>setNodes(prev=>prev.map(n=>n.id===selNodeData.id?{...n,note:e.target.value}:n))}
+                            placeholder="Add investigation notes…"
+                            style={{width:"100%",padding:"8px 10px",background:T.card,border:`1px solid ${T.border}`,borderRadius:7,fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.ink,resize:"vertical",outline:"none",caretColor:T.accent,lineHeight:1.6,boxSizing:"border-box"}}/>
+
+                          {/* Actions */}
+                          <div style={{display:"flex",gap:6,marginTop:10}}>
+                            <button onClick={()=>setConnecting(selNodeData.id)}
+                              style={{flex:1,padding:"6px",background:T.info+"18",border:`1px solid ${T.info}40`,borderRadius:6,color:T.info,fontFamily:"'DM Sans',sans-serif",fontSize:10,fontWeight:600,cursor:"pointer"}}>
+                              🔗 Connect
+                            </button>
+                            <button onClick={()=>deleteNode(selNodeData.id)}
+                              style={{flex:1,padding:"6px",background:"transparent",border:`1px solid ${T.border}`,borderRadius:6,color:T.danger,fontFamily:"'DM Sans',sans-serif",fontSize:10,fontWeight:600,cursor:"pointer"}}>
+                              🗑 Delete
+                            </button>
+                          </div>
+                        </div>
+                      </>
+                    );
+                  })()}
+                </div>
+              )}
+
+              {selEdgeData&&!selNodeData&&(()=>{
+                const f=nodes.find(n=>n.id===selEdgeData.from);
+                const t=nodes.find(n=>n.id===selEdgeData.to);
+                if(!f||!t) return null;
                 return (
-                  <>
-                    <div style={{padding:"10px 12px",background:T.accentDim,border:`1px solid ${T.accent}30`,borderRadius:9,marginBottom:12,textAlign:"center"}}>
-                      <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.ink,marginBottom:4}}>
-                        <span style={{color:NODE_TYPES[f.type]?.color}}>{NODE_TYPES[f.type]?.icon} {f.label}</span>
-                      </div>
-                      <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:T.accent,fontWeight:700,fontStyle:"italic",margin:"4px 0"}}>→ {selEdgeData.label} →</div>
-                      <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.ink}}>
-                        <span style={{color:NODE_TYPES[t.type]?.color}}>{NODE_TYPES[t.type]?.icon} {t.label}</span>
-                      </div>
+                  <div style={{padding:"14px",animation:"fade-in 0.2s ease"}}>
+                    <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.1em",textTransform:"uppercase",color:T.inkFaint,marginBottom:10,fontWeight:600}}>Selected Connection</div>
+                    <div style={{padding:"10px 12px",background:T.card,border:`1px solid ${T.border}`,borderRadius:9,marginBottom:12,textAlign:"center"}}>
+                      <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.ink,marginBottom:3}}>{NODE_TYPES[f.type]?.icon} {f.label}</div>
+                      <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:T.accent,fontWeight:700,margin:"4px 0"}}>→ {selEdgeData.label} →</div>
+                      <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.ink}}>{NODE_TYPES[t.type]?.icon} {t.label}</div>
                     </div>
-                    {/* Edit relation label */}
-                    <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.1em",textTransform:"uppercase",color:T.inkFaint,marginBottom:6,fontWeight:600}}>Relation</div>
-                    <select value={selEdgeData.label}
-                      onChange={e=>setEdges(prev=>prev.map(ed=>ed.id===selEdgeData.id?{...ed,label:e.target.value}:ed))}
-                      style={{width:"100%",padding:"6px 8px",background:T.card,border:`1px solid ${T.border}`,borderRadius:7,fontFamily:"'DM Sans',sans-serif",fontSize:12,color:T.ink,outline:"none",marginBottom:10}}>
-                      {RELATION_LABELS.map(l=><option key={l} value={l}>{l}</option>)}
-                    </select>
-                    <button onClick={()=>deleteEdge(selEdgeData.id)}
-                      style={{width:"100%",padding:"7px",background:"transparent",border:`1px solid ${T.border}`,borderRadius:7,color:T.danger,fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:600,cursor:"pointer",textTransform:"uppercase",letterSpacing:"0.04em",display:"flex",alignItems:"center",justifyContent:"center",gap:5}}>
-                      <Ic n="trash" s={12} c={T.danger}/> Delete edge
+                    <input value={selEdgeData.label} onChange={e=>setEdges(prev=>prev.map(ed=>ed.id===selEdgeData.id?{...ed,label:e.target.value}:ed))}
+                      style={{width:"100%",padding:"7px 10px",background:T.card,border:`1px solid ${T.border}`,borderRadius:7,fontFamily:"'DM Sans',sans-serif",fontSize:12,color:T.ink,outline:"none",boxSizing:"border-box",marginBottom:8,caretColor:T.accent}}/>
+                    <button onClick={()=>{setEdges(prev=>prev.filter(e=>e.id!==selEdgeData.id));setSelEdge(null);}}
+                      style={{width:"100%",padding:"7px",background:"transparent",border:`1px solid ${T.border}`,borderRadius:7,color:T.danger,fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:600,cursor:"pointer"}}>
+                      Delete connection
                     </button>
-                  </>
+                  </div>
                 );
               })()}
+
+              {!selNodeData&&!selEdgeData&&(
+                <div style={{padding:"16px"}}>
+                  <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.1em",textTransform:"uppercase",color:T.inkFaint,marginBottom:12,fontWeight:600}}>Node Types</div>
+                  {Object.entries(NODE_TYPES).map(([k,v])=>(
+                    <div key={k} style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}>
+                      <div style={{width:28,height:28,borderRadius:7,background:`${v.color}20`,border:`1.5px solid ${v.color}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,flexShrink:0}}>{v.icon}</div>
+                      <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.inkMid}}>{v.label}</span>
+                    </div>
+                  ))}
+                  <div style={{marginTop:14,padding:"10px 12px",background:T.card,border:`1px solid ${T.border}`,borderRadius:8}}>
+                    <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:T.inkFaint,fontWeight:600,marginBottom:6}}>Tips</div>
+                    <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:T.inkLight,lineHeight:1.65}}>
+                      Drag nodes freely.<br/>
+                      Click <b style={{color:T.ink}}>Connect</b> then click two nodes.<br/>
+                      Use the <b style={{color:T.accent}}>AI Chat</b> tab to ask questions and auto-update the board.
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
-          {/* Default state */}
-          {!selNodeData && !selEdgeData && (
-            <div style={{flex:1,padding:"16px",display:"flex",flexDirection:"column",gap:10}}>
-              <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.1em",textTransform:"uppercase",color:T.inkFaint,fontWeight:600,marginBottom:4}}>Node Types</div>
-              {Object.entries(NODE_TYPES).map(([k,v])=>(
-                <div key={k} style={{display:"flex",alignItems:"center",gap:8}}>
-                  <div style={{width:26,height:26,borderRadius:6,background:`${v.color}20`,border:`1.5px solid ${v.color}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,flexShrink:0}}>{v.icon}</div>
-                  <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.inkMid}}>{v.label}</span>
+          {/* AI Chat panel */}
+          {panelTab==="chat"&&(
+            <div style={{flex:1,display:"flex",flexDirection:"column",overflow:"hidden"}}>
+              <div style={{flex:1,overflowY:"auto",padding:"12px 12px 4px"}}>
+                {chatHistory.length===0&&(
+                  <div style={{padding:"20px 0",textAlign:"center",color:T.inkLight,fontFamily:"'DM Sans',sans-serif",fontSize:12,lineHeight:1.7}}>
+                    Ask about the board, add connections, or request deeper analysis.<br/>
+                    <span style={{color:T.accent,fontSize:11}}>The AI can edit this board in real time.</span>
+                  </div>
+                )}
+                {chatHistory.map((msg,i)=>{
+                  if(msg.role==="system") return (
+                    <div key={i} style={{margin:"6px 0",padding:"5px 10px",background:T.accent+"18",border:`1px solid ${T.accent}30`,borderRadius:6,fontFamily:"'DM Sans',sans-serif",fontSize:10,color:T.accent,animation:"fade-in 0.2s ease"}}>{msg.content}</div>
+                  );
+                  const isUser=msg.role==="user";
+                  return (
+                    <div key={i} style={{display:"flex",justifyContent:isUser?"flex-end":"flex-start",marginBottom:8,animation:"fade-in 0.2s ease"}}>
+                      <div style={{maxWidth:"88%",padding:"8px 11px",background:isUser?T.accent:T.card,borderRadius:isUser?"12px 12px 4px 12px":"12px 12px 12px 4px",border:isUser?"none":`1px solid ${T.border}`}}>
+                        <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:isUser?"#fff":T.ink,margin:0,lineHeight:1.65,whiteSpace:"pre-wrap"}}>{msg.content}</p>
+                      </div>
+                    </div>
+                  );
+                })}
+                {chatLoading&&(
+                  <div style={{display:"flex",gap:4,padding:"8px 12px",animation:"fade-in 0.2s ease"}}>
+                    {[0,1,2].map(i=><div key={i} style={{width:6,height:6,borderRadius:"50%",background:T.accent,animation:`node-glow 1s ease-in-out ${i*0.2}s infinite`}}/>)}
+                  </div>
+                )}
+                <div ref={chatEndRef}/>
+              </div>
+              <div style={{padding:"10px 12px",borderTop:`1px solid ${T.border}`,flexShrink:0}}>
+                <div style={{display:"flex",gap:6}}>
+                  <input value={chatInput} onChange={e=>setChatInput(e.target.value)}
+                    onKeyDown={e=>e.key==="Enter"&&!e.shiftKey&&sendChat()}
+                    placeholder="Ask anything about this board…"
+                    style={{flex:1,padding:"8px 10px",background:T.card,border:`1px solid ${T.border}`,borderRadius:8,fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.ink,outline:"none",caretColor:T.accent}}
+                  />
+                  <button onClick={sendChat} disabled={chatLoading||!chatInput.trim()}
+                    style={{padding:"8px 12px",background:chatLoading||!chatInput.trim()?T.border:T.accent,border:"none",borderRadius:8,cursor:chatLoading||!chatInput.trim()?"not-allowed":"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}>
+                    <Ic n="send" s={14} c="#fff"/>
+                  </button>
                 </div>
-              ))}
-              <div style={{marginTop:8,padding:"10px",background:T.card,border:`1px solid ${T.border}`,borderRadius:8}}>
-                <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,color:T.inkFaint,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:5,fontWeight:600}}>How to use</div>
-                <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:T.inkLight,lineHeight:1.6}}>
-                  Drag nodes freely.<br/>
-                  Click <strong style={{color:T.ink}}>Connect & Relate</strong> then click two nodes to draw an edge.<br/>
-                  Click any node or edge to inspect.
+                <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,color:T.inkFaint,marginTop:5,textAlign:"center"}}>
+                  Enter to send · AI can add nodes and edges to the board
                 </div>
               </div>
             </div>
@@ -1871,7 +1708,6 @@ function Home({ T, onNavigate }) {
     {id:"explore",label:"Explore",icon:"globe",colorKey:"info",tagline:"The Interactive Globe",desc:"Navigate human history from 315,000 BCE. African civilizations, world empires, diaspora communities, accountability records."},
     {id:"timeline",label:"Timeline",icon:"clock",colorKey:"accent",tagline:"300,000 BCE → Present",desc:"Every era, every turning point. From human origins to today — on one scrollable timeline."},
     {id:"learn",label:"Learn",icon:"book",colorKey:"info",tagline:"People & Civilizations",desc:"Kings, scholars, warriors, activists. From Julius Caesar to Genghis Khan — every civilisation that shaped today."},
-    {id:"reckon",label:"Reckon",icon:"scale",colorKey:"reckon",tagline:"Truth & Accountability",desc:"Named ships, owners, companies, institutions. The wealth trail from the slave trade to Wall Street."},
     {id:"investigate",label:"Investigate",icon:"connect",colorKey:"slate",tagline:"The PI Board",desc:"Drop nodes, draw connections, follow any thread. AI builds the connection graph automatically."},
     {id:"research",label:"Research",icon:"ai",colorKey:"success",tagline:"AI Research Suite",desc:"Four AI agents answer any history question — African, American, Asian, European. Ask anything."},
   ];
@@ -2079,7 +1915,6 @@ export default function App() {
             {active==="explore"     && <ExploreSection     T={T} theme={theme}/>}
             {active==="timeline"    && <TimelineSection    T={T}/>}
             {active==="learn"       && <LearnSection       T={T}/>}
-            {active==="reckon"      && <ReckonSection      T={T}/>}
             {active==="investigate" && <InvestigateSection T={T} nodes={piNodes} edges={piEdges} setNodes={setPiNodes} setEdges={setPiEdges}/>}
             {active==="research"    && <ResearchSection    T={T} onPushToBoard={pushToBoard} onNavigate={setActive} savedState={researchState} onSaveState={setResearchState}/>}
           </div>
