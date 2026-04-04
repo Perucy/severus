@@ -263,7 +263,7 @@ Pull requests are welcome. Open an issue first for major changes.
 ---
 
 ## License and Copyright
-Copyright (c) 2024 [Your Legal Name]. All rights reserved.
+Copyright (c) 2024 Perucy Astus Mussiba. All rights reserved.
 
 This software is provided under the GNU AGPLv3. 
 Any use of this software outside the terms of this license is strictly 
