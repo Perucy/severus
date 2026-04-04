@@ -266,14 +266,44 @@ const PEOPLE = [
 
 
 // ── SECTIONS NAV ──────────────────────────────────────────────
+
+// ── JOURNEY TRACKER ───────────────────────────────────────────
+// 100% local. No accounts, no PII, no server calls.
+// Stores anonymous behavioral breadcrumbs in localStorage only.
+
+const JOURNEY_KEY = "severus_journey";
+const MAX_EVENTS  = 600;
+
+function track(type, meta = {}) {
+  try {
+    const raw    = localStorage.getItem(JOURNEY_KEY);
+    const stored = raw ? JSON.parse(raw) : { events:[] };
+    const event  = { d: new Date().toISOString().slice(0,10), type, ...meta };
+    const events = [...stored.events, event].slice(-MAX_EVENTS);
+    localStorage.setItem(JOURNEY_KEY, JSON.stringify({ events }));
+  } catch {}
+}
+
+function getJourneyData() {
+  try {
+    const raw = localStorage.getItem(JOURNEY_KEY);
+    return raw ? JSON.parse(raw) : { events:[] };
+  } catch { return { events:[] }; }
+}
+
+function clearJourney() {
+  try { localStorage.removeItem(JOURNEY_KEY); } catch {}
+}
+
 const SECTIONS = [
   { id:"home",        label:"Home",        icon:"home",    colorKey:"accent" },
   { id:"explore",     label:"Explore",     icon:"globe",   colorKey:"info",    tagline:"The Interactive Globe",   status:"active" },
   { id:"timeline",    label:"Timeline",    icon:"clock",   colorKey:"accent",  tagline:"315,000 BCE → Present",   status:"active" },
   { id:"learn",       label:"Learn",       icon:"book",    colorKey:"info",    tagline:"People & Civilizations",  status:"active" },
-  { id:"vr",          label:"Sites",        icon:"pin",     colorKey:"success", tagline:"Historical Sites",         status:"active" },
+  { id:"vr",          label:"Sites",       icon:"pin",     colorKey:"success", tagline:"Historical Sites",        status:"active" },
   { id:"investigate", label:"Investigate", icon:"connect", colorKey:"slate",   tagline:"The PI Board",            status:"active" },
   { id:"research",    label:"Research",    icon:"ai",      colorKey:"success", tagline:"AI Research Suite",       status:"active" },
+  { id:"journey",     label:"Journey",     icon:"flame",   colorKey:"accent",  tagline:"Your Learning Journey",   status:"active" },
 ];
 
 // ── ICONS ─────────────────────────────────────────────────────
@@ -501,7 +531,10 @@ function ExploreSection({ T, theme }) {
   // Combine mapped locations + any temp markers from live search
   const allVisLocs=useMemo(()=>[...visLocs, ...tempMarkers],[visLocs,tempMarkers]);
   const visArcs=useMemo(()=>showArcs?MIGRATIONS.filter(m=>m.startYear<=era.year):[],[era.year,showArcs]);
-  const handleClick=useCallback(loc=>setSelected(s=>s?.id===loc.id?null:loc),[]);
+  const handleClick=useCallback(loc=>{
+    track("explore", { label: loc.name, region: loc.region||"" });
+    setSelected(s=>s?.id===loc.id?null:loc);
+  },[]);
 
   // ── Unified local search index ──────────────────────────────
   const searchIndex = useMemo(() => {
@@ -969,7 +1002,10 @@ function TimelineSection({ T }) {
               const id = ev.id || `${ev.year}-${i}`;
               return (
                 <div key={id} style={{position:"relative",paddingLeft:44,marginBottom:18,cursor:"pointer"}}
-                  onClick={()=>setSelected(isSel?null:ev)}>
+                  onClick={()=>{
+                    if(!isSel) track("timeline", { label: ev.title, era: ev.era||"", region: ev.region||"" });
+                    setSelected(isSel?null:ev);
+                  }}>
                   <div style={{position:"absolute",left:8,top:6,width:18,height:18,borderRadius:"50%",background:isSel?col:T.card,border:`2px solid ${col}`,display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.2s",boxShadow:isSel?`0 0 12px ${col}70`:"none"}}>
                     {isSel&&<div style={{width:6,height:6,borderRadius:"50%",background:"#fff"}}/>}
                   </div>
@@ -1263,10 +1299,18 @@ function LearnSection({ T }) {
 }
 
 function PersonCard({ item, tab, T, selected, onClick }) {
-  const img = useWikiImage(item.wikiTitle);
+  const img   = useWikiImage(item.wikiTitle);
   const color = tab==="people" ? T.info : T.accent;
+  const handleClick = () => {
+    track("learn", {
+      label:  item.name,
+      region: item.region || "",
+      subtype: tab === "people" ? "person" : "civilization",
+    });
+    onClick();
+  };
   return (
-    <div onClick={onClick} style={{background:selected?T.cardHov:T.card,border:`1px solid ${selected?color+"50":T.border}`,borderRadius:10,overflow:"hidden",cursor:"pointer",transition:"all 0.2s",transform:selected?"translateY(-2px)":"none",boxShadow:selected?`0 6px 20px rgba(0,0,0,0.15)`:"none"}}>
+    <div onClick={handleClick} style={{background:selected?T.cardHov:T.card,border:`1px solid ${selected?color+"50":T.border}`,borderRadius:10,overflow:"hidden",cursor:"pointer",transition:"all 0.2s",transform:selected?"translateY(-2px)":"none",boxShadow:selected?`0 6px 20px rgba(0,0,0,0.15)`:"none"}}>
       <div style={{height:140,background:"linear-gradient(135deg,#1A1400,#0D1814)",overflow:"hidden",position:"relative"}}>
         {img&&<img src={img.src} alt="" style={{width:"100%",height:"100%",objectFit:"cover",objectPosition:"center top",filter:"brightness(0.85)"}}/>}
         <div style={{position:"absolute",inset:0,background:"linear-gradient(to top,rgba(0,0,0,0.7),transparent 60%)"}}/>
@@ -2335,7 +2379,7 @@ function VRSection({ T }) {
               style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:12,overflow:"hidden",cursor:"pointer",transition:"all 0.2s"}}
               onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-3px)";e.currentTarget.style.boxShadow=`0 8px 24px rgba(0,0,0,0.18)`;e.currentTarget.style.borderColor=T.accent+"50";}}
               onMouseLeave={e=>{e.currentTarget.style.transform="none";e.currentTarget.style.boxShadow="none";e.currentTarget.style.borderColor=T.border;}}
-              onClick={()=>setSelected(site)}>
+              onClick={()=>{ track("site", { label: site.name, region: site.region }); setSelected(site); }}>
 
               {/* Thumbnail */}
               <div style={{height:155,position:"relative",overflow:"hidden",background:"#1a1410"}}>
@@ -2392,6 +2436,331 @@ function VRSection({ T }) {
     </div>
   );
 }
+
+
+// ── JOURNEY SECTION ───────────────────────────────────────────
+function JourneySection({ T, onNavigate }) {
+  const [data,       setData]       = useState(getJourneyData);
+  const [showClear,  setShowClear]  = useState(false);
+  const isDark = T.name === "dark";
+
+  const refresh = () => setData(getJourneyData());
+
+  const handleClear = () => {
+    clearJourney();
+    setData({ events:[] });
+    setShowClear(false);
+  };
+
+  const events = data.events || [];
+
+  // ── Derived stats ────────────────────────────────────────────
+  const today     = new Date().toISOString().slice(0,10);
+  const uniqueDays= [...new Set(events.map(e=>e.d))].sort();
+  const streak    = (() => {
+    if(!uniqueDays.length) return 0;
+    let count = 0, cur = new Date();
+    for(let i=uniqueDays.length-1;i>=0;i--){
+      const d = uniqueDays[i];
+      const expected = cur.toISOString().slice(0,10);
+      if(d===expected){ count++; cur.setDate(cur.getDate()-1); }
+      else if(d < expected) break;
+    }
+    return count;
+  })();
+
+  const totalTopics   = new Set(events.filter(e=>e.label).map(e=>e.label)).size;
+  const learnEvents   = events.filter(e=>e.type==="learn");
+  const exploreEvents = events.filter(e=>e.type==="explore");
+  const timelineEvents= events.filter(e=>e.type==="timeline");
+  const siteEvents    = events.filter(e=>e.type==="site");
+
+  // Region coverage
+  const ALL_REGIONS = ["Africa","Asia","Europe","Americas","Middle East","Pacific","Worldwide"];
+  const touchedRegions = new Set(
+    events.filter(e=>e.region).map(e=>{
+      const r = e.region;
+      for(const reg of ALL_REGIONS) if(r.toLowerCase().includes(reg.toLowerCase())) return reg;
+      return null;
+    }).filter(Boolean)
+  );
+
+  // Era coverage from timeline events
+  const ALL_ERAS = ["prehistory","outafrica","neolithic","firstkings","classical","medieval","empires","contact","slavetrade","colonial","independence","present"];
+  const touchedEras = new Set(events.filter(e=>e.era).map(e=>e.era));
+
+  // Section breakdown
+  const sectionCounts = {
+    explore: exploreEvents.length,
+    learn:   learnEvents.length,
+    timeline:timelineEvents.length,
+    sites:   siteEvents.length,
+    research:events.filter(e=>e.type==="section"&&e.label==="research").length,
+  };
+  const sectionTotal = Object.values(sectionCounts).reduce((a,b)=>a+b,0)||1;
+
+  // Activity heatmap — last 84 days (12 weeks)
+  const heatmap = (() => {
+    const counts = {};
+    events.forEach(e=>{ counts[e.d] = (counts[e.d]||0)+1; });
+    const days = [];
+    for(let i=83;i>=0;i--){
+      const d = new Date(); d.setDate(d.getDate()-i);
+      const key = d.toISOString().slice(0,10);
+      days.push({ date:key, count:counts[key]||0, dow:d.getDay() });
+    }
+    return days;
+  })();
+  const heatMax = Math.max(...heatmap.map(d=>d.count),1);
+
+  // Recent activity — last 12 unique events with labels
+  const recent = [...events].reverse().filter(e=>e.label).slice(0,12);
+
+  // Top topics
+  const topicCounts = {};
+  events.filter(e=>e.label).forEach(e=>{ topicCounts[e.label]=(topicCounts[e.label]||0)+1; });
+  const topTopics = Object.entries(topicCounts).sort((a,b)=>b[1]-a[1]).slice(0,8);
+
+  const TYPE_COLORS = {
+    learn:"#3B82F6", explore:"#10B981", timeline:"#9B59B6",
+    site:"#F59E0B", research:"#EF4444", section:"rgba(255,255,255,0.2)"
+  };
+  const TYPE_LABELS = {
+    learn:"Learn", explore:"Globe", timeline:"Timeline",
+    site:"Sites", research:"Research", section:"Navigation"
+  };
+
+  const ERA_LABELS = {
+    prehistory:"Prehistory", outafrica:"Out of Africa", neolithic:"First Civilizations",
+    firstkings:"Ancient World", classical:"Classical Age", medieval:"Medieval Period",
+    empires:"Age of Empires", contact:"Exploration", slavetrade:"Colonialism",
+    colonial:"Revolutions", independence:"World Wars", present:"Modern Era"
+  };
+
+  if(events.length === 0) return (
+    <div style={{height:"100%",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",background:T.bg,padding:32,textAlign:"center"}}>
+      <div style={{fontSize:44,marginBottom:16}}>🌍</div>
+      <h2 style={{fontFamily:"'Playfair Display',serif",fontSize:22,fontWeight:700,color:T.ink,margin:"0 0 10px"}}>Your learning journey starts here</h2>
+      <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:13,color:T.inkMid,lineHeight:1.75,maxWidth:420,margin:"0 0 24px"}}>
+        As you explore civilizations, people, timelines, and historical sites, Severus tracks your journey — <b>locally and anonymously</b>. No accounts, no servers, nothing leaves your device.
+      </p>
+      <div style={{display:"flex",gap:12,flexWrap:"wrap",justifyContent:"center"}}>
+        {[["Explore","explore"],["Learn","learn"],["Timeline","timeline"],["Sites","vr"]].map(([l,id])=>(
+          <button key={id} onClick={()=>onNavigate(id)}
+            style={{padding:"10px 20px",background:T.accent,border:"none",borderRadius:8,color:"#fff",fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:700,cursor:"pointer"}}>
+            Start with {l} →
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+
+  return (
+    <div style={{height:"100%",display:"flex",flexDirection:"column",background:T.bg,overflow:"hidden"}}>
+
+      {/* Header */}
+      <div style={{background:T.surface,borderBottom:`1px solid ${T.border}`,padding:"12px 22px",display:"flex",alignItems:"center",gap:14,flexShrink:0}}>
+        <div>
+          <h2 style={{fontFamily:"'Playfair Display',serif",fontSize:17,fontWeight:700,color:T.ink,margin:0}}>Your Learning Journey</h2>
+          <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:T.inkLight,margin:"2px 0 0"}}>
+            Tracked locally · never leaves your device · no account required
+          </p>
+        </div>
+        <div style={{flex:1}}/>
+        <button onClick={()=>setShowClear(v=>!v)}
+          style={{padding:"6px 13px",background:"transparent",border:`1px solid ${T.border}`,borderRadius:7,color:T.inkFaint,fontFamily:"'DM Sans',sans-serif",fontSize:11,cursor:"pointer"}}>
+          {showClear?"Cancel":"Clear data"}
+        </button>
+        {showClear&&(
+          <button onClick={handleClear}
+            style={{padding:"6px 13px",background:"rgba(239,68,68,0.12)",border:"1px solid rgba(239,68,68,0.4)",borderRadius:7,color:"#EF4444",fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:700,cursor:"pointer"}}>
+            Yes, clear everything
+          </button>
+        )}
+      </div>
+
+      <div style={{flex:1,overflowY:"auto",padding:"20px 22px"}}>
+        <div style={{maxWidth:900,margin:"0 auto"}}>
+
+          {/* ── Stat cards ─────────────────────────────────────── */}
+          <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:14,marginBottom:20}}>
+            {[
+              { icon:"🔥", label:"Day Streak",    value:streak,             sub:streak===1?"day in a row":`days in a row` },
+              { icon:"📚", label:"Topics Explored",value:totalTopics,        sub:"unique topics" },
+              { icon:"🌍", label:"Regions Touched", value:touchedRegions.size,sub:`of ${ALL_REGIONS.length} world regions` },
+              { icon:"⏳", label:"Eras Explored",  value:touchedEras.size,   sub:`of ${ALL_ERAS.length} historical eras` },
+            ].map((s,i)=>(
+              <div key={i} style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:12,padding:"16px 18px"}}>
+                <div style={{fontSize:22,marginBottom:6}}>{s.icon}</div>
+                <div style={{fontFamily:"'Playfair Display',serif",fontSize:26,fontWeight:700,color:T.accent,lineHeight:1}}>{s.value}</div>
+                <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:600,color:T.ink,marginTop:4}}>{s.label}</div>
+                <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:T.inkLight,marginTop:2}}>{s.sub}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* ── Activity heatmap ────────────────────────────────── */}
+          <div style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:12,padding:"16px 18px",marginBottom:16}}>
+            <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,letterSpacing:"0.1em",textTransform:"uppercase",color:T.inkFaint,fontWeight:600,marginBottom:12}}>Activity — last 12 weeks</div>
+            <div style={{display:"flex",gap:3,overflowX:"auto",paddingBottom:4}}>
+              {Array.from({length:12},(_,week)=>(
+                <div key={week} style={{display:"flex",flexDirection:"column",gap:3}}>
+                  {Array.from({length:7},(_,dow)=>{
+                    const idx = week*7+dow;
+                    const day = heatmap[idx];
+                    if(!day) return <div key={dow} style={{width:11,height:11}}/>;
+                    const intensity = day.count===0?0:Math.max(0.15,day.count/heatMax);
+                    const isToday = day.date===today;
+                    return (
+                      <div key={dow} title={`${day.date}: ${day.count} interaction${day.count!==1?"s":""}`}
+                        style={{width:11,height:11,borderRadius:2,
+                          background:day.count===0
+                            ?(isDark?"rgba(255,255,255,0.04)":"rgba(0,0,0,0.06)")
+                            :`rgba(255,87,34,${intensity})`,
+                          border:isToday?`1px solid ${T.accent}`:"none",
+                          cursor:"default"}}/>
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+            <div style={{display:"flex",justifyContent:"space-between",marginTop:8}}>
+              <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,color:T.inkFaint}}>12 weeks ago</span>
+              <div style={{display:"flex",alignItems:"center",gap:5}}>
+                <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,color:T.inkFaint}}>Less</span>
+                {[0.06,0.2,0.45,0.75,1].map((o,i)=>(
+                  <div key={i} style={{width:10,height:10,borderRadius:2,background:`rgba(255,87,34,${o})`}}/>
+                ))}
+                <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,color:T.inkFaint}}>More</span>
+              </div>
+              <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,color:T.inkFaint}}>Today</span>
+            </div>
+          </div>
+
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,marginBottom:16}}>
+
+            {/* ── Region coverage ──────────────────────────────── */}
+            <div style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:12,padding:"16px 18px"}}>
+              <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,letterSpacing:"0.1em",textTransform:"uppercase",color:T.inkFaint,fontWeight:600,marginBottom:14}}>
+                World Region Coverage — {touchedRegions.size}/{ALL_REGIONS.length}
+              </div>
+              {ALL_REGIONS.map(reg=>{
+                const touched = touchedRegions.has(reg);
+                const count   = events.filter(e=>e.region&&e.region.toLowerCase().includes(reg.toLowerCase())).length;
+                return (
+                  <div key={reg} style={{marginBottom:9}}>
+                    <div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}>
+                      <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:touched?T.ink:T.inkFaint,fontWeight:touched?600:400}}>{reg}</span>
+                      <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:T.inkLight}}>{count} interaction{count!==1?"s":""}</span>
+                    </div>
+                    <div style={{height:5,borderRadius:3,background:isDark?"rgba(255,255,255,0.06)":"rgba(0,0,0,0.07)"}}>
+                      <div style={{height:"100%",borderRadius:3,width:`${Math.min(100,(count/Math.max(...ALL_REGIONS.map(r=>events.filter(e=>e.region&&e.region.toLowerCase().includes(r.toLowerCase())).length),1)))*100}%`,background:touched?T.accent:"transparent",transition:"width 0.6s ease"}}/>
+                    </div>
+                  </div>
+                );
+              })}
+              {touchedRegions.size < ALL_REGIONS.length && (
+                <div style={{marginTop:10,padding:"7px 10px",background:T.accentDim,border:`1px solid ${T.accent}30`,borderRadius:7,fontFamily:"'DM Sans',sans-serif",fontSize:10,color:T.accent}}>
+                  💡 You haven't explored {ALL_REGIONS.filter(r=>!touchedRegions.has(r)).join(" or ")} yet
+                </div>
+              )}
+            </div>
+
+            {/* ── Era coverage ─────────────────────────────────── */}
+            <div style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:12,padding:"16px 18px"}}>
+              <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,letterSpacing:"0.1em",textTransform:"uppercase",color:T.inkFaint,fontWeight:600,marginBottom:14}}>
+                Historical Era Coverage — {touchedEras.size}/{ALL_ERAS.length}
+              </div>
+              {ALL_ERAS.map(era=>{
+                const touched = touchedEras.has(era);
+                return (
+                  <div key={era} style={{display:"flex",alignItems:"center",gap:9,marginBottom:7}}>
+                    <div style={{width:8,height:8,borderRadius:"50%",flexShrink:0,
+                      background:touched?T.accent:(isDark?"rgba(255,255,255,0.1)":"rgba(0,0,0,0.1)")}}/>
+                    <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:touched?T.ink:T.inkFaint,fontWeight:touched?500:400,flex:1}}>
+                      {ERA_LABELS[era]||era}
+                    </span>
+                    {touched&&<span style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,color:T.success}}>✓</span>}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,marginBottom:16}}>
+
+            {/* ── Section breakdown ─────────────────────────────── */}
+            <div style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:12,padding:"16px 18px"}}>
+              <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,letterSpacing:"0.1em",textTransform:"uppercase",color:T.inkFaint,fontWeight:600,marginBottom:14}}>Where you spend time</div>
+              {Object.entries(sectionCounts).map(([sec,count])=>{
+                const pct = Math.round((count/sectionTotal)*100);
+                const col = TYPE_COLORS[sec]||T.accent;
+                return (
+                  <div key={sec} style={{marginBottom:10}}>
+                    <div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}>
+                      <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.ink,fontWeight:500}}>{TYPE_LABELS[sec]||sec}</span>
+                      <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:T.inkLight}}>{count} · {pct}%</span>
+                    </div>
+                    <div style={{height:6,borderRadius:3,background:isDark?"rgba(255,255,255,0.06)":"rgba(0,0,0,0.07)"}}>
+                      <div style={{height:"100%",borderRadius:3,width:`${pct}%`,background:col,transition:"width 0.6s ease"}}/>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* ── Top topics ───────────────────────────────────── */}
+            <div style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:12,padding:"16px 18px"}}>
+              <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,letterSpacing:"0.1em",textTransform:"uppercase",color:T.inkFaint,fontWeight:600,marginBottom:14}}>Most explored topics</div>
+              {topTopics.length===0
+                ? <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.inkFaint,margin:0}}>No topics explored yet</p>
+                : topTopics.map(([label,count],i)=>(
+                  <div key={label} style={{display:"flex",alignItems:"center",gap:10,marginBottom:8,padding:"6px 8px",background:T.surface,borderRadius:7}}>
+                    <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:700,color:T.inkFaint,width:16,textAlign:"right",flexShrink:0}}>#{i+1}</span>
+                    <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:T.ink,flex:1,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{label}</span>
+                    <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:T.inkLight,flexShrink:0}}>{count}×</span>
+                  </div>
+                ))
+              }
+            </div>
+          </div>
+
+          {/* ── Recent activity feed ─────────────────────────────── */}
+          {recent.length>0&&(
+            <div style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:12,padding:"16px 18px"}}>
+              <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,letterSpacing:"0.1em",textTransform:"uppercase",color:T.inkFaint,fontWeight:600,marginBottom:12}}>Recent activity</div>
+              <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(200px,1fr))",gap:8}}>
+                {recent.map((ev,i)=>{
+                  const col=TYPE_COLORS[ev.type]||T.accent;
+                  return (
+                    <div key={i} style={{display:"flex",alignItems:"flex-start",gap:8,padding:"8px 10px",background:T.surface,borderRadius:8,borderLeft:`3px solid ${col}`}}>
+                      <div style={{flex:1,minWidth:0}}>
+                        <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:600,color:T.ink,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{ev.label}</div>
+                        <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,color:T.inkLight,marginTop:2}}>
+                          {TYPE_LABELS[ev.type]||ev.type}{ev.region?` · ${ev.region}`:""}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Privacy note */}
+          <div style={{marginTop:16,padding:"11px 14px",background:"transparent",border:`1px solid ${T.border}`,borderRadius:9,display:"flex",gap:9,alignItems:"flex-start"}}>
+            <span style={{fontSize:14,flexShrink:0}}>🔒</span>
+            <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:T.inkFaint,margin:0,lineHeight:1.65}}>
+              All data above is stored exclusively in your browser's localStorage. Nothing is sent to any server. Severus has no account system and cannot see any of this. You can clear it at any time using the button above.
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  );
+}
+
 
 // ── HOME ──────────────────────────────────────────────────────
 function Home({ T, onNavigate }) {
@@ -2607,9 +2976,11 @@ function SettingsModal({ T, onClose }) {
           <div style={{padding:"12px 14px",background:T.accent+"10",border:`1px solid ${T.accent}25`,borderRadius:9,marginBottom:20,display:"flex",gap:10,alignItems:"flex-start"}}>
             <span style={{fontSize:16,flexShrink:0}}>🔒</span>
             <div>
-              <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:600,color:T.ink,marginBottom:3}}>Your key stays in your browser</div>
-              <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.inkMid,margin:0,lineHeight:1.6}}>
-                Your API key is stored in <code style={{background:T.surface,padding:"1px 5px",borderRadius:4,fontSize:10}}>localStorage</code> only. It is never sent to Severus servers — only directly to Anthropic's API from your browser. Clear it any time.
+              <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:600,color:T.ink,marginBottom:4}}>Your key never leaves your browser</div>
+              <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.inkMid,margin:0,lineHeight:1.65}}>
+                Stored only in <code style={{background:T.surface,padding:"1px 5px",borderRadius:4,fontSize:10}}>localStorage</code> on your device.
+                When used, it goes directly from <b>your browser → Anthropic's API</b> — it never touches Severus servers.
+                Severus is open source: you can <a href="https://github.com/Perucy/severus" target="_blank" rel="noopener noreferrer" style={{color:T.accent}}>verify this in the code</a>.
               </p>
             </div>
           </div>
@@ -2792,7 +3163,11 @@ export default function App() {
       {showSettings && <SettingsModal T={T} onClose={()=>setShowSettings(false)}/>}
 
       <div style={{display:"flex",height:"100vh",background:T.bg,overflow:"hidden",transition:"background 0.3s"}}>
-        <Sidebar active={active} onNavigate={(id)=>{setActive(id);if(id==="investigate")clearBadge();}} open={sideOpen} T={T} piNewCount={piNewCount}/>
+        <Sidebar active={active} onNavigate={(id)=>{
+          track("section", { label: id });
+          setActive(id);
+          if(id==="investigate") clearBadge();
+        }} open={sideOpen} T={T} piNewCount={piNewCount}/>
         <div style={{flex:1,display:"flex",flexDirection:"column",minWidth:0,overflow:"hidden"}}>
           <TopBar active={active} onNavigate={setActive} onToggle={()=>setSideOpen(v=>!v)} theme={theme} onToggleTheme={()=>setTheme(t=>t==="dark"?"light":"dark")} T={T} onOpenSettings={()=>setShowSettings(true)} hasKey={hasKey}/>
           <div style={{flex:1,overflow:"hidden"}}>
@@ -2803,6 +3178,7 @@ export default function App() {
             {active==="vr"          && <VRSection          T={T}/>}
             {active==="investigate" && <InvestigateSection T={T} nodes={piNodes} edges={piEdges} setNodes={setPiNodes} setEdges={setPiEdges}/>}
             {active==="research"    && <ResearchSection    T={T} onPushToBoard={pushToBoard} onNavigate={setActive} savedState={researchState} onSaveState={setResearchState}/>}
+            {active==="journey"     && <JourneySection     T={T} onNavigate={setActive}/>}
           </div>
         </div>
       </div>
