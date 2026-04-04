@@ -262,10 +262,12 @@ Pull requests are welcome. Open an issue first for major changes.
 
 ---
 
-## License
+## License and Copyright
+Copyright (c) 2024 [Your Legal Name]. All rights reserved.
 
-MIT
+This software is provided under the GNU AGPLv3. 
+Any use of this software outside the terms of this license is strictly 
+prohibited without prior written consent from the copyright holder.
 
----
 
 Built by [Perucy Mussiba](https://github.com/Perucy)
