@@ -271,7 +271,7 @@ const SECTIONS = [
   { id:"explore",     label:"Explore",     icon:"globe",   colorKey:"info",    tagline:"The Interactive Globe",   status:"active" },
   { id:"timeline",    label:"Timeline",    icon:"clock",   colorKey:"accent",  tagline:"315,000 BCE → Present",   status:"active" },
   { id:"learn",       label:"Learn",       icon:"book",    colorKey:"info",    tagline:"People & Civilizations",  status:"active" },
-  { id:"vr",          label:"VR Explorer", icon:"vr",      colorKey:"success", tagline:"Immersive History",       status:"active" },
+  { id:"vr",          label:"Sites",        icon:"pin",     colorKey:"success", tagline:"Historical Sites",         status:"active" },
   { id:"investigate", label:"Investigate", icon:"connect", colorKey:"slate",   tagline:"The PI Board",            status:"active" },
   { id:"research",    label:"Research",    icon:"ai",      colorKey:"success", tagline:"AI Research Suite",       status:"active" },
 ];
@@ -2088,175 +2088,105 @@ function InvestigateSection({ T, nodes: propNodes, edges: propEdges, setNodes: s
 
 
 
+
 // ── VR EXPLORER ───────────────────────────────────────────────
-// Phase 1 + 2: Inline canvas equirectangular panorama viewer.
-// All images sourced from Wikimedia Commons (public domain / CC).
-// Phase 3 (out of scope): AI-generated reconstruction — see LinkedIn.
+// Honest status: immersive 3D history in the browser is genuinely
+// hard. See VRSection for the full technical explanation shown to users.
 
 const VR_SITES = [
-  { id:"great-pyramid",  name:"Great Pyramid of Giza",    region:"Egypt",        era:"2560 BCE", type:"civilization",
-    panorama:"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Kheops-Pyramid.jpg/2560px-Kheops-Pyramid.jpg",
+  { id:"great-pyramid",  name:"Great Pyramid of Giza",         region:"Egypt",       era:"2560 BCE", type:"civilization",
     thumbnail:"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Kheops-Pyramid.jpg/640px-Kheops-Pyramid.jpg",
-    description:"The last surviving Wonder of the Ancient World. Built over 20 years, it remained the tallest structure on Earth for 3,800 years. Its internal chambers and precise astronomical alignment still baffle engineers today.",
-    facts:["Originally 146.5 m tall — tallest structure for 3,800 years","Built with ~2.3 million blocks, some weighing 80 tonnes","Aligned to true north within 0.05 degrees","Internal temperature constant at 20°C regardless of outside heat"],
-    wikiUrl:"https://en.wikipedia.org/wiki/Great_Pyramid_of_Giza" },
-  { id:"colosseum",      name:"The Colosseum — Rome",      region:"Italy",        era:"80 CE",    type:"world",
-    panorama:"https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Colosseo_2020.jpg/2560px-Colosseo_2020.jpg",
+    description:"The last surviving Wonder of the Ancient World. Remained the tallest structure on Earth for 3,800 years. Its astronomical alignment still baffles engineers.",
+    facts:["Originally 146.5 m tall — tallest structure for 3,800 years","~2.3 million blocks, some weighing 80 tonnes","Aligned to true north within 0.05 degrees","Internal temperature constant at 20°C"],
+    wikiUrl:"https://en.wikipedia.org/wiki/Great_Pyramid_of_Giza",
+    mapsUrl:"https://maps.google.com/?q=29.9792,31.1342",
+    youtubeQuery:"Great Pyramid of Giza 360 virtual tour",
+    artsUrl:"https://artsandculture.google.com/search?q=great+pyramid+giza" },
+  { id:"colosseum",      name:"The Colosseum — Rome",           region:"Italy",       era:"80 CE",    type:"world",
     thumbnail:"https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Colosseo_2020.jpg/640px-Colosseo_2020.jpg",
-    description:"The largest amphitheatre ever built, seating up to 80,000 spectators. Gladiatorial combat, animal hunts, and public executions were staged here. The engineering influenced stadium design for 2,000 years.",
-    facts:["Held 50,000–80,000 spectators","Built in just 8–10 years (70–80 CE)","80 entrances — crowds could empty in minutes","Underground hypogeum held animals and stage machinery"],
-    wikiUrl:"https://en.wikipedia.org/wiki/Colosseum" },
-  { id:"machu-picchu",   name:"Machu Picchu",              region:"Peru",         era:"1450 CE",  type:"world",
-    panorama:"https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Machu_Picchu%2C_Peru.jpg/2560px-Machu_Picchu%2C_Peru.jpg",
+    description:"The largest amphitheatre ever built, seating up to 80,000. Its engineering influenced stadium design for 2,000 years.",
+    facts:["Held 50,000–80,000 spectators","Built in just 8–10 years","80 entrances — crowds could empty in minutes","Underground hypogeum held animals and stage machinery"],
+    wikiUrl:"https://en.wikipedia.org/wiki/Colosseum",
+    mapsUrl:"https://maps.google.com/?q=41.8902,12.4922",
+    youtubeQuery:"Colosseum Rome 360 virtual tour",
+    artsUrl:"https://artsandculture.google.com/search?q=colosseum+rome" },
+  { id:"machu-picchu",   name:"Machu Picchu",                  region:"Peru",        era:"1450 CE",  type:"world",
     thumbnail:"https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Machu_Picchu%2C_Peru.jpg/640px-Machu_Picchu%2C_Peru.jpg",
-    description:"The Inca citadel sits at 2,430 metres in the Andes. Built without mortar — stones fit so precisely a knife blade cannot pass between them. Unknown to the outside world until 1911.",
-    facts:["Built at 2,430 m — above the clouds","Stones fit without mortar, knife-blade precision","Earthquake-resistant: stones 'dance' during tremors","Rediscovered by Hiram Bingham in 1911"],
-    wikiUrl:"https://en.wikipedia.org/wiki/Machu_Picchu" },
-  { id:"parthenon",      name:"The Parthenon — Athens",    region:"Greece",       era:"432 BCE",  type:"world",
-    panorama:"https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/The_Parthenon_in_Athens.jpg/2560px-The_Parthenon_in_Athens.jpg",
+    description:"Inca citadel at 2,430 m in the Andes. Stones fit without mortar — a knife blade cannot pass between them. Unknown to the outside world until 1911.",
+    facts:["Built at 2,430 m — above the clouds","Stones fit without mortar","Earthquake-resistant design","Rediscovered by Hiram Bingham in 1911"],
+    wikiUrl:"https://en.wikipedia.org/wiki/Machu_Picchu",
+    mapsUrl:"https://maps.google.com/?q=-13.1631,-72.5450",
+    youtubeQuery:"Machu Picchu 360 virtual tour drone",
+    artsUrl:"https://artsandculture.google.com/search?q=machu+picchu" },
+  { id:"parthenon",      name:"The Parthenon — Athens",        region:"Greece",      era:"432 BCE",  type:"world",
     thumbnail:"https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/The_Parthenon_in_Athens.jpg/640px-The_Parthenon_in_Athens.jpg",
-    description:"The temple of Athena on the Acropolis. Its seemingly straight lines are actually subtly curved — optical illusions that make it appear perfect from a distance. The most influential building in Western architecture.",
-    facts:["Has no perfectly straight lines — all subtly curved","46 outer columns, each slightly different","Held a 12-metre ivory and gold statue of Athena","The Elgin Marbles were removed by Britain in 1801 — Greece demands their return"],
-    wikiUrl:"https://en.wikipedia.org/wiki/Parthenon" },
-  { id:"angkor-wat",     name:"Angkor Wat",                region:"Cambodia",     era:"1150 CE",  type:"world",
-    panorama:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Angkor_Wat_as_seen_from_the_air.JPG/2560px-Angkor_Wat_as_seen_from_the_air.JPG",
+    description:"Temple of Athena on the Acropolis. Its lines are subtly curved — optical illusions making it appear perfectly straight. The most influential building in Western architecture.",
+    facts:["Has no perfectly straight lines","46 outer columns, each slightly different","Held a 12m ivory and gold statue of Athena","The Elgin Marbles: still in London, Greece demands return"],
+    wikiUrl:"https://en.wikipedia.org/wiki/Parthenon",
+    mapsUrl:"https://maps.google.com/?q=37.9715,23.7267",
+    youtubeQuery:"Parthenon Athens Acropolis 360 virtual tour",
+    artsUrl:"https://artsandculture.google.com/search?q=parthenon+athens" },
+  { id:"angkor-wat",     name:"Angkor Wat",                    region:"Cambodia",    era:"1150 CE",  type:"world",
     thumbnail:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Angkor_Wat_as_seen_from_the_air.JPG/640px-Angkor_Wat_as_seen_from_the_air.JPG",
-    description:"The world's largest religious monument — a temple city covering 402 acres built by the Khmer Empire. Its bas-relief galleries stretch for 800 metres and depict the entire Hindu cosmological universe.",
-    facts:["World's largest religious monument: 402 acres","800 m of bas-relief galleries — the longest in the world","Built for Suryavarman II as his state temple","The moat required digging 30 million cubic metres of earth"],
-    wikiUrl:"https://en.wikipedia.org/wiki/Angkor_Wat" },
-  { id:"great-wall",     name:"Great Wall of China",       region:"China",        era:"221 BCE",  type:"world",
-    panorama:"https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Badaling_great_wall.jpg/2560px-Badaling_great_wall.jpg",
+    description:"The world's largest religious monument — 402 acres built by the Khmer Empire. Bas-relief galleries stretch 800 metres depicting the entire Hindu cosmological universe.",
+    facts:["World's largest religious monument: 402 acres","800 m of bas-relief galleries","Built for Suryavarman II","Moat required 30 million cubic metres of earth"],
+    wikiUrl:"https://en.wikipedia.org/wiki/Angkor_Wat",
+    mapsUrl:"https://maps.google.com/?q=13.4124,103.8667",
+    youtubeQuery:"Angkor Wat 360 virtual tour Cambodia",
+    artsUrl:"https://artsandculture.google.com/search?q=angkor+wat" },
+  { id:"great-wall",     name:"Great Wall of China",           region:"China",       era:"221 BCE",  type:"world",
     thumbnail:"https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Badaling_great_wall.jpg/640px-Badaling_great_wall.jpg",
-    description:"Built over centuries by multiple dynasties, the Great Wall stretches 21,000+ km. It was never a single wall but a network of fortifications. Millions died building it — their bones are said to be in the foundations.",
-    facts:["Total length: 21,196 km including all branches","2,000+ years and multiple dynasties to build","At least 400,000 workers died during construction","Visible from low Earth orbit — but NOT the Moon (a myth)"],
-    wikiUrl:"https://en.wikipedia.org/wiki/Great_Wall_of_China" },
-  { id:"hagia-sophia",   name:"Hagia Sophia — Istanbul",   region:"Turkey",       era:"537 CE",   type:"empire",
-    panorama:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Hagia_Sophia_Mars_2013.jpg/2560px-Hagia_Sophia_Mars_2013.jpg",
+    description:"21,000+ km of fortifications built over centuries. Never a single wall but a network. Millions died building it — their bones said to be in the foundations.",
+    facts:["Total length: 21,196 km","2,000+ years and multiple dynasties to build","400,000+ workers died during construction","Visible from orbit — but NOT from the Moon (a myth)"],
+    wikiUrl:"https://en.wikipedia.org/wiki/Great_Wall_of_China",
+    mapsUrl:"https://maps.google.com/?q=40.4319,116.5704",
+    youtubeQuery:"Great Wall of China 360 virtual tour",
+    artsUrl:"https://artsandculture.google.com/search?q=great+wall+china" },
+  { id:"hagia-sophia",   name:"Hagia Sophia — Istanbul",       region:"Turkey",      era:"537 CE",   type:"empire",
     thumbnail:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Hagia_Sophia_Mars_2013.jpg/640px-Hagia_Sophia_Mars_2013.jpg",
-    description:"Built by Emperor Justinian I, the Hagia Sophia was the world's largest cathedral for nearly 1,000 years. Its dome appeared to float — supported by hidden pendentives. Changed religion three times.",
-    facts:["World's largest cathedral for 1,000 years (537–1520 CE)","Dome is 55.6 m high — larger than the Pantheon","Changed: cathedral → mosque → museum → mosque","The 'floating' dome was architecturally revolutionary"],
-    wikiUrl:"https://en.wikipedia.org/wiki/Hagia_Sophia" },
-  { id:"stonehenge",     name:"Stonehenge",                region:"England",      era:"2500 BCE", type:"indigenous",
-    panorama:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Stonehenge2007_07_30.jpg/2560px-Stonehenge2007_07_30.jpg",
+    description:"World's largest cathedral for 1,000 years. Its dome appeared to float — a revolutionary engineering feat. Changed religion three times: cathedral, mosque, museum, mosque.",
+    facts:["Largest cathedral for 1,000 years (537–1520 CE)","Dome is 55.6 m high","Changed religion 3 times","The floating dome was architecturally revolutionary"],
+    wikiUrl:"https://en.wikipedia.org/wiki/Hagia_Sophia",
+    mapsUrl:"https://maps.google.com/?q=41.0086,28.9802",
+    youtubeQuery:"Hagia Sophia Istanbul 360 virtual tour inside",
+    artsUrl:"https://artsandculture.google.com/search?q=hagia+sophia" },
+  { id:"stonehenge",     name:"Stonehenge",                    region:"England",     era:"2500 BCE", type:"indigenous",
     thumbnail:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Stonehenge2007_07_30.jpg/640px-Stonehenge2007_07_30.jpg",
-    description:"A prehistoric monument on Salisbury Plain. The largest stones were transported 250 km from Wales — how remains unknown. Precisely aligned with the summer solstice sunrise and winter solstice sunset.",
-    facts:["Built in phases from 3000–1500 BCE","Largest stones: 25 tonnes, transported 250 km from Wales","Aligned with summer solstice sunrise","Purpose — burial site, solar calendar, healing centre — still debated"],
-    wikiUrl:"https://en.wikipedia.org/wiki/Stonehenge" },
-  { id:"taj-mahal",      name:"Taj Mahal",                 region:"India",        era:"1653 CE",  type:"empire",
-    panorama:"https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Taj_Mahal_%28Edited%29.jpeg/2560px-Taj_Mahal_%28Edited%29.jpeg",
+    description:"Prehistoric monument on Salisbury Plain. Largest stones transported 250 km from Wales. Aligned with the summer solstice sunrise and winter solstice sunset.",
+    facts:["Built 3000–1500 BCE in phases","Largest stones: 25 tonnes from 250 km away","Aligned with summer solstice sunrise","Purpose still debated: burial site? Solar calendar? Healing centre?"],
+    wikiUrl:"https://en.wikipedia.org/wiki/Stonehenge",
+    mapsUrl:"https://maps.google.com/?q=51.1789,-1.8262",
+    youtubeQuery:"Stonehenge 360 virtual tour",
+    artsUrl:"https://artsandculture.google.com/search?q=stonehenge" },
+  { id:"taj-mahal",      name:"Taj Mahal",                     region:"India",       era:"1653 CE",  type:"empire",
     thumbnail:"https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Taj_Mahal_%28Edited%29.jpeg/640px-Taj_Mahal_%28Edited%29.jpeg",
-    description:"Built by Emperor Shah Jahan as a mausoleum for his wife Mumtaz Mahal. 20,000 workers and 1,000 elephants took 22 years. The marble changes colour with the light — pink at dawn, white at noon, golden at night.",
-    facts:["22 years, 20,000 workers, 1,000 elephants to build","Marble changes colour: pink at dawn, white at noon, golden at night","Four minarets lean outward — to fall away from the tomb in earthquakes","Shah Jahan died imprisoned, looking at the Taj from his cell"],
-    wikiUrl:"https://en.wikipedia.org/wiki/Taj_Mahal" },
-  { id:"pompeii",        name:"Pompeii",                   region:"Italy",        era:"79 CE",    type:"world",
-    panorama:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Pompeii_Street.jpg/1280px-Pompeii_Street.jpg",
+    description:"Built by Shah Jahan for his wife Mumtaz Mahal. 22 years, 20,000 workers. Marble changes colour — pink at dawn, white at noon, golden at night.",
+    facts:["22 years, 20,000 workers, 1,000 elephants","Marble: pink at dawn, white at noon, golden at night","Minarets lean outward — to fall away from the tomb in earthquakes","Shah Jahan died imprisoned, looking at the Taj from his cell"],
+    wikiUrl:"https://en.wikipedia.org/wiki/Taj_Mahal",
+    mapsUrl:"https://maps.google.com/?q=27.1751,78.0421",
+    youtubeQuery:"Taj Mahal 360 virtual tour inside",
+    artsUrl:"https://artsandculture.google.com/search?q=taj+mahal" },
+  { id:"pompeii",        name:"Pompeii",                       region:"Italy",       era:"79 CE",    type:"world",
     thumbnail:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Pompeii_Street.jpg/640px-Pompeii_Street.jpg",
-    description:"A Roman city buried under 6 metres of volcanic ash by Vesuvius in 79 CE. The ash preserved it perfectly — streets, houses, graffiti, food in ovens, and plaster casts of citizens frozen in their final moments.",
-    facts:["Buried in 6 metres of ash in 18–20 hours","Preserved for 1,700 years, rediscovered in 1748","Electoral campaign graffiti still legible on the walls","Plaster casts of victims made by pouring plaster into ash voids"],
-    wikiUrl:"https://en.wikipedia.org/wiki/Pompeii" },
-  { id:"great-zimbabwe", name:"Great Zimbabwe",            region:"Zimbabwe",     era:"1100 CE",  type:"civilization",
-    panorama:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Great_Zimbabwe_02.jpg/1280px-Great_Zimbabwe_02.jpg",
+    description:"Roman city buried under 6 metres of volcanic ash in 79 CE. Preserved perfectly — streets, graffiti, food in ovens, plaster casts of citizens in their final moments.",
+    facts:["Buried in ash in 18–20 hours","Preserved for 1,700 years, rediscovered 1748","Electoral campaign graffiti still legible","Plaster casts of victims made by pouring plaster into ash voids"],
+    wikiUrl:"https://en.wikipedia.org/wiki/Pompeii",
+    mapsUrl:"https://maps.google.com/?q=40.7509,14.4989",
+    youtubeQuery:"Pompeii ancient ruins 360 virtual tour walk",
+    artsUrl:"https://artsandculture.google.com/search?q=pompeii" },
+  { id:"great-zimbabwe", name:"Great Zimbabwe",                region:"Zimbabwe",    era:"1100 CE",  type:"civilization",
     thumbnail:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Great_Zimbabwe_02.jpg/640px-Great_Zimbabwe_02.jpg",
-    description:"The largest pre-colonial stone structure in sub-Saharan Africa — 720 hectares of dry-stone walls built by the Shona people without mortar. At its peak it housed 18,000 people and controlled trade from the Indian Ocean to the interior.",
-    facts:["Largest pre-colonial structure in sub-Saharan Africa","Built without mortar across 720 hectares","Housed 18,000 people at its peak (1300–1450 CE)","European colonisers refused to believe Africans built it — the history was suppressed for decades"],
-    wikiUrl:"https://en.wikipedia.org/wiki/Great_Zimbabwe" },
+    description:"Largest pre-colonial stone structure in sub-Saharan Africa. 720 hectares of dry-stone walls, no mortar. Housed 18,000 people and controlled Indian Ocean trade.",
+    facts:["Largest pre-colonial structure in sub-Saharan Africa","Built without mortar across 720 hectares","Housed 18,000 people at peak (1300–1450 CE)","European colonisers denied Africans built it — history was suppressed for decades"],
+    wikiUrl:"https://en.wikipedia.org/wiki/Great_Zimbabwe",
+    mapsUrl:"https://maps.google.com/?q=-20.2745,30.9338",
+    youtubeQuery:"Great Zimbabwe ruins virtual tour",
+    artsUrl:"https://artsandculture.google.com/search?q=great+zimbabwe" },
 ];
 
-// Inline canvas-based panorama viewer — no external dependencies
-function PanoramaViewer({ url, name, T }) {
-  const canvasRef  = useRef(null);
-  const imgRef     = useRef(null);
-  const stateRef   = useRef({ dragging:false, lastX:0, offsetX:0, targetX:0, animId:null });
-  const [loaded, setLoaded]   = useState(false);
-  const [error,  setError]    = useState(false);
-
-  useEffect(() => {
-    setLoaded(false); setError(false);
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    img.onload  = () => { imgRef.current = img; setLoaded(true); };
-    img.onerror = () => setError(true);
-    img.src = url;
-    return () => { img.onload = null; img.onerror = null; };
-  }, [url]);
-
-  useEffect(() => {
-    if (!loaded || !canvasRef.current || !imgRef.current) return;
-    const canvas = canvasRef.current;
-    const ctx    = canvas.getContext("2d");
-    const img    = imgRef.current;
-    const s      = stateRef.current;
-
-    const draw = () => {
-      // Smooth interpolation
-      s.offsetX += (s.targetX - s.offsetX) * 0.08;
-      const W = canvas.width, H = canvas.height;
-      const iW = img.naturalWidth, iH = img.naturalHeight;
-      // Scale image to fill canvas height
-      const scale  = H / iH;
-      const dispW  = iW * scale;
-      // Wrap the x offset
-      const x = ((s.offsetX % dispW) + dispW) % dispW;
-      ctx.clearRect(0, 0, W, H);
-      // Draw main portion
-      ctx.drawImage(img, 0, 0, iW, iH, -x, 0, dispW, H);
-      // Wrap-around second copy
-      if (dispW - x < W) ctx.drawImage(img, 0, 0, iW, iH, dispW - x, 0, dispW, H);
-      s.animId = requestAnimationFrame(draw);
-    };
-
-    s.animId = requestAnimationFrame(draw);
-
-    const resize = () => {
-      canvas.width  = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
-    };
-    resize();
-    window.addEventListener("resize", resize);
-    return () => { cancelAnimationFrame(s.animId); window.removeEventListener("resize", resize); };
-  }, [loaded]);
-
-  const onDown  = e => { const s = stateRef.current; s.dragging = true; s.lastX = e.clientX ?? e.touches?.[0]?.clientX; };
-  const onMove  = e => {
-    const s = stateRef.current; if (!s.dragging) return;
-    const x = e.clientX ?? e.touches?.[0]?.clientX;
-    s.targetX += (s.lastX - x) * 1.2;
-    s.lastX = x;
-  };
-  const onUp    = () => { stateRef.current.dragging = false; };
-
-  if (error) return (
-    <div style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",background:"#0A0908",flexDirection:"column",gap:12}}>
-      <span style={{fontSize:32}}>🖼️</span>
-      <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:13,color:"rgba(255,255,255,0.4)"}}>Image unavailable — view on Wikipedia</p>
-    </div>
-  );
-
-  return (
-    <div style={{flex:1,position:"relative",overflow:"hidden",cursor:"grab",userSelect:"none"}}>
-      {!loaded && (
-        <div style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center",background:"#0A0908",flexDirection:"column",gap:10,zIndex:2}}>
-          <span style={{fontSize:28,animation:"spin 1s linear infinite",display:"inline-block"}}>⟳</span>
-          <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"rgba(255,255,255,0.4)"}}>Loading panorama…</p>
-        </div>
-      )}
-      <canvas ref={canvasRef} style={{width:"100%",height:"100%",display:"block"}}
-        onMouseDown={onDown} onMouseMove={onMove} onMouseUp={onUp} onMouseLeave={onUp}
-        onTouchStart={onDown} onTouchMove={onMove} onTouchEnd={onUp}/>
-      {loaded && (
-        <div style={{position:"absolute",bottom:16,left:"50%",transform:"translateX(-50%)",padding:"5px 14px",background:"rgba(0,0,0,0.55)",borderRadius:20,backdropFilter:"blur(6px)",pointerEvents:"none"}}>
-          <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:"rgba(255,255,255,0.55)"}}>
-            ← Drag to pan · Scroll left/right to explore →
-          </span>
-        </div>
-      )}
-    </div>
-  );
-}
-
 function VRSection({ T }) {
-  const [selected, setSelected]  = useState(null);
-  const [search,   setSearch]    = useState("");
+  const [selected, setSelected] = useState(null);
+  const [search,   setSearch]   = useState("");
 
   const filtered = useMemo(() => {
     if (!search) return VR_SITES;
@@ -2271,47 +2201,92 @@ function VRSection({ T }) {
 
   const isDark = T.name === "dark";
 
-  // ── Panorama viewer ────────────────────────────────────────
+  // ── Site detail view ───────────────────────────────────────
   if (selected) return (
-    <div style={{height:"100%",display:"flex",flexDirection:"column",background:"#0A0908"}}>
-      <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+    <div style={{height:"100%",display:"flex",flexDirection:"column",background:T.bg,overflow:"hidden"}}>
 
       {/* Top bar */}
-      <div style={{background:"rgba(0,0,0,0.7)",borderBottom:"1px solid rgba(255,255,255,0.08)",padding:"10px 16px",display:"flex",alignItems:"center",gap:12,flexShrink:0,backdropFilter:"blur(10px)"}}>
+      <div style={{background:T.surface,borderBottom:`1px solid ${T.border}`,padding:"10px 18px",display:"flex",alignItems:"center",gap:12,flexShrink:0}}>
         <button onClick={()=>setSelected(null)}
-          style={{display:"flex",alignItems:"center",gap:6,padding:"6px 12px",background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.15)",borderRadius:7,color:"rgba(255,255,255,0.7)",fontFamily:"'DM Sans',sans-serif",fontSize:11,cursor:"pointer"}}>
+          style={{display:"flex",alignItems:"center",gap:6,padding:"6px 12px",background:T.card,border:`1px solid ${T.border}`,borderRadius:7,color:T.inkMid,fontFamily:"'DM Sans',sans-serif",fontSize:11,cursor:"pointer"}}>
           <Ic n="chevL" s={12} c="currentColor"/> Back
         </button>
-        <div style={{flex:1}}>
-          <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:700,color:"#fff"}}>{selected.name}</div>
-          <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:"rgba(255,255,255,0.45)"}}>{selected.region} · {selected.era}</div>
+        <div>
+          <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:700,color:T.ink}}>{selected.name}</div>
+          <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:T.inkLight}}>{selected.region} · {selected.era}</div>
         </div>
-        <div style={{padding:"4px 10px",borderRadius:20,background:"rgba(59,130,246,0.2)",border:"1px solid rgba(59,130,246,0.4)",fontFamily:"'DM Sans',sans-serif",fontSize:9,fontWeight:700,color:"#60A5FA",letterSpacing:"0.08em"}}>
-          360° PANORAMA
-        </div>
+        <div style={{flex:1}}/>
+        <a href={selected.mapsUrl} target="_blank" rel="noopener noreferrer"
+          style={{display:"flex",alignItems:"center",gap:6,padding:"6px 13px",background:"#1a73e820",border:"1px solid #1a73e850",borderRadius:7,color:"#1a73e8",fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:600,textDecoration:"none"}}>
+          <Ic n="pin" s={12} c="currentColor"/> Open in Google Maps
+        </a>
         <a href={selected.wikiUrl} target="_blank" rel="noopener noreferrer"
-          style={{display:"flex",alignItems:"center",gap:5,padding:"6px 12px",background:"rgba(255,255,255,0.06)",border:"1px solid rgba(255,255,255,0.12)",borderRadius:7,color:"rgba(255,255,255,0.5)",fontFamily:"'DM Sans',sans-serif",fontSize:11,textDecoration:"none"}}>
+          style={{display:"flex",alignItems:"center",gap:5,padding:"6px 13px",background:T.card,border:`1px solid ${T.border}`,borderRadius:7,color:T.inkMid,fontFamily:"'DM Sans',sans-serif",fontSize:11,textDecoration:"none"}}>
           <Ic n="extlink" s={11} c="currentColor"/> Wikipedia
         </a>
       </div>
 
-      {/* Canvas panorama + facts sidebar */}
-      <div style={{flex:1,display:"flex",overflow:"hidden"}}>
-        <PanoramaViewer url={selected.panorama} name={selected.name} T={T}/>
+      {/* Content */}
+      <div style={{flex:1,overflowY:"auto",padding:"24px"}}>
+        <div style={{maxWidth:820,margin:"0 auto",display:"grid",gridTemplateColumns:"1fr 1fr",gap:20}}>
 
-        {/* Side panel */}
-        <div style={{width:260,background:"rgba(0,0,0,0.6)",backdropFilter:"blur(12px)",borderLeft:"1px solid rgba(255,255,255,0.07)",display:"flex",flexDirection:"column",flexShrink:0,overflowY:"auto",padding:"16px 14px"}}>
-          <div style={{marginBottom:12}}>
-            <div style={{fontFamily:"'Playfair Display',serif",fontSize:14,fontWeight:700,color:"#fff",marginBottom:6}}>{selected.name}</div>
-            <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:"rgba(255,255,255,0.55)",lineHeight:1.7,margin:0}}>{selected.description}</p>
-          </div>
-          <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.1em",textTransform:"uppercase",color:"rgba(255,255,255,0.25)",marginBottom:10,fontWeight:600}}>Key Facts</div>
-          {selected.facts.map((f,i) => (
-            <div key={i} style={{display:"flex",gap:8,marginBottom:9,paddingBottom:9,borderBottom:"1px solid rgba(255,255,255,0.06)"}}>
-              <div style={{width:4,height:4,borderRadius:"50%",background:"#3B82F6",flexShrink:0,marginTop:5}}/>
-              <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:"rgba(255,255,255,0.55)",lineHeight:1.6}}>{f}</span>
+          {/* Hero image */}
+          <div style={{gridColumn:"1/-1",borderRadius:12,overflow:"hidden",height:260,position:"relative",background:"#1a1410"}}>
+            <img src={selected.thumbnail} alt={selected.name}
+              style={{width:"100%",height:"100%",objectFit:"cover"}}
+              onError={e=>{e.target.style.display="none";}}/>
+            <div style={{position:"absolute",inset:0,background:"linear-gradient(to top,rgba(0,0,0,0.6),transparent 50%)"}}/>
+            <div style={{position:"absolute",bottom:14,left:18}}>
+              <h2 style={{fontFamily:"'Playfair Display',serif",fontSize:22,fontWeight:700,color:"#fff",margin:"0 0 3px"}}>{selected.name}</h2>
+              <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:"rgba(255,255,255,0.65)"}}>{selected.region} · {selected.era}</div>
             </div>
-          ))}
+          </div>
+
+          {/* About */}
+          <div style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:12,padding:"18px"}}>
+            <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.1em",textTransform:"uppercase",color:T.inkFaint,fontWeight:600,marginBottom:10}}>About this site</div>
+            <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:T.inkMid,lineHeight:1.75,margin:"0 0 14px"}}>{selected.description}</p>
+            <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.1em",textTransform:"uppercase",color:T.inkFaint,fontWeight:600,marginBottom:8}}>Key facts</div>
+            {selected.facts.map((f,i) => (
+              <div key={i} style={{display:"flex",gap:8,marginBottom:7,paddingBottom:7,borderBottom:i<selected.facts.length-1?`1px solid ${T.border}`:"none"}}>
+                <div style={{width:4,height:4,borderRadius:"50%",background:T.accent,flexShrink:0,marginTop:5}}/>
+                <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.inkMid,lineHeight:1.6}}>{f}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Explore elsewhere */}
+          <div style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:12,padding:"18px"}}>
+            <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.1em",textTransform:"uppercase",color:T.inkFaint,fontWeight:600,marginBottom:14}}>Explore this site</div>
+
+            {/* Resources */}
+            {[
+              { icon:"🗺️", label:"View on Google Maps", sub:"Satellite and street-level imagery", href:selected.mapsUrl, color:"#1a73e8" },
+              { icon:"🎬", label:"360° Tour on YouTube", sub:"Search virtual walkthroughs and drone footage", href:`https://www.youtube.com/results?search_query=${encodeURIComponent(selected.youtubeQuery)}`, color:"#FF0000" },
+              { icon:"🖼️", label:"Google Arts & Culture", sub:"High-res photography and curator stories", href:selected.artsUrl, color:"#EA4335" },
+              { icon:"📖", label:"Wikipedia", sub:"Full historical context and references", href:selected.wikiUrl, color:T.info },
+            ].map((r,i) => (
+              <a key={i} href={r.href} target="_blank" rel="noopener noreferrer"
+                style={{display:"flex",gap:12,alignItems:"flex-start",padding:"10px 11px",marginBottom:i<3?8:0,background:T.surface,border:`1px solid ${T.border}`,borderRadius:9,textDecoration:"none",transition:"all 0.15s"}}
+                onMouseEnter={e=>{e.currentTarget.style.borderColor=r.color+"50";e.currentTarget.style.transform="translateX(2px)";}}
+                onMouseLeave={e=>{e.currentTarget.style.borderColor=T.border;e.currentTarget.style.transform="none";}}>
+                <span style={{fontSize:20,flexShrink:0}}>{r.icon}</span>
+                <div style={{flex:1}}>
+                  <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:600,color:T.ink,marginBottom:2}}>{r.label}</div>
+                  <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:T.inkLight}}>{r.sub}</div>
+                </div>
+                <Ic n="extlink" s={12} c={T.inkFaint}/>
+              </a>
+            ))}
+
+            {/* Why no immersive 3D here */}
+            <div style={{marginTop:14,padding:"11px 13px",background:isDark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.03)",border:`1px solid ${T.border}`,borderRadius:9}}>
+              <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,fontWeight:600,color:T.inkLight,marginBottom:5}}>Why no in-app 360° viewer?</div>
+              <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:T.inkFaint,lineHeight:1.65,margin:0}}>
+                True photospheres require specialized camera rigs. Embedding third-party 360° viewers introduces licensing, CORS restrictions, and iframes that break. Google Maps and YouTube deliver the best experience for this — we link you directly there.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -2320,14 +2295,13 @@ function VRSection({ T }) {
   // ── Browse grid ────────────────────────────────────────────
   return (
     <div style={{height:"100%",display:"flex",flexDirection:"column",background:T.bg,overflow:"hidden"}}>
-      <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
 
       {/* Header */}
       <div style={{background:T.surface,borderBottom:`1px solid ${T.border}`,padding:"12px 20px",display:"flex",alignItems:"center",gap:16,flexShrink:0}}>
         <div>
-          <h2 style={{fontFamily:"'Playfair Display',serif",fontSize:18,fontWeight:700,color:T.ink,margin:0}}>VR Explorer</h2>
+          <h2 style={{fontFamily:"'Playfair Display',serif",fontSize:18,fontWeight:700,color:T.ink,margin:0}}>Historical Sites</h2>
           <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.inkLight,margin:"2px 0 0"}}>
-            Immersive 360° panoramas of the world's greatest historical sites
+            Explore the world's greatest sites — via Google Maps, YouTube 360° tours, and Google Arts & Culture
           </p>
         </div>
         <div style={{flex:1}}/>
@@ -2337,6 +2311,15 @@ function VRSection({ T }) {
             style={{border:"none",background:"transparent",outline:"none",fontFamily:"'DM Sans',sans-serif",fontSize:12,color:T.ink,flex:1,caretColor:T.accent}}/>
           {search && <span onClick={()=>setSearch("")} style={{cursor:"pointer",color:T.inkFaint,fontSize:12}}>✕</span>}
         </div>
+      </div>
+
+      {/* Honest notice */}
+      <div style={{padding:"9px 20px",background:isDark?"rgba(251,191,36,0.07)":"rgba(251,191,36,0.06)",borderBottom:"1px solid rgba(251,191,36,0.2)",display:"flex",alignItems:"center",gap:10,flexShrink:0}}>
+        <span style={{fontSize:15}}>⚠️</span>
+        <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:isDark?"#FCD34D":"#92400E",lineHeight:1.5}}>
+          <b>In-browser immersive 3D for historical sites isn't ready yet.</b> True photospheres need specialist camera equipment; embedding third-party viewers introduces licensing and CORS issues.
+          {" "}<b>For each site below we link directly to Google Maps, YouTube 360° tours, and Google Arts & Culture</b> — which all do this better than any iframe could.
+        </span>
       </div>
 
       {/* Site grid */}
@@ -2350,41 +2333,60 @@ function VRSection({ T }) {
           {filtered.map(site => (
             <div key={site.id}
               style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:12,overflow:"hidden",cursor:"pointer",transition:"all 0.2s"}}
-              onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-3px)";e.currentTarget.style.boxShadow="0 8px 24px rgba(0,0,0,0.2)";e.currentTarget.style.borderColor="#3B82F660";}}
+              onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-3px)";e.currentTarget.style.boxShadow=`0 8px 24px rgba(0,0,0,0.18)`;e.currentTarget.style.borderColor=T.accent+"50";}}
               onMouseLeave={e=>{e.currentTarget.style.transform="none";e.currentTarget.style.boxShadow="none";e.currentTarget.style.borderColor=T.border;}}
               onClick={()=>setSelected(site)}>
 
               {/* Thumbnail */}
-              <div style={{height:160,position:"relative",overflow:"hidden",background:"#1a1410"}}>
+              <div style={{height:155,position:"relative",overflow:"hidden",background:"#1a1410"}}>
                 <img src={site.thumbnail} alt={site.name}
                   style={{width:"100%",height:"100%",objectFit:"cover",filter:"brightness(0.82)",transition:"transform 0.4s"}}
                   onMouseEnter={e=>e.target.style.transform="scale(1.05)"}
                   onMouseLeave={e=>e.target.style.transform="scale(1)"}
                   onError={e=>{e.target.style.display="none";}}/>
-                <div style={{position:"absolute",inset:0,background:"linear-gradient(to top,rgba(0,0,0,0.75),transparent 50%)"}}/>
-                <div style={{position:"absolute",top:8,right:8,padding:"3px 8px",borderRadius:20,background:"rgba(59,130,246,0.85)",fontFamily:"'DM Sans',sans-serif",fontSize:9,fontWeight:700,color:"#fff",letterSpacing:"0.06em"}}>
-                  360° PANORAMA
-                </div>
+                <div style={{position:"absolute",inset:0,background:"linear-gradient(to top,rgba(0,0,0,0.72),transparent 52%)"}}/>
                 <div style={{position:"absolute",bottom:8,left:10,right:10}}>
-                  <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:700,color:"#fff",lineHeight:1.2}}>{site.name}</div>
-                  <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:"rgba(255,255,255,0.65)",marginTop:2}}>{site.region} · {site.era}</div>
+                  <div style={{fontFamily:"'Playfair Display',serif",fontSize:14,fontWeight:700,color:"#fff",lineHeight:1.2}}>{site.name}</div>
+                  <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,color:"rgba(255,255,255,0.6)",marginTop:2}}>{site.region} · {site.era}</div>
                 </div>
               </div>
 
               {/* Card body */}
-              <div style={{padding:"12px 14px"}}>
-                <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.inkMid,lineHeight:1.65,margin:"0 0 12px"}}>
-                  {site.description.slice(0,110)}…
+              <div style={{padding:"11px 13px"}}>
+                <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.inkMid,lineHeight:1.65,margin:"0 0 10px"}}>
+                  {site.description.slice(0,100)}…
                 </p>
-                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-                  <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:T.inkFaint}}>{site.facts.length} historical facts</span>
-                  <div style={{display:"flex",alignItems:"center",gap:5,fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:600,color:"#3B82F6"}}>
-                    Explore 360° <Ic n="arrowR" s={13} c="#3B82F6"/>
+                <div style={{display:"flex",gap:6}}>
+                  <a href={site.mapsUrl} target="_blank" rel="noopener noreferrer"
+                    onClick={e=>e.stopPropagation()}
+                    style={{flex:1,padding:"6px 0",textAlign:"center",background:"#1a73e815",border:"1px solid #1a73e840",borderRadius:6,fontFamily:"'DM Sans',sans-serif",fontSize:10,fontWeight:600,color:"#1a73e8",textDecoration:"none"}}>
+                    🗺️ Maps
+                  </a>
+                  <a href={`https://www.youtube.com/results?search_query=${encodeURIComponent(site.youtubeQuery)}`} target="_blank" rel="noopener noreferrer"
+                    onClick={e=>e.stopPropagation()}
+                    style={{flex:1,padding:"6px 0",textAlign:"center",background:"#FF000015",border:"1px solid #FF000040",borderRadius:6,fontFamily:"'DM Sans',sans-serif",fontSize:10,fontWeight:600,color:"#FF0000",textDecoration:"none"}}>
+                    🎬 360° Tour
+                  </a>
+                  <div style={{flex:1,padding:"6px 0",textAlign:"center",background:T.accentDim,border:`1px solid ${T.accent}40`,borderRadius:6,fontFamily:"'DM Sans',sans-serif",fontSize:10,fontWeight:600,color:T.accent}}>
+                    Learn more →
                   </div>
                 </div>
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Phase 3 roadmap note */}
+        <div style={{marginTop:28,padding:"16px 20px",background:isDark?"rgba(255,255,255,0.02)":"rgba(0,0,0,0.02)",border:`1px solid ${T.border}`,borderRadius:10,display:"flex",gap:14,alignItems:"flex-start"}}>
+          <span style={{fontSize:22,flexShrink:0}}>🚀</span>
+          <div>
+            <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:600,color:T.ink,marginBottom:5}}>Phase 3 — AI Historical Reconstruction (out of scope for now)</div>
+            <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.inkMid,lineHeight:1.7,margin:0}}>
+              Generating walkable historical environments in-browser requires NeRF or Gaussian Splatting models trained on multi-view imagery, plus a WebGL streaming pipeline — not practical in a single-page app today.
+              True photospheres also need 360° camera rigs (Ricoh Theta, Insta360) that historical institutions rarely make openly available.
+              We're watching this space closely — a dedicated post on the roadmap is coming.
+            </p>
+          </div>
         </div>
       </div>
     </div>
@@ -2402,7 +2404,7 @@ function Home({ T, onNavigate }) {
     {id:"explore",     label:"Explore",      icon:"globe",    colorKey:"info",    tagline:"The Interactive Globe",  desc:"Navigate human history from 315,000 BCE. African civilizations, world empires, diaspora communities."},
     {id:"timeline",    label:"Timeline",     icon:"clock",    colorKey:"accent",  tagline:"300,000 BCE → Present",  desc:"Every era, every turning point. From human origins to today — on one scrollable timeline."},
     {id:"learn",       label:"Learn",        icon:"book",     colorKey:"info",    tagline:"People & Civilizations", desc:"Kings, scholars, warriors, activists. From Julius Caesar to Genghis Khan — every civilisation that shaped today."},
-    {id:"vr",          label:"VR Explorer",  icon:"vr",       colorKey:"success", tagline:"Immersive History",      desc:"Walk around the Pyramid of Giza, stand inside the Colosseum, explore Machu Picchu — in 3D and 360°."},
+    {id:"vr",          label:"Sites",        icon:"pin",      colorKey:"success", tagline:"Historical Sites",        desc:"Explore 11 of the world's greatest historical sites with facts, maps, 360° tours, and Google Arts & Culture."},
     {id:"investigate", label:"Investigate",  icon:"connect",  colorKey:"slate",   tagline:"The PI Board",           desc:"Drop nodes, draw connections, follow any thread. AI builds and edits the connection graph in real time."},
     {id:"research",    label:"Research",     icon:"ai",       colorKey:"success", tagline:"AI Research Suite",      desc:"AI agents answer any history question — African, Asian, European, American. Ask anything."},
   ];
