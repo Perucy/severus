@@ -8,7 +8,7 @@
       "headers": [
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://upload.wikimedia.org https://*.wikimedia.org https://maps.googleapis.com; connect-src 'self' https://api.anthropic.com https://en.wikipedia.org https://en.m.wikipedia.org https://*.up.railway.app wss://*.up.railway.app; frame-src 'none'; object-src 'none'; base-uri 'self';"
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://upload.wikimedia.org https://*.wikimedia.org https://maps.googleapis.com https://*.wikipedia.org; connect-src 'self' https://api.anthropic.com https://en.wikipedia.org https://en.m.wikipedia.org https://*.wikipedia.org https://*.wikimedia.org https://*.up.railway.app wss://*.up.railway.app http://localhost:8000; worker-src blob:; frame-src 'none'; object-src 'none'; base-uri 'self';"
         },
         {
           "key": "X-Content-Type-Options",
