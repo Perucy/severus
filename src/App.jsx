@@ -19,19 +19,18 @@ const LIGHT = {
 
 // ── ERAS ──────────────────────────────────────────────────────
 const ERAS = [
-  { id:"origins",      label:"Human Origins",      year:-315000 },
-  { id:"spread",       label:"African Spread",     year:-150000 },
-  { id:"outafrica",    label:"Out of Africa",       year:-70000  },
-  { id:"neolithic",    label:"Neolithic",           year:-10000  },
-  { id:"firstkings",   label:"First Kingdoms",      year:-3100   },
-  { id:"classical",    label:"Classical Age",       year:-500    },
-  { id:"medieval",     label:"Medieval Africa",     year:700     },
-  { id:"empires",      label:"Great Empires",       year:1300    },
-  { id:"contact",      label:"First Contact",       year:1500    },
-  { id:"slavetrade",   label:"Slave Trade",         year:1619    },
-  { id:"colonial",     label:"Colonialism",         year:1884    },
-  { id:"independence", label:"Independence",        year:1960    },
-  { id:"present",      label:"Present Day",         year:2024    },
+  { id:"prehistory",   label:"Prehistory",          year:-315000 },
+  { id:"outafrica",    label:"Out of Africa",        year:-70000  },
+  { id:"neolithic",    label:"First Civilizations",  year:-10000  },
+  { id:"firstkings",   label:"Ancient World",        year:-3100   },
+  { id:"classical",    label:"Classical Age",        year:-800    },
+  { id:"medieval",     label:"Medieval Period",      year:500     },
+  { id:"empires",      label:"Age of Empires",       year:1200    },
+  { id:"contact",      label:"Age of Exploration",   year:1400    },
+  { id:"slavetrade",   label:"Colonialism",          year:1500    },
+  { id:"colonial",     label:"Revolutions",          year:1750    },
+  { id:"independence", label:"World Wars",           year:1900    },
+  { id:"present",      label:"Modern Era",           year:1945    },
 ];
 
 const TYPE_META = {
@@ -144,67 +143,83 @@ const MIGRATIONS = [
 
 // ── TIMELINE DATA ─────────────────────────────────────────────
 const TIMELINE_EVENTS = [
-  { year:-315000, era:"origins",      title:"Homo Sapiens Emerge",         region:"Africa",        type:"origin",         desc:"The first anatomically modern humans appear in Africa. Jebel Irhoud skulls (Morocco, 315,000 BCE) and Omo remains (Ethiopia, 195,000 BCE) are our oldest fossils.", impact:"The origin of all 8 billion humans alive today." },
-  { year:-200000, era:"origins",      title:"Mitochondrial Eve",           region:"East Africa",   type:"origin",         desc:"All living humans trace their mitochondrial DNA to a single woman who lived in East Africa approximately 200,000 years ago.", impact:"Scientific confirmation that Africa is the mother of all humanity." },
-  { year:-150000, era:"spread",       title:"San Peoples Diverge",         region:"Southern Africa",type:"indigenous",     desc:"The San (Bushmen) lineage diverges from all other human populations — making them Earth's oldest continuous culture.", impact:"150,000+ years of unbroken cultural tradition — the longest on Earth." },
-  { year:-70000,  era:"outafrica",    title:"Out of Africa Migration",     region:"Horn of Africa", type:"origin",         desc:"A small group of Homo sapiens crosses from East Africa into Arabia. Every non-African human alive today descends from this migration.", impact:"The migration that populated every continent on Earth." },
-  { year:-65000,  era:"outafrica",    title:"First Pacific Crossing",      region:"Southeast Asia", type:"origin",         desc:"Humans use primitive watercraft to cross open ocean to Melanesia and Australia — the first ocean voyage in human history.", impact:"Proved human ingenuity and boldness 65,000 years before recorded history." },
-  { year:-10000,  era:"neolithic",    title:"Saharan Green Period",        region:"North Africa",   type:"civilization",   desc:"The Sahara is a lush grassland with lakes and rivers. African peoples develop agriculture, art, and permanent settlements across the region.", impact:"The Sahara fed African civilisations for millennia before becoming desert." },
-  { year:-8000,   era:"neolithic",    title:"African Agriculture",         region:"Sub-Saharan Africa",type:"civilization", desc:"Independent development of agriculture in multiple African regions — the Sahel, Ethiopian Highlands, and West African forests.", impact:"Africa independently discovered farming — not a gift from elsewhere." },
-  { year:-3100,   era:"firstkings",   title:"Ancient Egypt Founded",       region:"North Africa",   type:"civilization",   desc:"Narmer unifies Upper and Lower Egypt, founding one of the world's first nation-states. The civilisation Egyptians called 'Kemet' — the Black Land.", impact:"3,000 years of a civilisation that built the pyramids, wrote the first medical texts, and invented formal mathematics." },
-  { year:-2500,   era:"firstkings",   title:"Kingdom of Kush Rises",       region:"Sudan",          type:"civilization",   desc:"Kush emerges as a major power in the Nile Valley, eventually building more pyramids than Egypt and producing the world's greatest iron technology.", impact:"Kush proved African civilisation did not begin and end at Egypt's borders." },
-  { year:-1350,   era:"firstkings",   title:"Nefertiti & Akhenaten",       region:"Egypt",          type:"civilization",   desc:"Queen Nefertiti and Pharaoh Akhenaten revolutionise Egyptian religion, introducing proto-monotheism that likely influenced the Abrahamic faiths.", impact:"The first known monotheistic revolution in human history — from Africa." },
-  { year:-500,    era:"classical",    title:"Yoruba Civilisation",         region:"West Africa",    type:"civilization",   desc:"Ile-Ife emerges as the spiritual and political centre of Yoruba civilisation, developing sophisticated bronze casting and a complex religious system.", impact:"A religion that would survive the Middle Passage and thrive on 4 continents." },
-  { year:-332,    era:"classical",    title:"Alexander in Egypt",          region:"North Africa",   type:"accountability", desc:"Alexander the Great conquers Egypt, beginning the Greek Ptolemaic period. The first major instance of non-African powers claiming African civilisational heritage.", impact:"The beginning of the systematic erasure of African contributions to world civilisation." },
-  { year:330,     era:"medieval",     title:"Axum Adopts Christianity",    region:"Ethiopia",       type:"civilization",   desc:"King Ezana of Axum adopts Christianity — making Ethiopia one of the world's first Christian nations, 60 years before the Roman Empire.", impact:"The Ethiopian Orthodox Church is older than European Christianity." },
-  { year:700,     era:"medieval",     title:"Swahili Coast Flourishes",    region:"East Africa",    type:"civilization",   desc:"The Swahili Coast city-states become the world's most sophisticated Indian Ocean trading network, connecting Africa to Arabia, Persia, India and China.", impact:"Africa was the hub of global trade 800 years before Columbus." },
-  { year:900,     era:"medieval",     title:"Great Zimbabwe Built",        region:"Southern Africa",type:"civilization",   desc:"The Shona people begin construction of Great Zimbabwe — sub-Saharan Africa's largest pre-colonial stone monument, without mortar.", impact:"Proof that sophisticated monumental architecture existed across sub-Saharan Africa." },
-  { year:1235,    era:"empires",      title:"Mali Empire Founded",         region:"West Africa",    type:"civilization",   desc:"Sundiata Keita founds the Mali Empire after defeating the Sosso. Within a century it controls more than half the world's gold and salt supply.", impact:"The beginning of what would become the world's wealthiest empire." },
-  { year:1324,    era:"empires",      title:"Mansa Musa's Pilgrimage",     region:"West Africa",    type:"civilization",   desc:"Mansa Musa I travels to Mecca with 60,000 people and 100 camels loaded with gold. He gives away so much gold that he crashes Egypt's economy for a decade.", impact:"Mansa Musa's wealth remains the benchmark for the richest person in all of history." },
-  { year:1375,    era:"empires",      title:"Songhai Empire Rises",        region:"West Africa",    type:"civilization",   desc:"The Songhai expand to become the largest empire in West African history, with Timbuktu as its intellectual capital.", impact:"Timbuktu's Sankore University housed 25,000 students — more than the University of Oxford at the time." },
-  { year:1441,    era:"contact",      title:"First Portuguese Slave Raid", region:"West Africa",    type:"accountability", desc:"Portuguese sailors conduct the first European slave raid on the African coast, capturing 12 Africans. This is the beginning of the transatlantic slave trade.", impact:"The start of a system that would forcibly displace over 12 million people." },
-  { year:1485,    era:"contact",      title:"Portugal Meets Benin",        region:"Nigeria",        type:"civilization",   desc:"Portuguese traders reach the Kingdom of Benin. They are stunned by its sophistication, size and the quality of its bronze art.", impact:"Europeans documented that Africa had advanced civilisations — then proceeded to destroy them." },
-  { year:1502,    era:"slavetrade",   title:"First African Slaves in Americas",region:"Americas",   type:"accountability", desc:"The first enslaved Africans arrive in the Americas (Hispaniola). Over the next 350 years, more than 12.5 million will be transported.", impact:"The beginning of the largest forced migration in human history." },
-  { year:1526,    era:"slavetrade",   title:"Kongolese King Protests",     region:"Central Africa", type:"accountability", desc:"King Afonso I of the Kongo writes to the King of Portugal demanding the slave trade stop, as it is destroying his kingdom. Portugal ignores him.", impact:"One of the earliest documented protests against the transatlantic slave trade — by an African king." },
-  { id:"palmares-e",year:1605,era:"slavetrade",title:"Quilombo dos Palmares",region:"Brazil",      type:"diaspora",       desc:"Escaped enslaved Africans establish Palmares — a free republic in the Brazilian interior. It survives 90 years and grows to 30,000 people.", impact:"Proof that freedom was always being fought for — not gifted." },
-  { year:1619,    era:"slavetrade",   title:"First Africans in English America",region:"Virginia, USA",type:"accountability",desc:"The first enslaved Africans arrive in English North America at Point Comfort, Virginia, aboard a privateer ship.", impact:"The start of African American history — 400 years of building America from the ground up." },
-  { year:1660,    era:"slavetrade",   title:"Royal African Company",       region:"England",        type:"accountability", desc:"The English Crown charters the Royal African Company with the Duke of York (later King James II) as its governor. It becomes the largest slave-trading enterprise in history.", impact:"The British state — not just merchants — was the engine of the slave trade." },
-  { year:1688,    era:"slavetrade",   title:"Lloyd's Insures Enslaved People",region:"London",     type:"accountability", desc:"Lloyd's of London begins insuring enslaved Africans as cargo — treating humans as livestock and providing the financial backbone of the trade.", impact:"Lloyd's only publicly acknowledged this history in 2020. The institution still exists today." },
-  { year:1804,    era:"slavetrade",   title:"Haitian Revolution Succeeds", region:"Haiti",          type:"diaspora",       desc:"On January 1, 1804, Haiti declares independence — the world's first Black republic, created by defeating Napoleon's professional army in a 13-year war.", impact:"The only successful slave revolt in human history. It terrified slaveholders across the Americas and accelerated abolition." },
-  { year:1833,    era:"slavetrade",   title:"British Abolition Act",       region:"Britain",        type:"accountability", desc:"Britain abolishes slavery — but pays £20 million compensation to slave OWNERS, not the enslaved. The British public finished paying off this loan in 2015.", impact:"British taxpayers paid the descendants of slave owners until 2015. The enslaved received nothing." },
-  { year:1884,    era:"colonial",     title:"Berlin Conference",           region:"Europe",         type:"accountability", desc:"14 European powers meet in Berlin to divide Africa amongst themselves. Zero African representatives are present. They draw borders splitting 177 ethnic groups.", impact:"These artificial borders created today's African nations and directly cause many of the continent's contemporary conflicts." },
-  { year:1885,    era:"colonial",     title:"Leopold's Congo Horror",      region:"Congo",          type:"accountability", desc:"Belgium's King Leopold II establishes personal ownership of the Congo. His rubber-extraction regime kills an estimated 10 million Congolese.", impact:"The first genocide of the 20th century — largely ignored in European history education." },
-  { year:1896,    era:"colonial",     title:"Ethiopia Defeats Italy at Adwa",region:"Ethiopia",    type:"diaspora",       desc:"Ethiopia's Emperor Menelik II defeats the Italian army at the Battle of Adwa — the only African nation to successfully defeat a European colonial army.", impact:"Adwa became a symbol of African resistance and Black liberation worldwide." },
-  { year:1897,    era:"colonial",     title:"Benin Bronzes Looted",        region:"Nigeria",        type:"accountability", desc:"British forces mount a 'punitive expedition' on the Kingdom of Benin, looting over 3,000 bronze artworks. Most remain in Western museums today.", impact:"The Benin Bronzes are at the centre of the global repatriation debate. Their theft represents the cultural genocide of colonialism." },
-  { year:1920,    era:"colonial",     title:"Harlem Renaissance",          region:"New York, USA",  type:"diaspora",       desc:"An explosion of African American art, literature and music redefines global culture. Jazz, blues, Langston Hughes, Duke Ellington.", impact:"African Americans gave the 20th century much of its cultural soul — while still being denied basic rights." },
-  { year:1945,    era:"colonial",     title:"Pan-African Congress",        region:"Manchester, UK", type:"diaspora",       desc:"The Fifth Pan-African Congress brings together Kwame Nkrumah, Jomo Kenyatta and W.E.B. Du Bois to plan the independence of Africa.", impact:"The blueprint for the decolonisation of an entire continent." },
-  { year:1957,    era:"independence", title:"Ghana Independence",          region:"Ghana",          type:"diaspora",       desc:"Ghana becomes the first sub-Saharan African country to gain independence, led by Kwame Nkrumah. 'Ghana is free forever!'", impact:"Triggered the wave of African independence movements across the continent in the 1960s." },
-  { year:1960,    era:"independence", title:"Year of Africa",              region:"Africa",         type:"civilization",   desc:"17 African nations gain independence in a single year. The era of formal European colonialism in Africa effectively ends.", impact:"The continent throws off 80 years of colonial rule. A new chapter begins — but colonial structures remain." },
-  { year:1963,    era:"independence", title:"Organisation of African Unity",region:"Ethiopia",      type:"civilization",   desc:"32 African nations found the Organisation of African Unity in Addis Ababa — a continental institution for African self-determination.", impact:"The precursor to the African Union, which today represents 55 nations and 1.4 billion people." },
-  { year:1994,    era:"present",      title:"End of Apartheid",            region:"South Africa",   type:"diaspora",       desc:"Nelson Mandela becomes South Africa's first democratically elected president, ending 46 years of apartheid.", impact:"The last formal system of racial segregation in the world ends — 340 years after the Cape Colony was founded." },
-  { year:2020,    era:"present",      title:"Global Reckoning",            region:"Worldwide",      type:"accountability", desc:"The murder of George Floyd triggers global Black Lives Matter protests across 60 countries. Statues of slave traders are pulled down. Museums face repatriation demands.", impact:"The global conversation about slavery's legacy — and who still benefits from it — finally breaks into the mainstream." },
-
-  // ── WORLD HISTORY EVENTS ──────────────────────────────────
-  { year:-776,    era:"classical",    title:"First Olympic Games",          region:"Ancient Greece",  type:"world", desc:"The first recorded Olympic Games held at Olympia in 776 BCE. Athletes from across Greece compete in running, wrestling, and chariot racing.", impact:"A tradition of peaceful international competition that survives 2,800 years later." },
-  { year:-44,     era:"classical",    title:"Assassination of Julius Caesar", region:"Rome",          type:"world", desc:"Julius Caesar assassinated on the Ides of March, 44 BCE. The killing that ended the Roman Republic and began the Roman Empire.", impact:"The most consequential political assassination in Western history — transformed Rome and the entire Mediterranean world." },
-  { year:1066,    era:"medieval",     title:"Battle of Hastings",           region:"England",         type:"world", desc:"William the Conqueror defeats King Harold II, changing English language, culture, and governance forever. French becomes the language of English courts for 300 years.", impact:"The event that created modern England — and why English has so many French words." },
-  { year:1215,    era:"medieval",     title:"Magna Carta Signed",           region:"England",         type:"world", desc:"King John forced to sign the Magna Carta — the first document to establish that the king was subject to the rule of law.", impact:"The foundation of constitutional democracy, human rights law, and the US Bill of Rights." },
-  { year:1347,    era:"medieval",     title:"The Black Death",              region:"Europe & Asia",   type:"world", desc:"The bubonic plague kills 30–60% of Europe's population — 25 million people. Spread along the Silk Road from Central Asia.", impact:"Ended feudalism, triggered the Renaissance, and remains history's deadliest pandemic." },
-  { year:1440,    era:"contact",      title:"Gutenberg's Printing Press",   region:"Germany",         type:"world", desc:"Johannes Gutenberg invents movable-type printing. Within 50 years, 20 million books printed across Europe — more than all manuscripts in previous history.", impact:"The internet of the 15th century — enabled the Reformation, the Scientific Revolution, and mass literacy." },
-  { year:1492,    era:"contact",      title:"Columbus 'Discovers' Americas", region:"Caribbean",     type:"world", desc:"Columbus lands in the Bahamas, believing he has reached Asia. Within decades, European colonisation begins. 90% of indigenous Americans will die from disease and violence.", impact:"The beginning of globalisation — and the deadliest demographic catastrophe in human history." },
-  { year:1687,    era:"contact",      title:"Newton's Principia Mathematica",region:"England",        type:"world", desc:"Isaac Newton publishes laws of motion and gravity — unifying terrestrial and celestial mechanics. Built on work by Islamic scholars, Indian mathematicians, and Copernicus.", impact:"The foundation of modern physics, engineering, and space exploration." },
-  { year:1776,    era:"slavetrade",   title:"American Declaration of Independence", region:"USA",     type:"world", desc:"The United States declares independence from Britain. 'All men are created equal' — written by Thomas Jefferson, who owned 600 enslaved people throughout his life.", impact:"The defining contradiction of American democracy: freedom proclaimed by slaveholders." },
-  { year:1789,    era:"slavetrade",   title:"French Revolution",            region:"France",          type:"world", desc:"The storming of the Bastille begins the French Revolution. Liberty, Equality, Fraternity — and the guillotine. 40,000 people executed in the Terror.", impact:"Triggered revolutions across Europe and the Americas, including the Haitian Revolution of 1804." },
-  { year:1859,    era:"slavetrade",   title:"Darwin's On the Origin of Species", region:"England",    type:"world", desc:"Charles Darwin publishes his theory of evolution by natural selection — the most important idea in the history of biology.", impact:"Transformed science, religion, and humanity's understanding of its own origins." },
-  { year:1905,    era:"colonial",     title:"Einstein's Theory of Relativity", region:"Switzerland", type:"world", desc:"Albert Einstein, a 26-year-old patent clerk, publishes four papers that transform physics — including special relativity and E=mc².", impact:"Led directly to nuclear energy, GPS satellites, and modern cosmology." },
-  { year:1921,    era:"colonial",     title:"Black Wall Street Destroyed",  region:"Tulsa, USA",      type:"world", desc:"Greenwood, Tulsa — the wealthiest Black community in America — burned by a white mob in 18 hours. Up to 300 killed, 10,000 left homeless. The Oklahoma National Guard participated.", impact:"One of the most successful Black communities in US history, deliberately destroyed and erased from history books for 75 years." },
-  { year:1939,    era:"colonial",     title:"World War II Begins",          region:"Europe",          type:"world", desc:"Germany invades Poland on September 1, 1939. The deadliest conflict in human history — 70–85 million people killed, including 6 million Jewish people in the Holocaust.", impact:"Reshaped every border on Earth and established the United Nations, NATO, and the modern world order." },
-  { year:1945,    era:"colonial",     title:"Atomic Bombs — Hiroshima & Nagasaki", region:"Japan",   type:"world", desc:"The United States drops atomic bombs on two Japanese cities, killing 110,000–210,000 people instantly. Japan surrenders. The nuclear age begins.", impact:"Changed warfare forever — humanity now holds the power to destroy itself." },
-  { year:1969,    era:"independence", title:"Moon Landing",                 region:"USA / Space",     type:"world", desc:"Neil Armstrong becomes the first human to walk on the Moon — achieved by a NASA team that included Katherine Johnson, Dorothy Vaughan, and Mary Jackson, three Black women whose calculations made it possible.", impact:"The greatest technological achievement in human history — built on the work of people history forgot to credit." },
-  { year:1989,    era:"present",      title:"Fall of the Berlin Wall",      region:"Germany",         type:"world", desc:"The Berlin Wall falls on November 9, 1989. 28 years of a divided Germany end in a single night. The Cold War effectively ends.", impact:"The most televised moment of liberation in history — watched live by hundreds of millions worldwide." },
-  { year:1991,    era:"present",      title:"Dissolution of the Soviet Union", region:"Russia",      type:"world", desc:"The USSR dissolves into 15 independent states on December 26, 1991. The Cold War ends. The United States becomes the world's sole superpower.", impact:"Created today's geopolitical map — and the unresolved tensions driving current conflicts." },
-  { year:2001,    era:"present",      title:"September 11 Attacks",         region:"USA",             type:"world", desc:"Al-Qaeda hijackers crash four planes, destroying the World Trade Centre and killing 2,977 people. The US launches the War on Terror.", impact:"Reshaped global politics, surveillance, and civil liberties for a generation." },
+  // ── Prehistory & Human Origins ─────────────────────────────
+  { year:-315000, era:"prehistory",  title:"Homo Sapiens Emerge",              region:"Africa",           type:"origin",       desc:"The first anatomically modern humans appear in Africa. Jebel Irhoud skulls (Morocco) and Omo remains (Ethiopia, 195,000 BCE) are our oldest fossils.",         impact:"The origin of all 8 billion humans alive today." },
+  { year:-70000,  era:"outafrica",   title:"Out of Africa Migration",           region:"East Africa",       type:"origin",       desc:"A small group of Homo sapiens crosses from East Africa into Arabia. Every non-African human alive today descends from this migration of perhaps 1,000 people.", impact:"The migration that populated every continent on Earth." },
+  { year:-65000,  era:"outafrica",   title:"Humans Reach Australia",            region:"Southeast Asia",    type:"origin",       desc:"Humans use primitive watercraft to cross open ocean to Melanesia and Australia — the first ocean voyage in human history, predating Columbus by 64,500 years.",   impact:"Proved human ingenuity and boldness 65,000 years before recorded history." },
+  { year:-15000,  era:"outafrica",   title:"Humans Cross into Americas",        region:"North America",     type:"origin",       desc:"Humans cross from Siberia to Alaska via the Bering land bridge, beginning the settlement of the entire American continent across 10,000 years.",               impact:"The last major landmass settled — home to 500+ distinct civilisations by 1492." },
+  { year:-10000,  era:"neolithic",   title:"Agricultural Revolution",           region:"Middle East",       type:"world",        desc:"Humans in the Fertile Crescent (modern Iraq/Syria/Turkey) begin farming wheat and barley, domesticating cattle and sheep. The most transformative shift in human history.", impact:"Enabled cities, writing, armies, and civilisation — and also famine, war, and inequality." },
+  { year:-9000,   era:"neolithic",   title:"Göbekli Tepe Built",                region:"Turkey",            type:"world",        desc:"The world's oldest known temple complex is constructed in southeastern Turkey — 6,000 years before Stonehenge, by hunter-gatherers, not farmers.",                 impact:"Rewrote our understanding of early religion and social organisation." },
+  // ── Ancient World ──────────────────────────────────────────
+  { year:-3500,   era:"firstkings",  title:"Cuneiform Invented — Mesopotamia",  region:"Iraq",              type:"world",        desc:"Sumerians in Mesopotamia invent cuneiform, the world's first writing system — originally for tracking grain and cattle, evolving into literature and law.",             impact:"Writing enabled history, law, commerce, and literature — everything that followed." },
+  { year:-3100,   era:"firstkings",  title:"Ancient Egypt Founded",             region:"North Africa",      type:"civilization", desc:"Narmer unifies Upper and Lower Egypt, founding one of the world's first nation-states. The civilisation they called 'Kemet' would last 3,000 years.",               impact:"3,000 years of pyramids, medicine, mathematics, and art — the longest-lasting civilisation." },
+  { year:-2560,   era:"firstkings",  title:"Great Pyramid Built",               region:"Egypt",             type:"world",        desc:"The Great Pyramid of Giza is completed — the tallest structure on Earth for the next 3,800 years. Aligned to true north within 0.05 degrees.",                   impact:"A feat of engineering that engineers still cannot fully explain." },
+  { year:-2300,   era:"firstkings",  title:"Indus Valley Cities",               region:"South Asia",        type:"world",        desc:"Mohenjo-daro and Harappa — cities of 40,000+ people with grid streets, indoor plumbing, and standardised weights — 2,000 years before Rome.",                   impact:"The world's first urban civilisation, forgotten for 4,000 years until excavated in 1922." },
+  { year:-2100,   era:"firstkings",  title:"Xia Dynasty — China Begins",        region:"China",             type:"world",        desc:"The first recorded Chinese dynasty begins, starting one of the world's longest continuous civilisations, responsible for paper, printing, gunpowder, and the compass.", impact:"China's civilisation has run continuously for over 4,000 years." },
+  { year:-1754,   era:"firstkings",  title:"Code of Hammurabi",                 region:"Babylon",           type:"world",        desc:"Babylonian King Hammurabi publishes 282 laws on a stone stele — the world's oldest complete legal code, covering commerce, property, family, and crime.",            impact:"The foundation of the concept that law should be written, public, and apply to everyone." },
+  { year:-1350,   era:"firstkings",  title:"Nefertiti & Akhenaten",             region:"Egypt",             type:"civilization", desc:"Queen Nefertiti and Pharaoh Akhenaten revolutionise Egyptian religion, introducing proto-monotheism — the world's first known monotheistic revolution.",              impact:"Likely influenced the Abrahamic faiths that would shape 4 billion people today." },
+  // ── Classical Age ──────────────────────────────────────────
+  { year:-776,    era:"classical",   title:"First Olympic Games",               region:"Ancient Greece",    type:"world",        desc:"The first recorded Olympic Games held at Olympia in 776 BCE. Athletes from across Greece compete in running, wrestling, and chariot racing for Zeus.",             impact:"A tradition of peaceful international competition that survives 2,800 years later." },
+  { year:-550,    era:"classical",   title:"Persian Empire — Cyrus the Great",  region:"Iran",              type:"world",        desc:"Cyrus the Great founds the Achaemenid Persian Empire — the largest in history to that point. The Cyrus Cylinder (539 BCE) is history's first charter of human rights.", impact:"First empire to govern multiple cultures with tolerance rather than forced assimilation." },
+  { year:-507,    era:"classical",   title:"Democracy Invented — Athens",       region:"Greece",            type:"world",        desc:"Cleisthenes introduces direct democracy in Athens — the first government in which citizens vote on laws. It excluded women, slaves, and foreigners, but the idea changed everything.", impact:"The political concept that eventually spread to govern 4 billion people." },
+  { year:-500,    era:"classical",   title:"Yoruba Civilisation",               region:"West Africa",       type:"civilization", desc:"Ile-Ife emerges as the spiritual and political centre of Yoruba civilisation, developing sophisticated bronze casting and a complex religious system.",               impact:"A religion that would survive the Middle Passage and thrive on 4 continents today." },
+  { year:-334,    era:"classical",   title:"Alexander's Conquests Begin",       region:"Greece",            type:"world",        desc:"Alexander the Great crosses into Persia with 37,000 soldiers. By his death at 32, he had conquered an empire from Greece to India, spreading Greek culture worldwide.", impact:"Created the Hellenistic world that shaped Rome, Christianity, and Western civilisation." },
+  { year:-221,    era:"classical",   title:"Qin Unifies China",                 region:"China",             type:"world",        desc:"Qin Shi Huang becomes the first Emperor of a unified China, building the Great Wall and standardising currency, weights, and writing across the empire.",          impact:"China's centralised imperial system lasted 2,100 years until 1912." },
+  { year:-44,     era:"classical",   title:"Assassination of Julius Caesar",    region:"Rome",              type:"world",        desc:"Julius Caesar assassinated on the Ides of March. The killing ended the Roman Republic and triggered civil war — from which the Roman Empire emerged.",               impact:"The most consequential political assassination in Western history." },
+  { year:-27,     era:"classical",   title:"Roman Empire Founded",              region:"Rome",              type:"world",        desc:"Augustus Caesar becomes the first Roman Emperor. At its peak the empire governs 70 million people — 20% of the world — from Britain to Mesopotamia.",             impact:"Roman law, Latin language, and infrastructure shaped all of Western civilisation." },
+  { year:0,       era:"classical",   title:"Birth of Jesus of Nazareth",        region:"Roman Judea",       type:"world",        desc:"Jesus is born in Roman-occupied Judea. His teachings spread across the empire as Christianity, becoming the world's largest religion by 400 CE.",                    impact:"Christianity today has 2.4 billion followers — the largest religion in history." },
+  { year:330,     era:"medieval",    title:"Ethiopia Adopts Christianity",      region:"Ethiopia",          type:"civilization", desc:"King Ezana of Axum adopts Christianity — making Ethiopia one of the world's first Christian nations, 60 years before the Roman Empire.",                         impact:"The Ethiopian Orthodox Church is older than European Christianity." },
+  // ── Medieval Period ────────────────────────────────────────
+  { year:570,     era:"medieval",    title:"Birth of Muhammad",                 region:"Arabia",            type:"world",        desc:"Muhammad is born in Mecca. His revelations, compiled as the Quran, launch Islam — which spreads from Spain to Indonesia within 100 years of his death in 632.", impact:"Islam today has 1.9 billion followers and shaped science, art, and law across three continents." },
+  { year:700,     era:"medieval",    title:"Swahili Coast Trade Empire",        region:"East Africa",       type:"civilization", desc:"The Swahili Coast city-states become the world's most sophisticated Indian Ocean trading network, connecting Africa to Arabia, Persia, India, and China.",      impact:"Africa was the hub of global trade 800 years before Columbus." },
+  { year:750,     era:"medieval",    title:"Islamic Golden Age — Baghdad",      region:"Iraq",              type:"world",        desc:"The House of Wisdom in Baghdad becomes the world's greatest centre of learning. Muslim scholars make breakthroughs in algebra, optics, medicine, and astronomy.", impact:"While Europe had the Dark Ages, Islamic scholars preserved Greek knowledge and advanced science." },
+  { year:800,     era:"medieval",    title:"Charlemagne's European Empire",     region:"Europe",            type:"world",        desc:"Charlemagne, King of the Franks, is crowned Holy Roman Emperor — uniting much of Western Europe for the first time since Rome and creating the idea of 'Europe'.",  impact:"The foundation of France, Germany, and Western European political culture." },
+  { year:900,     era:"medieval",    title:"Great Zimbabwe Built",              region:"Southern Africa",   type:"civilization", desc:"The Shona people begin construction of Great Zimbabwe — sub-Saharan Africa's largest pre-colonial stone monument, without mortar, covering 720 hectares.",     impact:"Proof that sophisticated monumental architecture existed across sub-Saharan Africa." },
+  { year:1000,    era:"medieval",    title:"Vikings Reach North America",       region:"Newfoundland",      type:"world",        desc:"Leif Erikson establishes a Norse settlement at L'Anse aux Meadows, Newfoundland — 500 years before Columbus landed in the Caribbean.",                         impact:"The first confirmed European contact with the Americas, largely forgotten for centuries." },
+  { year:1066,    era:"medieval",    title:"Battle of Hastings",                region:"England",           type:"world",        desc:"William the Conqueror defeats King Harold II, changing English language, culture, and governance. French becomes the language of English courts for 300 years.",  impact:"Created modern English — a fusion of Old English and Norman French." },
+  { year:1215,    era:"medieval",    title:"Magna Carta Signed",                region:"England",           type:"world",        desc:"King John forced to sign the Magna Carta — the first document establishing that the king is subject to the rule of law, not above it.",                         impact:"The foundation of constitutional democracy, human rights law, and the US Bill of Rights." },
+  { year:1235,    era:"empires",     title:"Mali Empire Founded",               region:"West Africa",       type:"civilization", desc:"Sundiata Keita founds the Mali Empire. Within a century it controls more than half the world's gold and salt supply, becoming the wealthiest empire on Earth.",   impact:"Mansa Musa's wealth remains the benchmark for the richest person in all of history." },
+  // ── Age of Empires ────────────────────────────────────────
+  { year:1206,    era:"empires",     title:"Mongol Empire — Genghis Khan",      region:"Mongolia",          type:"world",        desc:"Genghis Khan unites the Mongol tribes and begins conquests that will create the largest contiguous land empire in history — 24 million km².",                    impact:"Killed ~40 million people but also created the first international postal system and opened East-West trade." },
+  { year:1300,    era:"empires",     title:"Ottoman Empire Founded",            region:"Turkey",            type:"world",        desc:"The Ottoman Empire begins its 600-year rule across three continents. At its height it governs 32 million people from Vienna to the Persian Gulf.",              impact:"The Ottoman Empire preserved Greek and Roman knowledge and shaped the modern Middle East." },
+  { year:1324,    era:"empires",     title:"Mansa Musa's Pilgrimage",           region:"West Africa",       type:"civilization", desc:"Mansa Musa travels to Mecca with 60,000 people and 100 camels of gold — distributing so much wealth that he crashed Egypt's economy for a decade.",              impact:"Mansa Musa's wealth makes him the richest individual in all of recorded history." },
+  { year:1347,    era:"empires",     title:"Black Death Devastates Europe",     region:"Europe & Asia",     type:"world",        desc:"The bubonic plague, spreading along the Silk Road from Central Asia, kills 30–60% of Europe's population — 25 million people in four years.",                 impact:"Ended feudalism, triggered the Renaissance, and remains history's deadliest pandemic." },
+  { year:1368,    era:"empires",     title:"Ming Dynasty — Forbidden City",     region:"China",             type:"world",        desc:"The Ming Dynasty builds the Forbidden City — a 980-building palace complex — and sends treasure fleets across the Indian Ocean, reaching East Africa in 1418.", impact:"China was the world's largest economy and most advanced civilisation throughout the Ming era." },
+  { year:1440,    era:"contact",     title:"Gutenberg's Printing Press",        region:"Germany",           type:"world",        desc:"Johannes Gutenberg invents movable-type printing. Within 50 years, 20 million books are printed across Europe — more than in all previous history combined.",    impact:"The internet of the 15th century — enabled the Reformation, the Scientific Revolution, and mass literacy." },
+  // ── Age of Exploration & Colonialism ─────────────────────
+  { year:1441,    era:"contact",     title:"First Portuguese Slave Raid",       region:"West Africa",       type:"accountability",desc:"Portuguese sailors conduct the first European slave raid on the African coast, capturing 12 Africans — the beginning of the transatlantic slave trade.",      impact:"The start of a system that would forcibly displace over 12.5 million people over 350 years." },
+  { year:1453,    era:"contact",     title:"Fall of Constantinople",            region:"Turkey",            type:"world",        desc:"The Ottoman army captures Constantinople, ending the Byzantine Empire after 1,100 years. Greek scholars flee to Italy, sparking the Renaissance.",              impact:"Blocked the Silk Road trade route and forced Europeans to find sea routes — triggering Columbus." },
+  { year:1492,    era:"contact",     title:"Columbus 'Discovers' Americas",     region:"Caribbean",         type:"world",        desc:"Columbus lands in the Bahamas believing he has reached Asia. Within decades, colonisation begins. 90% of indigenous Americans will die from disease and violence.", impact:"The beginning of globalisation — and the deadliest demographic catastrophe in human history." },
+  { year:1502,    era:"slavetrade",  title:"First Enslaved Africans in Americas",region:"Americas",         type:"accountability",desc:"The first enslaved Africans arrive in Hispaniola. Over the next 350 years, more than 12.5 million will be transported across the Atlantic in the Middle Passage.", impact:"The beginning of the largest forced migration in human history." },
+  { year:1519,    era:"slavetrade",  title:"Cortés Destroys the Aztec Empire",  region:"Mexico",            type:"world",        desc:"Hernán Cortés with 600 soldiers, indigenous allies, and smallpox destroys the Aztec Empire and its capital Tenochtitlan — a city of 200,000, larger than London.", impact:"The conquest killed 90% of Mexico's indigenous population and erased one of history's great civilisations." },
+  { year:1600,    era:"slavetrade",  title:"East India Company Founded",        region:"England",           type:"accountability",desc:"England's East India Company is chartered — beginning the era of corporate colonialism that would eventually control most of the Indian subcontinent.",            impact:"The world's first multinational corporation, which ruled 200 million people at its peak." },
+  { year:1619,    era:"slavetrade",  title:"First Africans in English America", region:"Virginia, USA",     type:"accountability",desc:"The first enslaved Africans arrive in English North America at Point Comfort, Virginia. Their forced labour builds the economic foundations of the United States.", impact:"The start of 400 years of African American history — building a nation that denied them citizenship." },
+  { year:1688,    era:"slavetrade",  title:"Lloyd's Insures Enslaved People",   region:"London",            type:"accountability",desc:"Lloyd's of London begins insuring enslaved Africans as cargo — treating human beings as livestock and providing the financial backbone of the slave trade.",         impact:"Lloyd's only publicly acknowledged this history in 2020. The institution still exists today." },
+  // ── Revolutions & Modern Era ──────────────────────────────
+  { year:1687,    era:"slavetrade",  title:"Newton's Principia Mathematica",    region:"England",           type:"world",        desc:"Isaac Newton publishes laws of motion and gravity, built on the work of Islamic scholars, Indian mathematicians, and Copernicus. The Scientific Revolution peaks.", impact:"The foundation of modern physics, engineering, and space exploration." },
+  { year:1776,    era:"colonial",    title:"American Declaration of Independence",region:"USA",              type:"world",        desc:"'All men are created equal' — written by Thomas Jefferson, who owned 600 enslaved people. The United States declares independence from Britain.",                  impact:"The defining contradiction of American democracy: freedom proclaimed by slaveholders." },
+  { year:1789,    era:"colonial",    title:"French Revolution",                 region:"France",            type:"world",        desc:"The storming of the Bastille begins the French Revolution. Liberty, Equality, Fraternity — and the guillotine. 40,000 people executed in the Terror.",        impact:"Triggered revolutions across Europe and the Americas, including the Haitian Revolution." },
+  { year:1804,    era:"colonial",    title:"Haitian Revolution Succeeds",       region:"Haiti",             type:"world",        desc:"Haiti declares independence — the world's first Black republic, created by defeating Napoleon's professional army in a 13-year war begun by enslaved people.",   impact:"The only successful slave revolt in human history. It terrified slaveholders across the Americas." },
+  { year:1833,    era:"colonial",    title:"British Abolition Act",             region:"Britain",           type:"accountability",desc:"Britain abolishes slavery — but pays £20 million compensation to slave owners, not the enslaved. The British public finished paying off this loan in 2015.",   impact:"British taxpayers paid descendants of slave owners until 2015. The enslaved received nothing." },
+  { year:1884,    era:"colonial",    title:"Berlin Conference — Scramble for Africa",region:"Europe",       type:"accountability",desc:"14 European powers divide Africa amongst themselves in Berlin. Zero African representatives present. They split 177 ethnic groups across arbitrary borders.",      impact:"These artificial borders created today's African nations and many of its contemporary conflicts." },
+  { year:1896,    era:"colonial",    title:"Ethiopia Defeats Italy at Adwa",    region:"Ethiopia",          type:"world",        desc:"Emperor Menelik II defeats the Italian army at Adwa — the only African nation to successfully defeat a European colonial army in the Scramble for Africa.",        impact:"Adwa became a global symbol of African resistance and Black liberation." },
+  { year:1905,    era:"independence",title:"Einstein's Theory of Relativity",   region:"Switzerland",       type:"world",        desc:"Albert Einstein, a 26-year-old patent clerk, publishes four papers transforming physics — including special relativity and E=mc², built on Islamic and Greek science.", impact:"Led directly to nuclear energy, GPS satellites, and modern cosmology." },
+  { year:1914,    era:"independence",title:"World War I Begins",                region:"Europe",            type:"world",        desc:"The assassination of Archduke Franz Ferdinand triggers a war involving 30 nations and killing 20 million people. The map of Europe is redrawn completely.",        impact:"Ended empires, created new nations, and planted the seeds of World War II." },
+  { year:1917,    era:"independence",title:"Russian Revolution",                region:"Russia",            type:"world",        desc:"The Bolshevik Revolution overthrows Tsar Nicholas II, ending 300 years of Romanov rule and creating the Soviet Union — which would last 74 years.",              impact:"Created the communist bloc that shaped the entire Cold War era and the 20th century." },
+  { year:1920,    era:"independence",title:"Harlem Renaissance",                region:"New York, USA",     type:"world",        desc:"An explosion of African American art, literature, and music redefines global culture. Jazz, blues, Langston Hughes, Duke Ellington, Zora Neale Hurston.",      impact:"African Americans gave the 20th century much of its cultural soul while being denied basic rights." },
+  { year:1939,    era:"independence",title:"World War II Begins",               region:"Europe",            type:"world",        desc:"Germany invades Poland on September 1, 1939. The deadliest conflict in human history — 70–85 million killed, including 6 million Jewish people in the Holocaust.", impact:"Reshaped every border on Earth and created the UN, NATO, and the modern world order." },
+  { year:1945,    era:"independence",title:"Atomic Bombs — Hiroshima & Nagasaki",region:"Japan",            type:"accountability",desc:"The United States drops atomic bombs on two Japanese cities, killing 110,000–210,000 instantly. Japan surrenders. The nuclear age begins.",                     impact:"Changed warfare forever — humanity now holds the power to destroy itself." },
+  { year:1947,    era:"present",     title:"Indian Independence",               region:"South Asia",        type:"world",        desc:"India and Pakistan gain independence from Britain after 200 years of colonial rule — the largest decolonisation in history, affecting 350 million people.",       impact:"The British drained an estimated $45 trillion from India during colonisation (Columbia University study)." },
+  { year:1948,    era:"present",     title:"Universal Declaration of Human Rights",region:"France",         type:"world",        desc:"The UN adopts the Universal Declaration of Human Rights — 30 articles defining the rights of every human being, shaped by thinkers from 58 nations.",          impact:"The global foundation of international human rights law, still referenced in courts worldwide." },
+  { year:1957,    era:"present",     title:"Ghana Independence — Year of Africa",region:"Ghana",            type:"world",        desc:"Ghana becomes the first sub-Saharan African country to gain independence, led by Kwame Nkrumah. 17 more African nations follow in 1960 alone.",              impact:"Triggered the wave of African independence that decolonised an entire continent." },
+  { year:1969,    era:"present",     title:"Moon Landing",                      region:"USA / Space",       type:"world",        desc:"Neil Armstrong walks on the Moon — made possible by Katherine Johnson, Dorothy Vaughan, and Mary Jackson, three Black women whose calculations were essential.", impact:"The greatest technological achievement in human history — built on work history forgot to credit." },
+  { year:1989,    era:"present",     title:"Fall of the Berlin Wall",           region:"Germany",           type:"world",        desc:"The Berlin Wall falls on November 9, ending the Cold War division of Europe. Within two years, the Soviet Union collapses and 15 new nations are born.",        impact:"Ended the Cold War era and reshaped the political map of the world overnight." },
+  { year:1994,    era:"present",     title:"End of Apartheid",                  region:"South Africa",      type:"world",        desc:"Nelson Mandela becomes South Africa's first democratically elected president, ending 46 years of apartheid — the last formal racial segregation system.",    impact:"The last formal system of racial segregation in the world ends, 340 years after it began." },
+  { year:2001,    era:"present",     title:"September 11 Attacks",              region:"USA",               type:"world",        desc:"Al-Qaeda hijacks four planes and kills 2,977 people in New York, Washington, and Pennsylvania — triggering wars in Afghanistan and Iraq lasting 20 years.",   impact:"Reshaped global security, civil liberties, and Islam's relationship with the West for a generation." },
+  { year:2020,    era:"present",     title:"COVID-19 Pandemic",                 region:"Worldwide",         type:"world",        desc:"A coronavirus originating in Wuhan, China kills over 7 million people globally, shutting down the world economy and accelerating remote work and digital life.", impact:"The worst pandemic since 1918 — exposed deep inequalities in healthcare and governance." },
+  { year:2020,    era:"present",     title:"Global Reckoning — George Floyd",   region:"Worldwide",         type:"accountability",desc:"George Floyd's murder by police triggers global Black Lives Matter protests in 60 countries. Statues of slave traders toppled. Museums face repatriation demands.", impact:"The global conversation about slavery's legacy — and who still benefits — breaks into the mainstream." },
 ];
+
 
 // ── PEOPLE ────────────────────────────────────────────────────
 const PEOPLE = [
@@ -775,68 +790,216 @@ function ExploreSection({ T, theme }) {
 // ── TIMELINE SECTION ──────────────────────────────────────────
 function TimelineSection({ T }) {
   const [filterEra,  setFilterEra]  = useState("all");
-  const [filterType, setFilterType] = useState("all");
+  const [filterRegion, setFilterRegion] = useState("all");
   const [selected,   setSelected]   = useState(null);
   const [search,     setSearch]     = useState("");
+  const [mode,       setMode]       = useState("world"); // "world" | "mine"
+  const [myEvents,   setMyEvents]   = useState(() => {
+    try { return JSON.parse(localStorage.getItem("severus_my_timeline") || "[]"); } catch { return []; }
+  });
+  const [addOpen,    setAddOpen]    = useState(false);
+  const [draft,      setDraft]      = useState({ title:"", year:"", region:"", desc:"", era:"present", impact:"" });
 
-  const filtered = useMemo(()=>TIMELINE_EVENTS.filter(e=>
-    (filterEra==="all"||e.era===filterEra)&&
-    (filterType==="all"||e.type===filterType)&&
-    (search===""||e.title.toLowerCase().includes(search.toLowerCase())||e.desc.toLowerCase().includes(search.toLowerCase()))
-  ),[filterEra,filterType,search]);
+  const fmtY=y=>{
+    const n = Number(y);
+    if(isNaN(n)) return y;
+    if(n<=-100000)return`${(Math.abs(n)/1000).toFixed(0)}k BCE`;
+    if(n<0)return`${Math.abs(n).toLocaleString()} BCE`;
+    if(n>=2024)return"Present";
+    return`${n} CE`;
+  };
 
-  const fmtY=y=>{if(y<=-100000)return`${(Math.abs(y)/1000).toFixed(0)}k BCE`;if(y<0)return`${Math.abs(y).toLocaleString()} BCE`;if(y>=2024)return"Present";return`${y} CE`;};
+  const eraColors={
+    prehistory:"#FFD700", outafrica:"#45D4D4", neolithic:"#4CAF7D",
+    firstkings:"#FF8C00", classical:"#FF5722", medieval:"#009AD8",
+    empires:"#9B59B6",    contact:"#E67E22",   slavetrade:"#E03030",
+    colonial:"#8B3030",   independence:"#4CAF7D", present:"#009AD8",
+    custom:"#EC4899",
+  };
 
-  const eraColors={origins:"#FFD700",spread:"#FFC200",outafrica:"#45D4D4",neolithic:"#4CAF7D",firstkings:"#FF8C00",classical:"#FF5722",medieval:"#009AD8",empires:"#9B59B6",contact:"#E67E22",slavetrade:"#E03030",colonial:"#8B3030",independence:"#4CAF7D",present:"#009AD8"};
+  const REGIONS = ["all","Africa","Asia","Europe","Americas","Middle East","Pacific","Worldwide"];
+
+  const worldFiltered = useMemo(() => {
+    const q = search.toLowerCase();
+    return TIMELINE_EVENTS
+      .filter(e =>
+        (filterEra === "all" || e.era === filterEra) &&
+        (filterRegion === "all" || e.region.toLowerCase().includes(filterRegion.toLowerCase())) &&
+        (!q || e.title.toLowerCase().includes(q) || e.desc.toLowerCase().includes(q) || e.region.toLowerCase().includes(q))
+      )
+      .sort((a,b) => a.year - b.year);
+  }, [filterEra, filterRegion, search]);
+
+  const myFiltered = useMemo(() => {
+    const q = search.toLowerCase();
+    return [...myEvents]
+      .filter(e => !q || e.title.toLowerCase().includes(q) || (e.desc||"").toLowerCase().includes(q))
+      .sort((a,b) => Number(a.year) - Number(b.year));
+  }, [myEvents, search]);
+
+  const events = mode === "world" ? worldFiltered : myFiltered;
+
+  const saveMyEvents = (evs) => {
+    setMyEvents(evs);
+    try { localStorage.setItem("severus_my_timeline", JSON.stringify(evs)); } catch {}
+  };
+
+  const addEvent = () => {
+    if (!draft.title.trim() || !draft.year) return;
+    const ev = { ...draft, year: Number(draft.year), id: Date.now(), type:"custom" };
+    saveMyEvents([...myEvents, ev]);
+    setDraft({ title:"", year:"", region:"", desc:"", era:"present", impact:"" });
+    setAddOpen(false);
+  };
+
+  const deleteEvent = (id) => saveMyEvents(myEvents.filter(e => e.id !== id));
 
   return (
     <div style={{height:"100%",display:"flex",flexDirection:"column",background:T.bg,overflow:"hidden"}}>
-      {/* Filter bar */}
-      <div style={{background:T.surface,borderBottom:`1px solid ${T.border}`,padding:"8px 16px",display:"flex",alignItems:"center",gap:8,flexShrink:0,flexWrap:"wrap"}}>
+
+      {/* ── Mode tabs + search ──────────────────────────────── */}
+      <div style={{background:T.surface,borderBottom:`1px solid ${T.border}`,padding:"0 16px",display:"flex",alignItems:"center",gap:12,flexShrink:0}}>
+        {[["world","🌍 World History"],["mine","📌 My Timeline"]].map(([v,l])=>(
+          <button key={v} onClick={()=>{setMode(v);setSelected(null);}}
+            style={{padding:"12px 4px",background:"transparent",border:"none",borderBottom:mode===v?`2px solid ${T.accent}`:"2px solid transparent",color:mode===v?T.accent:T.inkLight,fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:mode===v?600:400,cursor:"pointer",letterSpacing:"0.04em",whiteSpace:"nowrap"}}>
+            {l}
+          </button>
+        ))}
+        <div style={{flex:1}}/>
+        {mode==="mine" && (
+          <button onClick={()=>setAddOpen(v=>!v)}
+            style={{display:"flex",alignItems:"center",gap:6,padding:"7px 14px",background:addOpen?T.accent:T.accentDim,border:`1px solid ${T.accent}50`,borderRadius:8,color:addOpen?"#fff":T.accent,fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:700,cursor:"pointer",transition:"all 0.15s"}}>
+            <Ic n="plus" s={13} c="currentColor"/> Add Event
+          </button>
+        )}
         <div style={{display:"flex",alignItems:"center",gap:8,padding:"6px 12px",background:T.card,border:`1px solid ${T.border}`,borderRadius:8,minWidth:200}}>
           <Ic n="search" s={13} c={T.inkLight}/>
-          <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search events…" style={{border:"none",background:"transparent",outline:"none",fontFamily:"'DM Sans',sans-serif",fontSize:12,color:T.ink,flex:1,caretColor:T.accent}} />
+          <input value={search} onChange={e=>setSearch(e.target.value)}
+            placeholder={mode==="world" ? "Search events, regions…" : "Search your events…"}
+            style={{border:"none",background:"transparent",outline:"none",fontFamily:"'DM Sans',sans-serif",fontSize:12,color:T.ink,flex:1,caretColor:T.accent}}/>
+          {search&&<span onClick={()=>setSearch("")} style={{cursor:"pointer",color:T.inkFaint,fontSize:12}}>✕</span>}
         </div>
-        <div style={{width:1,height:16,background:T.border}}/>
-        {[["all","All Eras"],...ERAS.slice(0,7).map(e=>[e.id,e.label])].map(([v,l])=>{
-          const on=filterEra===v;
-          return <div key={v} onClick={()=>setFilterEra(v)} style={{padding:"3px 10px",borderRadius:20,border:`1px solid ${on?T.accent+"60":T.border}`,background:on?T.accentDim:"transparent",color:on?T.accent:T.inkLight,fontFamily:"'DM Sans',sans-serif",fontSize:9,textTransform:"uppercase",letterSpacing:"0.08em",fontWeight:on?600:400,cursor:"pointer",whiteSpace:"nowrap"}}>{l}</div>;
-        })}
-        <div style={{flex:1}}/>
-        <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.inkLight}}><span style={{color:T.accent,fontWeight:700}}>{filtered.length}</span> events</span>
       </div>
 
+      {/* ── Era + region filters (world mode only) ───────────── */}
+      {mode==="world" && (
+        <div style={{background:T.surface,borderBottom:`1px solid ${T.border}`,padding:"6px 16px",display:"flex",gap:5,alignItems:"center",flexShrink:0,flexWrap:"wrap"}}>
+          {[["all","All Eras"],...ERAS.map(e=>[e.id,e.label])].map(([v,l])=>{
+            const on=filterEra===v;
+            const col=eraColors[v]||T.accent;
+            return <div key={v} onClick={()=>setFilterEra(v)} style={{padding:"3px 10px",borderRadius:20,border:`1px solid ${on?col+"60":T.border}`,background:on?col+"18":"transparent",color:on?col:T.inkLight,fontFamily:"'DM Sans',sans-serif",fontSize:9,textTransform:"uppercase",letterSpacing:"0.07em",fontWeight:on?600:400,cursor:"pointer",whiteSpace:"nowrap",transition:"all 0.15s"}}>{l}</div>;
+          })}
+          <div style={{width:1,height:14,background:T.border,margin:"0 4px"}}/>
+          {REGIONS.map(r=>{
+            const on=filterRegion===r;
+            return <div key={r} onClick={()=>setFilterRegion(r)} style={{padding:"3px 10px",borderRadius:20,border:`1px solid ${on?T.info+"60":T.border}`,background:on?T.info+"18":"transparent",color:on?T.info:T.inkLight,fontFamily:"'DM Sans',sans-serif",fontSize:9,textTransform:"uppercase",letterSpacing:"0.07em",fontWeight:on?600:400,cursor:"pointer",whiteSpace:"nowrap",transition:"all 0.15s"}}>{r}</div>;
+          })}
+          <div style={{flex:1}}/>
+          <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:T.inkLight,flexShrink:0}}>
+            <span style={{color:T.accent,fontWeight:700}}>{events.length}</span> events
+          </span>
+        </div>
+      )}
+
+      {/* ── Add event form (my timeline) ─────────────────────── */}
+      {mode==="mine" && addOpen && (
+        <div style={{background:T.card,borderBottom:`1px solid ${T.border}`,padding:"14px 20px",flexShrink:0}}>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 120px 1fr",gap:10,marginBottom:10}}>
+            <input value={draft.title} onChange={e=>setDraft(d=>({...d,title:e.target.value}))}
+              placeholder="Event title *"
+              style={{padding:"8px 10px",background:T.surface,border:`1px solid ${T.border}`,borderRadius:7,fontFamily:"'DM Sans',sans-serif",fontSize:12,color:T.ink,outline:"none"}}/>
+            <input value={draft.year} onChange={e=>setDraft(d=>({...d,year:e.target.value}))}
+              placeholder="Year (e.g. -44)"
+              style={{padding:"8px 10px",background:T.surface,border:`1px solid ${T.border}`,borderRadius:7,fontFamily:"'DM Sans',sans-serif",fontSize:12,color:T.ink,outline:"none"}}/>
+            <input value={draft.region} onChange={e=>setDraft(d=>({...d,region:e.target.value}))}
+              placeholder="Region / Country"
+              style={{padding:"8px 10px",background:T.surface,border:`1px solid ${T.border}`,borderRadius:7,fontFamily:"'DM Sans',sans-serif",fontSize:12,color:T.ink,outline:"none"}}/>
+          </div>
+          <textarea value={draft.desc} onChange={e=>setDraft(d=>({...d,desc:e.target.value}))}
+            placeholder="What happened? (description)"
+            rows={2}
+            style={{width:"100%",padding:"8px 10px",background:T.surface,border:`1px solid ${T.border}`,borderRadius:7,fontFamily:"'DM Sans',sans-serif",fontSize:12,color:T.ink,resize:"none",outline:"none",boxSizing:"border-box",marginBottom:8}}/>
+          <div style={{display:"flex",gap:8}}>
+            <input value={draft.impact} onChange={e=>setDraft(d=>({...d,impact:e.target.value}))}
+              placeholder="Historical impact / why it matters"
+              style={{flex:1,padding:"8px 10px",background:T.surface,border:`1px solid ${T.border}`,borderRadius:7,fontFamily:"'DM Sans',sans-serif",fontSize:12,color:T.ink,outline:"none"}}/>
+            <button onClick={addEvent} disabled={!draft.title.trim()||!draft.year}
+              style={{padding:"8px 20px",background:draft.title.trim()&&draft.year?T.accent:T.border,border:"none",borderRadius:7,color:"#fff",fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:700,cursor:draft.title.trim()&&draft.year?"pointer":"not-allowed"}}>
+              Add
+            </button>
+            <button onClick={()=>setAddOpen(false)}
+              style={{padding:"8px 14px",background:"transparent",border:`1px solid ${T.border}`,borderRadius:7,color:T.inkMid,fontFamily:"'DM Sans',sans-serif",fontSize:12,cursor:"pointer"}}>
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+
       <div style={{flex:1,display:"flex",overflow:"hidden"}}>
-        {/* Event list */}
+        {/* ── Event list ──────────────────────────────────────── */}
         <div style={{flex:1,overflowY:"auto",padding:"20px 24px"}}>
+
+          {/* Empty states */}
+          {mode==="mine" && myEvents.length===0 && !addOpen && (
+            <div style={{textAlign:"center",padding:"60px 20px",color:T.inkLight}}>
+              <div style={{fontSize:36,marginBottom:12}}>📌</div>
+              <div style={{fontFamily:"'Playfair Display',serif",fontSize:17,fontWeight:700,color:T.ink,marginBottom:8}}>Your personal timeline is empty</div>
+              <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:T.inkMid,maxWidth:320,margin:"0 auto 16px",lineHeight:1.7}}>
+                Add events from your own research, coursework, or family history. Build a timeline that's entirely yours.
+              </p>
+              <button onClick={()=>setAddOpen(true)}
+                style={{padding:"9px 20px",background:T.accent,border:"none",borderRadius:8,color:"#fff",fontFamily:"'DM Sans',sans-serif",fontSize:13,fontWeight:700,cursor:"pointer"}}>
+                Add your first event
+              </button>
+            </div>
+          )}
+
+          {mode==="world" && events.length===0 && (
+            <div style={{textAlign:"center",padding:"60px 0",color:T.inkLight,fontFamily:"'DM Sans',sans-serif",fontSize:13}}>
+              No events match your filters
+            </div>
+          )}
+
+          {/* Timeline */}
           <div style={{position:"relative"}}>
-            {/* Timeline line */}
             <div style={{position:"absolute",left:16,top:0,bottom:0,width:2,background:T.border}}/>
-            {filtered.map((ev,i)=>{
-              const col=eraColors[ev.era]||T.accent;
-              const isSel=selected?.year===ev.year&&selected?.title===ev.title;
+            {events.map((ev,i) => {
+              const col = eraColors[ev.era] || eraColors.custom;
+              const isSel = selected?.title===ev.title && selected?.year===ev.year;
+              const id = ev.id || `${ev.year}-${i}`;
               return (
-                <div key={i} onClick={()=>setSelected(isSel?null:ev)} style={{position:"relative",paddingLeft:44,marginBottom:20,cursor:"pointer"}}>
-                  {/* Dot */}
-                  <div style={{position:"absolute",left:8,top:6,width:18,height:18,borderRadius:"50%",background:isSel?col:T.card,border:`2px solid ${col}`,display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.2s",boxShadow:isSel?`0 0 10px ${col}60`:"none"}}>
+                <div key={id} style={{position:"relative",paddingLeft:44,marginBottom:18,cursor:"pointer"}}
+                  onClick={()=>setSelected(isSel?null:ev)}>
+                  <div style={{position:"absolute",left:8,top:6,width:18,height:18,borderRadius:"50%",background:isSel?col:T.card,border:`2px solid ${col}`,display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.2s",boxShadow:isSel?`0 0 12px ${col}70`:"none"}}>
                     {isSel&&<div style={{width:6,height:6,borderRadius:"50%",background:"#fff"}}/>}
                   </div>
-                  <div style={{background:isSel?T.cardHov:T.card,border:`1px solid ${isSel?col+"50":T.border}`,borderRadius:10,padding:"14px 16px",transition:"all 0.2s",boxShadow:isSel?`0 4px 16px rgba(0,0,0,0.15)`:"none"}}>
-                    <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:12,marginBottom:6}}>
-                      <div>
-                        <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:4}}>
-                          <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,fontWeight:700,color:col,letterSpacing:"0.04em"}}>{fmtY(ev.year)}</span>
-                          <div style={{padding:"1px 7px",borderRadius:20,background:col+"20",border:`1px solid ${col}40`}}>
-                            <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:8,color:col,letterSpacing:"0.08em",textTransform:"uppercase"}}>{ev.region}</span>
-                          </div>
+                  <div style={{background:isSel?T.cardHov:T.card,border:`1px solid ${isSel?col+"60":T.border}`,borderRadius:10,padding:"13px 16px",transition:"all 0.2s",boxShadow:isSel?`0 4px 16px rgba(0,0,0,0.15)`:"none"}}>
+                    <div style={{display:"flex",alignItems:"flex-start",gap:10,marginBottom:5}}>
+                      <div style={{flex:1}}>
+                        <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:4,flexWrap:"wrap"}}>
+                          <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,fontWeight:700,color:col}}>{fmtY(ev.year)}</span>
+                          {ev.region && (
+                            <div style={{padding:"1px 7px",borderRadius:20,background:col+"20",border:`1px solid ${col}35`}}>
+                              <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:8,color:col,textTransform:"uppercase",letterSpacing:"0.07em"}}>{ev.region}</span>
+                            </div>
+                          )}
+                          {ev.type==="custom" && (
+                            <div style={{padding:"1px 7px",borderRadius:20,background:"#EC489920",border:"1px solid #EC489940"}}>
+                              <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:8,color:"#EC4899",textTransform:"uppercase",letterSpacing:"0.07em"}}>My Event</span>
+                            </div>
+                          )}
                         </div>
-                        <h3 style={{fontFamily:"'Playfair Display',Georgia,serif",fontSize:16,fontWeight:700,color:T.ink,margin:0,lineHeight:1.2}}>{ev.title}</h3>
+                        <h3 style={{fontFamily:"'Playfair Display',Georgia,serif",fontSize:15,fontWeight:700,color:T.ink,margin:0,lineHeight:1.25}}>{ev.title}</h3>
                       </div>
+                      {mode==="mine" && ev.type==="custom" && (
+                        <button onClick={e=>{e.stopPropagation();deleteEvent(ev.id);}}
+                          style={{background:"transparent",border:"none",cursor:"pointer",color:T.inkFaint,fontSize:14,padding:2,lineHeight:1,flexShrink:0}}>✕</button>
+                      )}
                     </div>
-                    <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:T.inkMid,lineHeight:1.7,margin:"0 0 8px"}}>{ev.desc}</p>
-                    {isSel&&(
-                      <div style={{paddingTop:10,borderTop:`1px solid ${T.border}`,marginTop:4}}>
-                        <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.1em",textTransform:"uppercase",color:T.inkFaint,marginBottom:6,fontWeight:600}}>Historical Impact</div>
+                    <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.inkMid,lineHeight:1.7,margin:0}}>{ev.desc}</p>
+                    {isSel && ev.impact && (
+                      <div style={{marginTop:10,paddingTop:10,borderTop:`1px solid ${T.border}`}}>
+                        <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.1em",textTransform:"uppercase",color:T.inkFaint,marginBottom:5,fontWeight:600}}>Historical Impact</div>
                         <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:col,lineHeight:1.7,margin:0,fontStyle:"italic"}}>{ev.impact}</p>
                       </div>
                     )}
@@ -847,24 +1010,52 @@ function TimelineSection({ T }) {
           </div>
         </div>
 
-        {/* Era sidebar */}
-        <div style={{width:200,borderLeft:`1px solid ${T.border}`,overflowY:"auto",background:T.surface,flexShrink:0}}>
-          <div style={{padding:"14px 14px 8px",fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.1em",textTransform:"uppercase",color:T.inkFaint,fontWeight:600}}>Eras</div>
-          {ERAS.map(era=>{
-            const on=filterEra===era.id;
-            const col=eraColors[era.id]||T.accent;
-            const count=TIMELINE_EVENTS.filter(e=>e.era===era.id).length;
-            return (
-              <div key={era.id} onClick={()=>setFilterEra(on?"all":era.id)} style={{padding:"10px 14px",cursor:"pointer",background:on?col+"18":"transparent",borderLeft:on?`3px solid ${col}`:"3px solid transparent",transition:"all 0.15s"}}
-                onMouseEnter={e=>{if(!on)e.currentTarget.style.background=T.card;}}
-                onMouseLeave={e=>{if(!on)e.currentTarget.style.background="transparent";}}
-              >
-                <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:on?600:400,color:on?col:T.inkMid}}>{era.label}</div>
-                <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:T.inkLight,marginTop:2}}>{count} events</div>
-              </div>
-            );
-          })}
-        </div>
+        {/* ── Era sidebar (world mode) ─────────────────────────── */}
+        {mode==="world" && (
+          <div style={{width:188,borderLeft:`1px solid ${T.border}`,overflowY:"auto",background:T.surface,flexShrink:0}}>
+            <div style={{padding:"14px 14px 8px",fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.1em",textTransform:"uppercase",color:T.inkFaint,fontWeight:600}}>Eras</div>
+            {[{id:"all",label:"All Eras"},...ERAS].map(era=>{
+              const on=filterEra===era.id;
+              const col=eraColors[era.id]||T.accent;
+              const count = era.id==="all" ? TIMELINE_EVENTS.length : TIMELINE_EVENTS.filter(e=>e.era===era.id).length;
+              return (
+                <div key={era.id} onClick={()=>setFilterEra(on&&era.id!=="all"?"all":era.id)}
+                  style={{padding:"9px 14px",cursor:"pointer",background:on?col+"18":"transparent",borderLeft:on?`3px solid ${col}`:"3px solid transparent",transition:"all 0.15s"}}
+                  onMouseEnter={e=>{if(!on)e.currentTarget.style.background=T.card;}}
+                  onMouseLeave={e=>{if(!on)e.currentTarget.style.background="transparent";}}>
+                  <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:on?600:400,color:on?col:T.inkMid}}>{era.label}</div>
+                  <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,color:T.inkLight,marginTop:1}}>{count} events</div>
+                </div>
+              );
+            })}
+
+            {/* My timeline mini stats */}
+            <div style={{padding:"14px 14px 8px",marginTop:8,borderTop:`1px solid ${T.border}`,fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.1em",textTransform:"uppercase",color:T.inkFaint,fontWeight:600}}>My Timeline</div>
+            <div style={{padding:"9px 14px",cursor:"pointer"}} onClick={()=>{setMode("mine");setSelected(null);}}>
+              <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.inkMid}}>Personal events</div>
+              <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,color:"#EC4899",marginTop:1,fontWeight:600}}>{myEvents.length} saved</div>
+            </div>
+          </div>
+        )}
+
+        {/* ── My timeline sidebar ──────────────────────────────── */}
+        {mode==="mine" && myEvents.length>0 && (
+          <div style={{width:188,borderLeft:`1px solid ${T.border}`,background:T.surface,flexShrink:0,padding:"14px"}}>
+            <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.1em",textTransform:"uppercase",color:T.inkFaint,marginBottom:10,fontWeight:600}}>Your Timeline</div>
+            <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:T.ink,fontWeight:700,marginBottom:4}}>{myEvents.length} event{myEvents.length!==1?"s":""}</div>
+            {myEvents.length>0 && (
+              <>
+                <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:T.inkLight,marginBottom:12,lineHeight:1.5}}>
+                  Spanning {fmtY(Math.min(...myEvents.map(e=>Number(e.year))))} → {fmtY(Math.max(...myEvents.map(e=>Number(e.year))))}
+                </div>
+                <button onClick={()=>{if(window.confirm("Clear your entire personal timeline?"))saveMyEvents([]);}}
+                  style={{width:"100%",padding:"6px",background:"transparent",border:`1px solid ${T.border}`,borderRadius:7,color:T.danger,fontFamily:"'DM Sans',sans-serif",fontSize:10,cursor:"pointer"}}>
+                  Clear all events
+                </button>
+              </>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -1896,163 +2087,176 @@ function InvestigateSection({ T, nodes: propNodes, edges: propEdges, setNodes: s
 
 
 
-// ── VR EXPLORER ───────────────────────────────────────────────
 
-// Phase 1: verified free .glb models (Sketchfab CC / public domain)
-// Phase 2: equirectangular panorama fallback (Wikimedia / public 360°)
-// Phase 3 (out of scope): AI-generated reconstruction
+// ── VR EXPLORER ───────────────────────────────────────────────
+// Phase 1 + 2: Inline canvas equirectangular panorama viewer.
+// All images sourced from Wikimedia Commons (public domain / CC).
+// Phase 3 (out of scope): AI-generated reconstruction — see LinkedIn.
 
 const VR_SITES = [
-  {
-    id: "great-pyramid",
-    name: "Great Pyramid of Giza",
-    region: "Egypt",
-    era: "2560 BCE",
-    type: "civilization",
-    description: "The last surviving Wonder of the Ancient World. Built over 20 years by tens of thousands of workers, it remained the tallest structure on Earth for 3,800 years. Its internal chambers and precise astronomical alignment still baffle engineers today.",
-    // Phase 1: Sketchfab embed (free, CC license)
-    sketchfabId: "b59cb8e3b7e94244a5bbf04e4fb09870",
-    // Phase 2: equirectangular panorama from Wikimedia
-    panoramaUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Kheops-Pyramid.jpg/2560px-Kheops-Pyramid.jpg",
-    thumbnail: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Kheops-Pyramid.jpg/640px-Kheops-Pyramid.jpg",
-    facts: ["Originally 146.5 metres tall — tallest structure for 3,800 years","Built with ~2.3 million stone blocks, some weighing 80 tonnes","Astronomically aligned — faces true north within 0.05 degrees","Internal temperature constant at 20°C regardless of outside temperature"],
-    wikiUrl: "https://en.wikipedia.org/wiki/Great_Pyramid_of_Giza",
-  },
-  {
-    id: "colosseum",
-    name: "The Colosseum — Rome",
-    region: "Italy",
-    era: "80 CE",
-    type: "world",
-    description: "The largest amphitheatre ever built, holding up to 80,000 spectators. Gladiatorial combat, animal hunts, public executions, and mock sea battles were staged here. The engineering — retractable awning, 80 entrances, numbered seating — influenced stadium design for 2,000 years.",
-    sketchfabId: "3e30b4af0c7f43c88fe72b08cfa1489d",
-    panoramaUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Colosseo_2020.jpg/2560px-Colosseo_2020.jpg",
-    thumbnail: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Colosseo_2020.jpg/640px-Colosseo_2020.jpg",
-    facts: ["Held 50,000–80,000 spectators","Built in just 8–10 years (70–80 CE)","Had 80 entrances — crowds could empty in minutes","Underground hypogeum held animals, gladiators, and stage machinery"],
-    wikiUrl: "https://en.wikipedia.org/wiki/Colosseum",
-  },
-  {
-    id: "machu-picchu",
-    name: "Machu Picchu",
-    region: "Peru",
-    era: "1450 CE",
-    type: "world",
-    description: "The Inca citadel sits at 2,430 metres above sea level in the Andes. Built without mortar, its stones fit so precisely that a knife blade cannot pass between them. Abandoned during the Spanish conquest, it was unknown to the outside world until 1911.",
-    sketchfabId: "0e4e63a10ef94be4b4e27abd0e33a95b",
-    panoramaUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Machu_Picchu%2C_Peru.jpg/2560px-Machu_Picchu%2C_Peru.jpg",
-    thumbnail: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Machu_Picchu%2C_Peru.jpg/640px-Machu_Picchu%2C_Peru.jpg",
-    facts: ["Built at 2,430 metres — above the clouds","Stones fit without mortar, knife-blade precision","Earthquake-resistant design — stones 'dance' during tremors","Rediscovered by Hiram Bingham in 1911, unknown to outside world for centuries"],
-    wikiUrl: "https://en.wikipedia.org/wiki/Machu_Picchu",
-  },
-  {
-    id: "parthenon",
-    name: "The Parthenon — Athens",
-    region: "Greece",
-    era: "432 BCE",
-    type: "world",
-    description: "The temple of Athena on the Athenian Acropolis is the most influential building in Western architecture. Its seemingly straight lines are actually subtly curved — the columns bulge slightly and lean inward — optical illusions that make it appear perfectly straight from a distance.",
-    sketchfabId: "3a8f44b67bef42e8b5e17dd51b6bcd28",
-    panoramaUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/The_Parthenon_in_Athens.jpg/2560px-The_Parthenon_in_Athens.jpg",
-    thumbnail: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/The_Parthenon_in_Athens.jpg/640px-The_Parthenon_in_Athens.jpg",
-    facts: ["Has no perfectly straight lines — all subtly curved to appear straight","46 outer columns, each slightly different to appear identical","Held a 12-metre ivory and gold statue of Athena inside","The Elgin Marbles were removed by Britain in 1801 — Greece demands their return"],
-    wikiUrl: "https://en.wikipedia.org/wiki/Parthenon",
-  },
-  {
-    id: "angkor-wat",
-    name: "Angkor Wat",
-    region: "Cambodia",
-    era: "1150 CE",
-    type: "world",
-    description: "The world's largest religious monument — a temple city covering 402 acres. Built by the Khmer Empire as a Hindu temple, later converted to Buddhist use. Its bas-relief galleries stretch for 800 metres and depict the entire Hindu cosmological universe.",
-    sketchfabId: "4ae47c0a41654048b52e9540e2fb8c8b",
-    panoramaUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Angkor_Wat_as_seen_from_the_air.JPG/2560px-Angkor_Wat_as_seen_from_the_air.JPG",
-    thumbnail: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Angkor_Wat_as_seen_from_the_air.JPG/640px-Angkor_Wat_as_seen_from_the_air.JPG",
-    facts: ["World's largest religious monument: 402 acres","800 metres of bas-relief galleries — the longest in the world","Built for Suryavarman II as his state temple and eventual mausoleum","The moat alone required digging 30 million cubic metres of earth"],
-    wikiUrl: "https://en.wikipedia.org/wiki/Angkor_Wat",
-  },
-  {
-    id: "great-wall",
-    name: "The Great Wall of China",
-    region: "China",
-    era: "221 BCE",
-    type: "world",
-    description: "Built over centuries by multiple Chinese dynasties, the Great Wall stretches more than 21,000 km. It was never a single continuous wall but a network of fortifications. Millions died building it — their bones are said to be buried in the foundations.",
-    sketchfabId: null,
-    panoramaUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Badaling_great_wall.jpg/2560px-Badaling_great_wall.jpg",
-    thumbnail: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Badaling_great_wall.jpg/640px-Badaling_great_wall.jpg",
-    facts: ["Total length: 21,196 km including all branches","Took over 2,000 years and multiple dynasties to build","At least 400,000 workers died during construction","Visible from low Earth orbit — but NOT from the Moon (a myth)"],
-    wikiUrl: "https://en.wikipedia.org/wiki/Great_Wall_of_China",
-  },
-  {
-    id: "hagia-sophia",
-    name: "Hagia Sophia — Istanbul",
-    region: "Turkey",
-    era: "537 CE",
-    type: "empire",
-    description: "Built by the Byzantine Emperor Justinian I, the Hagia Sophia was the world's largest cathedral for nearly 1,000 years. Conquered by the Ottomans in 1453, converted to a mosque, then a museum, and again a mosque in 2020. Its dome appeared to float miraculously — supported by hidden pendentives.",
-    sketchfabId: "c7c0e1c5b8764b4b9c7d7c91c3f94b1a",
-    panoramaUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Hagia_Sophia_Mars_2013.jpg/2560px-Hagia_Sophia_Mars_2013.jpg",
-    thumbnail: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Hagia_Sophia_Mars_2013.jpg/640px-Hagia_Sophia_Mars_2013.jpg",
-    facts: ["World's largest cathedral for 1,000 years (537–1520 CE)","Dome is 55.6 metres high — larger than the Pantheon","Changed religion three times: cathedral, mosque, museum, mosque","The 'floating' dome was revolutionary — no visible supports"],
-    wikiUrl: "https://en.wikipedia.org/wiki/Hagia_Sophia",
-  },
-  {
-    id: "stonehenge",
-    name: "Stonehenge",
-    region: "England",
-    era: "2500 BCE",
-    type: "indigenous",
-    description: "A prehistoric monument on Salisbury Plain whose purpose remains debated. The largest stones were transported 250 km from Wales — how remains unknown. It is precisely aligned with the summer solstice sunrise and winter solstice sunset, making it likely a solar calendar.",
-    sketchfabId: "df77e5cc12024a5998dcd05b71d428ae",
-    panoramaUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Stonehenge2007_07_30.jpg/2560px-Stonehenge2007_07_30.jpg",
-    thumbnail: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Stonehenge2007_07_30.jpg/640px-Stonehenge2007_07_30.jpg",
-    facts: ["Built in multiple phases from 3000–1500 BCE","Largest stones weigh 25 tonnes — transported 250 km from Wales","Precisely aligned with summer solstice sunrise","Its purpose — burial site, solar calendar, healing centre — still debated"],
-    wikiUrl: "https://en.wikipedia.org/wiki/Stonehenge",
-  },
-  {
-    id: "taj-mahal",
-    name: "Taj Mahal",
-    region: "India",
-    era: "1653 CE",
-    type: "empire",
-    description: "Built by Mughal Emperor Shah Jahan as a mausoleum for his wife Mumtaz Mahal, who died in childbirth. 20,000 workers and 1,000 elephants took 22 years to complete it. The marble changes colour with the light — pinkish at dawn, white at midday, golden at night.",
-    sketchfabId: null,
-    panoramaUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Taj_Mahal_%28Edited%29.jpeg/2560px-Taj_Mahal_%28Edited%29.jpeg",
-    thumbnail: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Taj_Mahal_%28Edited%29.jpeg/640px-Taj_Mahal_%28Edited%29.jpeg",
-    facts: ["22 years, 20,000 workers, 1,000 elephants to build","Marble changes colour: pink at dawn, white at noon, golden at night","The four minarets lean slightly outward — to fall away from the tomb in an earthquake","Shah Jahan was later imprisoned by his own son and died looking at the Taj from his cell"],
-    wikiUrl: "https://en.wikipedia.org/wiki/Taj_Mahal",
-  },
-  {
-    id: "pompeii",
-    name: "Pompeii",
-    region: "Italy",
-    era: "79 CE",
-    type: "world",
-    description: "The Roman city buried under 6 metres of volcanic ash by the eruption of Mount Vesuvius in 79 CE. The ash preserved it perfectly — streets, houses, graffiti, food in ovens, and the plaster casts of citizens frozen in their final moments. It is the most complete snapshot of any ancient city.",
-    sketchfabId: null,
-    panoramaUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Pompeii_-_Osteria_della_via_di_Mercurio_-_Roa.jpg/2560px-Pompeii_-_Osteria_della_via_di_Mercurio_-_Roa.jpg",
-    thumbnail: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Pompeii_Street.jpg/640px-Pompeii_Street.jpg",
-    facts: ["Buried in 6 metres of volcanic ash in just 18–20 hours","Preserved for 1,700 years until rediscovered in 1748","Electoral campaign graffiti still legible on the walls","Plaster casts of victims made by pouring plaster into the ash voids"],
-    wikiUrl: "https://en.wikipedia.org/wiki/Pompeii",
-  },
+  { id:"great-pyramid",  name:"Great Pyramid of Giza",    region:"Egypt",        era:"2560 BCE", type:"civilization",
+    panorama:"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Kheops-Pyramid.jpg/2560px-Kheops-Pyramid.jpg",
+    thumbnail:"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Kheops-Pyramid.jpg/640px-Kheops-Pyramid.jpg",
+    description:"The last surviving Wonder of the Ancient World. Built over 20 years, it remained the tallest structure on Earth for 3,800 years. Its internal chambers and precise astronomical alignment still baffle engineers today.",
+    facts:["Originally 146.5 m tall — tallest structure for 3,800 years","Built with ~2.3 million blocks, some weighing 80 tonnes","Aligned to true north within 0.05 degrees","Internal temperature constant at 20°C regardless of outside heat"],
+    wikiUrl:"https://en.wikipedia.org/wiki/Great_Pyramid_of_Giza" },
+  { id:"colosseum",      name:"The Colosseum — Rome",      region:"Italy",        era:"80 CE",    type:"world",
+    panorama:"https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Colosseo_2020.jpg/2560px-Colosseo_2020.jpg",
+    thumbnail:"https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Colosseo_2020.jpg/640px-Colosseo_2020.jpg",
+    description:"The largest amphitheatre ever built, seating up to 80,000 spectators. Gladiatorial combat, animal hunts, and public executions were staged here. The engineering influenced stadium design for 2,000 years.",
+    facts:["Held 50,000–80,000 spectators","Built in just 8–10 years (70–80 CE)","80 entrances — crowds could empty in minutes","Underground hypogeum held animals and stage machinery"],
+    wikiUrl:"https://en.wikipedia.org/wiki/Colosseum" },
+  { id:"machu-picchu",   name:"Machu Picchu",              region:"Peru",         era:"1450 CE",  type:"world",
+    panorama:"https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Machu_Picchu%2C_Peru.jpg/2560px-Machu_Picchu%2C_Peru.jpg",
+    thumbnail:"https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Machu_Picchu%2C_Peru.jpg/640px-Machu_Picchu%2C_Peru.jpg",
+    description:"The Inca citadel sits at 2,430 metres in the Andes. Built without mortar — stones fit so precisely a knife blade cannot pass between them. Unknown to the outside world until 1911.",
+    facts:["Built at 2,430 m — above the clouds","Stones fit without mortar, knife-blade precision","Earthquake-resistant: stones 'dance' during tremors","Rediscovered by Hiram Bingham in 1911"],
+    wikiUrl:"https://en.wikipedia.org/wiki/Machu_Picchu" },
+  { id:"parthenon",      name:"The Parthenon — Athens",    region:"Greece",       era:"432 BCE",  type:"world",
+    panorama:"https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/The_Parthenon_in_Athens.jpg/2560px-The_Parthenon_in_Athens.jpg",
+    thumbnail:"https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/The_Parthenon_in_Athens.jpg/640px-The_Parthenon_in_Athens.jpg",
+    description:"The temple of Athena on the Acropolis. Its seemingly straight lines are actually subtly curved — optical illusions that make it appear perfect from a distance. The most influential building in Western architecture.",
+    facts:["Has no perfectly straight lines — all subtly curved","46 outer columns, each slightly different","Held a 12-metre ivory and gold statue of Athena","The Elgin Marbles were removed by Britain in 1801 — Greece demands their return"],
+    wikiUrl:"https://en.wikipedia.org/wiki/Parthenon" },
+  { id:"angkor-wat",     name:"Angkor Wat",                region:"Cambodia",     era:"1150 CE",  type:"world",
+    panorama:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Angkor_Wat_as_seen_from_the_air.JPG/2560px-Angkor_Wat_as_seen_from_the_air.JPG",
+    thumbnail:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Angkor_Wat_as_seen_from_the_air.JPG/640px-Angkor_Wat_as_seen_from_the_air.JPG",
+    description:"The world's largest religious monument — a temple city covering 402 acres built by the Khmer Empire. Its bas-relief galleries stretch for 800 metres and depict the entire Hindu cosmological universe.",
+    facts:["World's largest religious monument: 402 acres","800 m of bas-relief galleries — the longest in the world","Built for Suryavarman II as his state temple","The moat required digging 30 million cubic metres of earth"],
+    wikiUrl:"https://en.wikipedia.org/wiki/Angkor_Wat" },
+  { id:"great-wall",     name:"Great Wall of China",       region:"China",        era:"221 BCE",  type:"world",
+    panorama:"https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Badaling_great_wall.jpg/2560px-Badaling_great_wall.jpg",
+    thumbnail:"https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Badaling_great_wall.jpg/640px-Badaling_great_wall.jpg",
+    description:"Built over centuries by multiple dynasties, the Great Wall stretches 21,000+ km. It was never a single wall but a network of fortifications. Millions died building it — their bones are said to be in the foundations.",
+    facts:["Total length: 21,196 km including all branches","2,000+ years and multiple dynasties to build","At least 400,000 workers died during construction","Visible from low Earth orbit — but NOT the Moon (a myth)"],
+    wikiUrl:"https://en.wikipedia.org/wiki/Great_Wall_of_China" },
+  { id:"hagia-sophia",   name:"Hagia Sophia — Istanbul",   region:"Turkey",       era:"537 CE",   type:"empire",
+    panorama:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Hagia_Sophia_Mars_2013.jpg/2560px-Hagia_Sophia_Mars_2013.jpg",
+    thumbnail:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Hagia_Sophia_Mars_2013.jpg/640px-Hagia_Sophia_Mars_2013.jpg",
+    description:"Built by Emperor Justinian I, the Hagia Sophia was the world's largest cathedral for nearly 1,000 years. Its dome appeared to float — supported by hidden pendentives. Changed religion three times.",
+    facts:["World's largest cathedral for 1,000 years (537–1520 CE)","Dome is 55.6 m high — larger than the Pantheon","Changed: cathedral → mosque → museum → mosque","The 'floating' dome was architecturally revolutionary"],
+    wikiUrl:"https://en.wikipedia.org/wiki/Hagia_Sophia" },
+  { id:"stonehenge",     name:"Stonehenge",                region:"England",      era:"2500 BCE", type:"indigenous",
+    panorama:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Stonehenge2007_07_30.jpg/2560px-Stonehenge2007_07_30.jpg",
+    thumbnail:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Stonehenge2007_07_30.jpg/640px-Stonehenge2007_07_30.jpg",
+    description:"A prehistoric monument on Salisbury Plain. The largest stones were transported 250 km from Wales — how remains unknown. Precisely aligned with the summer solstice sunrise and winter solstice sunset.",
+    facts:["Built in phases from 3000–1500 BCE","Largest stones: 25 tonnes, transported 250 km from Wales","Aligned with summer solstice sunrise","Purpose — burial site, solar calendar, healing centre — still debated"],
+    wikiUrl:"https://en.wikipedia.org/wiki/Stonehenge" },
+  { id:"taj-mahal",      name:"Taj Mahal",                 region:"India",        era:"1653 CE",  type:"empire",
+    panorama:"https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Taj_Mahal_%28Edited%29.jpeg/2560px-Taj_Mahal_%28Edited%29.jpeg",
+    thumbnail:"https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Taj_Mahal_%28Edited%29.jpeg/640px-Taj_Mahal_%28Edited%29.jpeg",
+    description:"Built by Emperor Shah Jahan as a mausoleum for his wife Mumtaz Mahal. 20,000 workers and 1,000 elephants took 22 years. The marble changes colour with the light — pink at dawn, white at noon, golden at night.",
+    facts:["22 years, 20,000 workers, 1,000 elephants to build","Marble changes colour: pink at dawn, white at noon, golden at night","Four minarets lean outward — to fall away from the tomb in earthquakes","Shah Jahan died imprisoned, looking at the Taj from his cell"],
+    wikiUrl:"https://en.wikipedia.org/wiki/Taj_Mahal" },
+  { id:"pompeii",        name:"Pompeii",                   region:"Italy",        era:"79 CE",    type:"world",
+    panorama:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Pompeii_Street.jpg/1280px-Pompeii_Street.jpg",
+    thumbnail:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Pompeii_Street.jpg/640px-Pompeii_Street.jpg",
+    description:"A Roman city buried under 6 metres of volcanic ash by Vesuvius in 79 CE. The ash preserved it perfectly — streets, houses, graffiti, food in ovens, and plaster casts of citizens frozen in their final moments.",
+    facts:["Buried in 6 metres of ash in 18–20 hours","Preserved for 1,700 years, rediscovered in 1748","Electoral campaign graffiti still legible on the walls","Plaster casts of victims made by pouring plaster into ash voids"],
+    wikiUrl:"https://en.wikipedia.org/wiki/Pompeii" },
+  { id:"great-zimbabwe", name:"Great Zimbabwe",            region:"Zimbabwe",     era:"1100 CE",  type:"civilization",
+    panorama:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Great_Zimbabwe_02.jpg/1280px-Great_Zimbabwe_02.jpg",
+    thumbnail:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Great_Zimbabwe_02.jpg/640px-Great_Zimbabwe_02.jpg",
+    description:"The largest pre-colonial stone structure in sub-Saharan Africa — 720 hectares of dry-stone walls built by the Shona people without mortar. At its peak it housed 18,000 people and controlled trade from the Indian Ocean to the interior.",
+    facts:["Largest pre-colonial structure in sub-Saharan Africa","Built without mortar across 720 hectares","Housed 18,000 people at its peak (1300–1450 CE)","European colonisers refused to believe Africans built it — the history was suppressed for decades"],
+    wikiUrl:"https://en.wikipedia.org/wiki/Great_Zimbabwe" },
 ];
 
-function VRSection({ T }) {
-  const [selected, setSelected] = useState(null);
-  const [mode,     setMode]     = useState("browse"); // "browse" | "view3d" | "panorama"
-  const [search,   setSearch]   = useState("");
-  const [vrSupported, setVrSupported] = useState(null);
-  const iframeRef = useRef(null);
+// Inline canvas-based panorama viewer — no external dependencies
+function PanoramaViewer({ url, name, T }) {
+  const canvasRef  = useRef(null);
+  const imgRef     = useRef(null);
+  const stateRef   = useRef({ dragging:false, lastX:0, offsetX:0, targetX:0, animId:null });
+  const [loaded, setLoaded]   = useState(false);
+  const [error,  setError]    = useState(false);
 
   useEffect(() => {
-    if (typeof navigator !== "undefined" && navigator.xr) {
-      navigator.xr.isSessionSupported("immersive-vr")
-        .then(supported => setVrSupported(supported))
-        .catch(() => setVrSupported(false));
-    } else {
-      setVrSupported(false);
-    }
-  }, []);
+    setLoaded(false); setError(false);
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload  = () => { imgRef.current = img; setLoaded(true); };
+    img.onerror = () => setError(true);
+    img.src = url;
+    return () => { img.onload = null; img.onerror = null; };
+  }, [url]);
+
+  useEffect(() => {
+    if (!loaded || !canvasRef.current || !imgRef.current) return;
+    const canvas = canvasRef.current;
+    const ctx    = canvas.getContext("2d");
+    const img    = imgRef.current;
+    const s      = stateRef.current;
+
+    const draw = () => {
+      // Smooth interpolation
+      s.offsetX += (s.targetX - s.offsetX) * 0.08;
+      const W = canvas.width, H = canvas.height;
+      const iW = img.naturalWidth, iH = img.naturalHeight;
+      // Scale image to fill canvas height
+      const scale  = H / iH;
+      const dispW  = iW * scale;
+      // Wrap the x offset
+      const x = ((s.offsetX % dispW) + dispW) % dispW;
+      ctx.clearRect(0, 0, W, H);
+      // Draw main portion
+      ctx.drawImage(img, 0, 0, iW, iH, -x, 0, dispW, H);
+      // Wrap-around second copy
+      if (dispW - x < W) ctx.drawImage(img, 0, 0, iW, iH, dispW - x, 0, dispW, H);
+      s.animId = requestAnimationFrame(draw);
+    };
+
+    s.animId = requestAnimationFrame(draw);
+
+    const resize = () => {
+      canvas.width  = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    };
+    resize();
+    window.addEventListener("resize", resize);
+    return () => { cancelAnimationFrame(s.animId); window.removeEventListener("resize", resize); };
+  }, [loaded]);
+
+  const onDown  = e => { const s = stateRef.current; s.dragging = true; s.lastX = e.clientX ?? e.touches?.[0]?.clientX; };
+  const onMove  = e => {
+    const s = stateRef.current; if (!s.dragging) return;
+    const x = e.clientX ?? e.touches?.[0]?.clientX;
+    s.targetX += (s.lastX - x) * 1.2;
+    s.lastX = x;
+  };
+  const onUp    = () => { stateRef.current.dragging = false; };
+
+  if (error) return (
+    <div style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",background:"#0A0908",flexDirection:"column",gap:12}}>
+      <span style={{fontSize:32}}>🖼️</span>
+      <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:13,color:"rgba(255,255,255,0.4)"}}>Image unavailable — view on Wikipedia</p>
+    </div>
+  );
+
+  return (
+    <div style={{flex:1,position:"relative",overflow:"hidden",cursor:"grab",userSelect:"none"}}>
+      {!loaded && (
+        <div style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center",background:"#0A0908",flexDirection:"column",gap:10,zIndex:2}}>
+          <span style={{fontSize:28,animation:"spin 1s linear infinite",display:"inline-block"}}>⟳</span>
+          <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:"rgba(255,255,255,0.4)"}}>Loading panorama…</p>
+        </div>
+      )}
+      <canvas ref={canvasRef} style={{width:"100%",height:"100%",display:"block"}}
+        onMouseDown={onDown} onMouseMove={onMove} onMouseUp={onUp} onMouseLeave={onUp}
+        onTouchStart={onDown} onTouchMove={onMove} onTouchEnd={onUp}/>
+      {loaded && (
+        <div style={{position:"absolute",bottom:16,left:"50%",transform:"translateX(-50%)",padding:"5px 14px",background:"rgba(0,0,0,0.55)",borderRadius:20,backdropFilter:"blur(6px)",pointerEvents:"none"}}>
+          <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:"rgba(255,255,255,0.55)"}}>
+            ← Drag to pan · Scroll left/right to explore →
+          </span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function VRSection({ T }) {
+  const [selected, setSelected]  = useState(null);
+  const [search,   setSearch]    = useState("");
 
   const filtered = useMemo(() => {
     if (!search) return VR_SITES;
@@ -2065,25 +2269,65 @@ function VRSection({ T }) {
     );
   }, [search]);
 
-  const openSite = (site, viewMode) => {
-    setSelected(site);
-    setMode(viewMode);
-  };
-
   const isDark = T.name === "dark";
 
+  // ── Panorama viewer ────────────────────────────────────────
+  if (selected) return (
+    <div style={{height:"100%",display:"flex",flexDirection:"column",background:"#0A0908"}}>
+      <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+
+      {/* Top bar */}
+      <div style={{background:"rgba(0,0,0,0.7)",borderBottom:"1px solid rgba(255,255,255,0.08)",padding:"10px 16px",display:"flex",alignItems:"center",gap:12,flexShrink:0,backdropFilter:"blur(10px)"}}>
+        <button onClick={()=>setSelected(null)}
+          style={{display:"flex",alignItems:"center",gap:6,padding:"6px 12px",background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.15)",borderRadius:7,color:"rgba(255,255,255,0.7)",fontFamily:"'DM Sans',sans-serif",fontSize:11,cursor:"pointer"}}>
+          <Ic n="chevL" s={12} c="currentColor"/> Back
+        </button>
+        <div style={{flex:1}}>
+          <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:700,color:"#fff"}}>{selected.name}</div>
+          <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:"rgba(255,255,255,0.45)"}}>{selected.region} · {selected.era}</div>
+        </div>
+        <div style={{padding:"4px 10px",borderRadius:20,background:"rgba(59,130,246,0.2)",border:"1px solid rgba(59,130,246,0.4)",fontFamily:"'DM Sans',sans-serif",fontSize:9,fontWeight:700,color:"#60A5FA",letterSpacing:"0.08em"}}>
+          360° PANORAMA
+        </div>
+        <a href={selected.wikiUrl} target="_blank" rel="noopener noreferrer"
+          style={{display:"flex",alignItems:"center",gap:5,padding:"6px 12px",background:"rgba(255,255,255,0.06)",border:"1px solid rgba(255,255,255,0.12)",borderRadius:7,color:"rgba(255,255,255,0.5)",fontFamily:"'DM Sans',sans-serif",fontSize:11,textDecoration:"none"}}>
+          <Ic n="extlink" s={11} c="currentColor"/> Wikipedia
+        </a>
+      </div>
+
+      {/* Canvas panorama + facts sidebar */}
+      <div style={{flex:1,display:"flex",overflow:"hidden"}}>
+        <PanoramaViewer url={selected.panorama} name={selected.name} T={T}/>
+
+        {/* Side panel */}
+        <div style={{width:260,background:"rgba(0,0,0,0.6)",backdropFilter:"blur(12px)",borderLeft:"1px solid rgba(255,255,255,0.07)",display:"flex",flexDirection:"column",flexShrink:0,overflowY:"auto",padding:"16px 14px"}}>
+          <div style={{marginBottom:12}}>
+            <div style={{fontFamily:"'Playfair Display',serif",fontSize:14,fontWeight:700,color:"#fff",marginBottom:6}}>{selected.name}</div>
+            <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:"rgba(255,255,255,0.55)",lineHeight:1.7,margin:0}}>{selected.description}</p>
+          </div>
+          <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:"0.1em",textTransform:"uppercase",color:"rgba(255,255,255,0.25)",marginBottom:10,fontWeight:600}}>Key Facts</div>
+          {selected.facts.map((f,i) => (
+            <div key={i} style={{display:"flex",gap:8,marginBottom:9,paddingBottom:9,borderBottom:"1px solid rgba(255,255,255,0.06)"}}>
+              <div style={{width:4,height:4,borderRadius:"50%",background:"#3B82F6",flexShrink:0,marginTop:5}}/>
+              <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:"rgba(255,255,255,0.55)",lineHeight:1.6}}>{f}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
   // ── Browse grid ────────────────────────────────────────────
-  if (mode === "browse" || !selected) return (
+  return (
     <div style={{height:"100%",display:"flex",flexDirection:"column",background:T.bg,overflow:"hidden"}}>
+      <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
 
       {/* Header */}
       <div style={{background:T.surface,borderBottom:`1px solid ${T.border}`,padding:"12px 20px",display:"flex",alignItems:"center",gap:16,flexShrink:0}}>
         <div>
           <h2 style={{fontFamily:"'Playfair Display',serif",fontSize:18,fontWeight:700,color:T.ink,margin:0}}>VR Explorer</h2>
           <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.inkLight,margin:"2px 0 0"}}>
-            Immersive 3D and 360° panoramas of historical sites
-            {vrSupported === true && <span style={{marginLeft:8,color:T.success,fontWeight:600}}>· VR headset detected ✓</span>}
-            {vrSupported === false && <span style={{marginLeft:8,color:T.inkFaint}}> · No VR headset — 3D and panorama mode available</span>}
+            Immersive 360° panoramas of the world's greatest historical sites
           </p>
         </div>
         <div style={{flex:1}}/>
@@ -2093,14 +2337,6 @@ function VRSection({ T }) {
             style={{border:"none",background:"transparent",outline:"none",fontFamily:"'DM Sans',sans-serif",fontSize:12,color:T.ink,flex:1,caretColor:T.accent}}/>
           {search && <span onClick={()=>setSearch("")} style={{cursor:"pointer",color:T.inkFaint,fontSize:12}}>✕</span>}
         </div>
-      </div>
-
-      {/* Phase notice */}
-      <div style={{padding:"8px 20px",background:isDark?"rgba(16,185,129,0.08)":"rgba(16,185,129,0.05)",borderBottom:`1px solid rgba(16,185,129,0.15)`,display:"flex",alignItems:"center",gap:10,flexShrink:0}}>
-        <Ic n="cube" s={14} c="#10B981"/>
-        <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:"#10B981",fontWeight:600}}>
-          Phase 1 sites have interactive 3D models · Phase 2 sites have 360° panoramas · AI reconstruction is on the roadmap
-        </span>
       </div>
 
       {/* Site grid */}
@@ -2114,185 +2350,46 @@ function VRSection({ T }) {
           {filtered.map(site => (
             <div key={site.id}
               style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:12,overflow:"hidden",cursor:"pointer",transition:"all 0.2s"}}
-              onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-3px)";e.currentTarget.style.boxShadow=`0 8px 24px rgba(0,0,0,0.2)`;e.currentTarget.style.borderColor=T.success+"60";}}
-              onMouseLeave={e=>{e.currentTarget.style.transform="none";e.currentTarget.style.boxShadow="none";e.currentTarget.style.borderColor=T.border;}}>
+              onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-3px)";e.currentTarget.style.boxShadow="0 8px 24px rgba(0,0,0,0.2)";e.currentTarget.style.borderColor="#3B82F660";}}
+              onMouseLeave={e=>{e.currentTarget.style.transform="none";e.currentTarget.style.boxShadow="none";e.currentTarget.style.borderColor=T.border;}}
+              onClick={()=>setSelected(site)}>
 
               {/* Thumbnail */}
               <div style={{height:160,position:"relative",overflow:"hidden",background:"#1a1410"}}>
                 <img src={site.thumbnail} alt={site.name}
-                  style={{width:"100%",height:"100%",objectFit:"cover",filter:"brightness(0.85)",transition:"transform 0.4s"}}
+                  style={{width:"100%",height:"100%",objectFit:"cover",filter:"brightness(0.82)",transition:"transform 0.4s"}}
                   onMouseEnter={e=>e.target.style.transform="scale(1.05)"}
                   onMouseLeave={e=>e.target.style.transform="scale(1)"}
                   onError={e=>{e.target.style.display="none";}}/>
                 <div style={{position:"absolute",inset:0,background:"linear-gradient(to top,rgba(0,0,0,0.75),transparent 50%)"}}/>
-
-                {/* Phase badge */}
-                <div style={{position:"absolute",top:8,right:8,padding:"3px 8px",borderRadius:20,
-                  background: site.sketchfabId ? "rgba(16,185,129,0.9)" : "rgba(59,130,246,0.9)",
-                  fontFamily:"'DM Sans',sans-serif",fontSize:9,fontWeight:700,color:"#fff",letterSpacing:"0.06em"}}>
-                  {site.sketchfabId ? "3D MODEL" : "360° PANORAMA"}
+                <div style={{position:"absolute",top:8,right:8,padding:"3px 8px",borderRadius:20,background:"rgba(59,130,246,0.85)",fontFamily:"'DM Sans',sans-serif",fontSize:9,fontWeight:700,color:"#fff",letterSpacing:"0.06em"}}>
+                  360° PANORAMA
                 </div>
-
                 <div style={{position:"absolute",bottom:8,left:10,right:10}}>
                   <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:700,color:"#fff",lineHeight:1.2}}>{site.name}</div>
-                  <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:"rgba(255,255,255,0.7)",marginTop:2}}>{site.region} · {site.era}</div>
+                  <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:"rgba(255,255,255,0.65)",marginTop:2}}>{site.region} · {site.era}</div>
                 </div>
               </div>
 
               {/* Card body */}
               <div style={{padding:"12px 14px"}}>
                 <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.inkMid,lineHeight:1.65,margin:"0 0 12px"}}>
-                  {site.description.slice(0, 120)}…
+                  {site.description.slice(0,110)}…
                 </p>
-                <div style={{display:"flex",gap:8}}>
-                  {site.sketchfabId && (
-                    <button onClick={()=>openSite(site,"view3d")}
-                      style={{flex:1,padding:"7px",background:T.success+"18",border:`1px solid ${T.success+"40"}`,borderRadius:7,color:T.success,fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:5}}>
-                      <Ic n="cube" s={12} c="currentColor"/> Explore 3D
-                    </button>
-                  )}
-                  <button onClick={()=>openSite(site,"panorama")}
-                    style={{flex:1,padding:"7px",background:T.info+"18",border:`1px solid ${T.info+"40"}`,borderRadius:7,color:T.info,fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:5}}>
-                    <Ic n="globe" s={12} c="currentColor"/> 360° View
-                  </button>
+                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+                  <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:T.inkFaint}}>{site.facts.length} historical facts</span>
+                  <div style={{display:"flex",alignItems:"center",gap:5,fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:600,color:"#3B82F6"}}>
+                    Explore 360° <Ic n="arrowR" s={13} c="#3B82F6"/>
+                  </div>
                 </div>
               </div>
             </div>
           ))}
         </div>
-
-        {/* Out of scope notice */}
-        <div style={{marginTop:32,padding:"16px 20px",background:isDark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.03)",border:`1px solid ${T.border}`,borderRadius:10,display:"flex",gap:14,alignItems:"flex-start"}}>
-          <span style={{fontSize:20,flexShrink:0}}>🚀</span>
-          <div>
-            <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:600,color:T.ink,marginBottom:4}}>Phase 3 — AI Historical Reconstruction (Coming Soon)</div>
-            <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.inkMid,lineHeight:1.65,margin:0}}>
-              For sites without existing 3D models or 360° photos, we plan to use Imagen 4 + NeRF reconstruction to generate walkable historical environments from multiple AI-generated views. This is computationally intensive and requires careful historical accuracy validation — we'll cover the technical challenges in a dedicated post.
-            </p>
-          </div>
-        </div>
       </div>
     </div>
   );
-
-  // ── 3D Model viewer ────────────────────────────────────────
-  if (mode === "view3d" && selected?.sketchfabId) return (
-    <div style={{height:"100%",display:"flex",flexDirection:"column",background:"#0A0908"}}>
-      {/* Top bar */}
-      <div style={{background:"rgba(0,0,0,0.6)",borderBottom:"1px solid rgba(255,255,255,0.08)",padding:"10px 16px",display:"flex",alignItems:"center",gap:12,flexShrink:0,backdropFilter:"blur(10px)"}}>
-        <button onClick={()=>{setMode("browse");}}
-          style={{display:"flex",alignItems:"center",gap:6,padding:"6px 12px",background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.15)",borderRadius:7,color:"rgba(255,255,255,0.7)",fontFamily:"'DM Sans',sans-serif",fontSize:11,cursor:"pointer"}}>
-          <Ic n="chevL" s={12} c="currentColor"/> Back
-        </button>
-        <div>
-          <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:700,color:"#fff"}}>{selected.name}</div>
-          <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:"rgba(255,255,255,0.5)"}}>{selected.region} · {selected.era}</div>
-        </div>
-        <div style={{flex:1}}/>
-        <div style={{padding:"4px 10px",borderRadius:20,background:"rgba(16,185,129,0.2)",border:"1px solid rgba(16,185,129,0.4)",fontFamily:"'DM Sans',sans-serif",fontSize:9,fontWeight:700,color:"#10B981",letterSpacing:"0.08em"}}>
-          INTERACTIVE 3D
-        </div>
-        {vrSupported && (
-          <div style={{padding:"4px 10px",borderRadius:20,background:"rgba(139,92,246,0.2)",border:"1px solid rgba(139,92,246,0.4)",fontFamily:"'DM Sans',sans-serif",fontSize:9,fontWeight:700,color:"#8B5CF6",letterSpacing:"0.08em"}}>
-            VR READY
-          </div>
-        )}
-        <button onClick={()=>openSite(selected,"panorama")}
-          style={{display:"flex",alignItems:"center",gap:5,padding:"6px 12px",background:"rgba(59,130,246,0.15)",border:"1px solid rgba(59,130,246,0.4)",borderRadius:7,color:"#60A5FA",fontFamily:"'DM Sans',sans-serif",fontSize:11,cursor:"pointer"}}>
-          <Ic n="globe" s={12} c="currentColor"/> Switch to 360°
-        </button>
-      </div>
-
-      {/* Sketchfab embed */}
-      <div style={{flex:1,position:"relative"}}>
-        <iframe
-          ref={iframeRef}
-          title={selected.name}
-          src={`https://sketchfab.com/models/${selected.sketchfabId}/embed?autostart=1&ui_infos=0&ui_watermark_link=0&ui_watermark=0&ui_ar=1&ui_vr=1&ui_fullscreen=1&preload=1`}
-          style={{width:"100%",height:"100%",border:"none"}}
-          allow="autoplay; fullscreen; xr-spatial-tracking"
-          allowFullScreen
-          mozallowfullscreen="true"
-          webkitallowfullscreen="true"
-        />
-      </div>
-
-      {/* Facts strip */}
-      <div style={{background:"rgba(0,0,0,0.7)",backdropFilter:"blur(10px)",borderTop:"1px solid rgba(255,255,255,0.08)",padding:"10px 20px",display:"flex",gap:20,flexShrink:0,overflowX:"auto"}}>
-        {selected.facts.map((f,i) => (
-          <div key={i} style={{display:"flex",gap:7,alignItems:"flex-start",flexShrink:0,maxWidth:240}}>
-            <div style={{width:4,height:4,borderRadius:"50%",background:"#10B981",flexShrink:0,marginTop:5}}/>
-            <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:"rgba(255,255,255,0.6)",lineHeight:1.55}}>{f}</span>
-          </div>
-        ))}
-        <a href={selected.wikiUrl} target="_blank" rel="noopener noreferrer"
-          style={{display:"flex",alignItems:"center",gap:5,flexShrink:0,fontFamily:"'DM Sans',sans-serif",fontSize:10,color:"rgba(255,255,255,0.35)",textDecoration:"none",paddingLeft:10,borderLeft:"1px solid rgba(255,255,255,0.1)"}}>
-          <Ic n="extlink" s={10} c="currentColor"/> Wikipedia
-        </a>
-      </div>
-    </div>
-  );
-
-  // ── 360° Panorama viewer ───────────────────────────────────
-  if (mode === "panorama" && selected) return (
-    <div style={{height:"100%",display:"flex",flexDirection:"column",background:"#0A0908"}}>
-      {/* Top bar */}
-      <div style={{background:"rgba(0,0,0,0.6)",borderBottom:"1px solid rgba(255,255,255,0.08)",padding:"10px 16px",display:"flex",alignItems:"center",gap:12,flexShrink:0,backdropFilter:"blur(10px)"}}>
-        <button onClick={()=>setMode("browse")}
-          style={{display:"flex",alignItems:"center",gap:6,padding:"6px 12px",background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.15)",borderRadius:7,color:"rgba(255,255,255,0.7)",fontFamily:"'DM Sans',sans-serif",fontSize:11,cursor:"pointer"}}>
-          <Ic n="chevL" s={12} c="currentColor"/> Back
-        </button>
-        <div>
-          <div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:700,color:"#fff"}}>{selected.name}</div>
-          <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:"rgba(255,255,255,0.5)"}}>{selected.region} · {selected.era}</div>
-        </div>
-        <div style={{flex:1}}/>
-        <div style={{padding:"4px 10px",borderRadius:20,background:"rgba(59,130,246,0.2)",border:"1px solid rgba(59,130,246,0.4)",fontFamily:"'DM Sans',sans-serif",fontSize:9,fontWeight:700,color:"#60A5FA",letterSpacing:"0.08em"}}>
-          360° PANORAMA
-        </div>
-        {selected.sketchfabId && (
-          <button onClick={()=>setMode("view3d")}
-            style={{display:"flex",alignItems:"center",gap:5,padding:"6px 12px",background:"rgba(16,185,129,0.15)",border:"1px solid rgba(16,185,129,0.4)",borderRadius:7,color:"#10B981",fontFamily:"'DM Sans',sans-serif",fontSize:11,cursor:"pointer"}}>
-            <Ic n="cube" s={12} c="currentColor"/> Switch to 3D
-          </button>
-        )}
-      </div>
-
-      {/* Pannellum photosphere */}
-      <div style={{flex:1,position:"relative",overflow:"hidden"}}>
-        <iframe
-          title={`${selected.name} 360`}
-          src={`https://pannellum.org/api/tour/?panorama=${encodeURIComponent(selected.panoramaUrl)}&autoLoad=true&showControls=true&showZoomCtrl=true&showFullscreenCtrl=true&title=${encodeURIComponent(selected.name)}&author=${encodeURIComponent(selected.region + " · " + selected.era)}`}
-          style={{width:"100%",height:"100%",border:"none"}}
-          allowFullScreen
-        />
-        <div style={{position:"absolute",bottom:80,left:"50%",transform:"translateX(-50%)",padding:"6px 14px",background:"rgba(0,0,0,0.6)",borderRadius:20,backdropFilter:"blur(8px)",pointerEvents:"none"}}>
-          <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:"rgba(255,255,255,0.6)"}}>
-            Click and drag to look around · Scroll to zoom
-          </span>
-        </div>
-      </div>
-
-      {/* Facts strip */}
-      <div style={{background:"rgba(0,0,0,0.7)",backdropFilter:"blur(10px)",borderTop:"1px solid rgba(255,255,255,0.08)",padding:"10px 20px",display:"flex",gap:20,flexShrink:0,overflowX:"auto"}}>
-        {selected.facts.map((f,i) => (
-          <div key={i} style={{display:"flex",gap:7,alignItems:"flex-start",flexShrink:0,maxWidth:240}}>
-            <div style={{width:4,height:4,borderRadius:"50%",background:"#3B82F6",flexShrink:0,marginTop:5}}/>
-            <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:"rgba(255,255,255,0.6)",lineHeight:1.55}}>{f}</span>
-          </div>
-        ))}
-        <a href={selected.wikiUrl} target="_blank" rel="noopener noreferrer"
-          style={{display:"flex",alignItems:"center",gap:5,flexShrink:0,fontFamily:"'DM Sans',sans-serif",fontSize:10,color:"rgba(255,255,255,0.35)",textDecoration:"none",paddingLeft:10,borderLeft:"1px solid rgba(255,255,255,0.1)"}}>
-          <Ic n="extlink" s={10} c="currentColor"/> Wikipedia
-        </a>
-      </div>
-    </div>
-  );
-
-  // Fallback
-  return null;
 }
-
 
 // ── HOME ──────────────────────────────────────────────────────
 function Home({ T, onNavigate }) {
@@ -2633,9 +2730,6 @@ function TopBar({ active, onNavigate, onToggle, theme, onToggleTheme, T, onOpenS
         <Ic n="key" s={14} c="currentColor"/>
         <span>{hasKey?"Key ✓":"Add Key"}</span>
       </button>
-      <div style={{padding:"5px 14px",background:T.accentDim,border:`1px solid ${T.accent}35`,borderRadius:6,flexShrink:0}}>
-        <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:T.accent,fontWeight:600,letterSpacing:"0.06em",textTransform:"uppercase"}}>Phase 1 · Africa & World</span>
-      </div>
     </div>
   );
 }
