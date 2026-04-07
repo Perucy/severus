@@ -6,8 +6,7 @@ import os
 import anthropic
 from utils import create_with_retry
 from tools.external_apis import generate_image, fetch_node_image
-from subjects.configs import SubjectConfig
-from core.config import settings
+
 
 # ── WEB IMAGE SEARCH ──────────────────────────────────────────
 # Try to find existing accurate images before generating (cheaper).
@@ -198,7 +197,7 @@ async def run_visualizer(state: dict) -> dict:
 
     for _ in range(6):
         resp = create_with_retry(client,
-            model=settings.ANTHROPIC_AI_MODEL,
+            model="claude-sonnet-4-6",
             max_tokens=2000,
             system=system,
             tools=TOOLS,
