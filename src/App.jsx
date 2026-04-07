@@ -425,8 +425,8 @@ function GlobeView({ visibleLocs, visibleArcs, onLocClick, selected, theme }) {
         backgroundColor="rgba(0,0,0,0)"
         atmosphereColor={theme==="dark"?"#3366CC":"#5588EE"}
         atmosphereAltitude={0.15}
-        globeImageUrl="https://cdn.jsdelivr.net/npm/three-globe/example/img/earth-blue-marble.jpg"
-        bumpImageUrl="https://cdn.jsdelivr.net/npm/three-globe/example/img/earth-topology.png"
+        globeImageUrl="https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
+        bumpImageUrl="https://unpkg.com/three-globe/example/img/earth-topology.png"
         pointsData={visibleLocs} pointLat="lat" pointLng="lon"
         pointColor={d=>TYPE_META[d.type]?.color||"#FF5722"}
         pointAltitude={0.02} pointRadius={0.45}
@@ -1667,7 +1667,13 @@ function InvestigateSection({ T, nodes: propNodes, edges: propEdges, setNodes: s
   const onNodeMouseDown = (e, id) => {
     e.stopPropagation();
     if (connecting !== null) {
+      if (connecting === -1) {
+        // First click — set this node as the source
+        setConnecting(id);
+        return;
+      }
       if (connecting !== id) {
+        // Second click — create edge from source to this node
         setEdges(prev => {
           if(prev.some(ed=>(ed.from===connecting&&ed.to===id)||(ed.from===id&&ed.to===connecting))) return prev;
           return [...prev,{id:"e"+Date.now(),from:connecting,to:id,label:"related to"}];
@@ -1810,7 +1816,7 @@ function InvestigateSection({ T, nodes: propNodes, edges: propEdges, setNodes: s
         <div style={{width:1,height:20,background:T.border}}/>
         <button onClick={()=>setConnecting(c=>c!==null?null:-1)}
           style={{display:"flex",alignItems:"center",gap:5,padding:"6px 14px",background:connecting!==null?T.info+"25":"transparent",border:`1px solid ${connecting!==null?T.info:T.border}`,borderRadius:7,color:connecting!==null?T.info:T.inkMid,fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:connecting!==null?700:400,cursor:"pointer",transition:"all 0.2s"}}>
-          <Ic n="link" s={13} c="currentColor"/> {connecting!==null?"Click target…":"Connect"}
+          <Ic n="link" s={13} c="currentColor"/> {connecting===null?"Connect":connecting===-1?"Pick source…":"Pick target…"}
         </button>
         <div style={{width:1,height:20,background:T.border}}/>
         <div style={{display:"flex",alignItems:"center",gap:6,padding:"5px 10px",background:T.card,border:`1px solid ${T.border}`,borderRadius:7}}>
@@ -1936,10 +1942,10 @@ function InvestigateSection({ T, nodes: propNodes, edges: propEdges, setNodes: s
           })}
 
           {/* Hint text */}
-          {connecting!=null&&connecting!==-1&&(
+          {connecting!=null&&(
             <text x="50%" y="95%" textAnchor="middle"
               style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,fill:T.info,pointerEvents:"none"}}>
-              Click any node to connect · Escape to cancel
+              {connecting===-1?"Step 1: click the source node":"Step 2: click the target node to connect · Escape to cancel"}
             </text>
           )}
         </svg>
