@@ -188,7 +188,51 @@ async def run_investigator_only(request: ResearchRequest):
     result = await run_investigator(state)
     return result
 
+class ChatRequest(BaseModel):
+    message: str
+    question: str = ""
+    nodes: list = []
+    edges: list = []
+    chat_history: list = []
 
+@app.post("/chat")
+async def chat(request: ChatRequest):
+    import anthropic
+    
+    client = anthropic.Anthropic()
+    
+    board_summary = f"{len(request.nodes)} nodes: {', '.join(n.get('label','') for n in request.nodes[:8])}"
+    
+    response = client.messages.create(
+        model="claude-sonnet-4-20250514",
+        max_tokens=1000,
+        system="""You are an AI historian assistant on the Severus PI board. 
+        The user has an investigation board with historical nodes and connections.
+        Answer their question and suggest board mutations when relevant.
+        If adding nodes or edges would help, include them in your response as JSON mutations.
+        Format mutations as: [{"type":"add_node","node":{"id":"n_x","label":"X","type":"person|event|place|concept|institution"}},
+        {"type":"add_edge","edge":{"from":"n1","to":"n2","label":"connection label"}}]""",
+        messages=[
+            *[{"role": m["role"], "content": m["content"]} 
+              for m in request.chat_history if m.get("role") in ("user","assistant")],
+            {"role": "user", "content": f"Board: {board_summary}\n\nQuestion: {request.message}"}
+        ],
+    )
+    
+    text = response.content[0].text
+    
+    # Extract mutations if present
+    mutations = []
+    import re
+    match = re.search(r'\[(\s*\{.*?\}\s*,?\s*)+\]', text, re.DOTALL)
+    if match:
+        try:
+            mutations = json.loads(match.group())
+            text = text[:match.start()].strip()
+        except Exception:
+            pass
+    
+    return {"text": text, "mutations": mutations}
 if __name__ == "__main__":
     import uvicorn
     port = int(os.getenv("PORT", 8000))
