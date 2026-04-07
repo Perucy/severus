@@ -6,10 +6,10 @@
 
 **Live:** [severus-xi.vercel.app](https://severus-xi.vercel.app)
 
-                              ![Status](https://img.shields.io/badge/status-live-brightgreen)
-                              ![License](https://img.shields.io/badge/license-MIT-blue)
-                              ![Python](https://img.shields.io/badge/python-3.11-blue)
-                              ![React](https://img.shields.io/badge/react-18-61dafb)
+  ![Status](https://img.shields.io/badge/status-live-brightgreen)
+  ![License](https://img.shields.io/badge/license-MIT-blue)
+  ![Python](https://img.shields.io/badge/python-3.11-blue)
+  ![React](https://img.shields.io/badge/react-18-61dafb)
 
 ---
 
