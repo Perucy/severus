@@ -4,7 +4,7 @@ import json
 import anthropic
 from utils import create_with_retry
 from tools.external_apis import search_wikipedia
-from tools.knowledge_base import search_knowledge_base
+from tools.knowledge_base import get_connection_hints
 
 SYSTEM = """You are The Historian for the Severus World History Platform.
 
@@ -43,7 +43,7 @@ async def _run_tool(name: str, inputs: dict) -> str:
         if name == "search_wikipedia":
             result = await search_wikipedia(inputs.get("query",""))
         elif name == "search_severus_kb":
-            result = search_knowledge_base(inputs.get("query",""), inputs.get("category","all"))
+            result = get_connection_hints(inputs.get("query",""))
         else:
             result = {"error": f"Unknown tool: {name}"}
         return json.dumps(result, default=str)
