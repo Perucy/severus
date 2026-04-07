@@ -12,7 +12,6 @@ import json
 import asyncio
 import anthropic
 from utils import create_with_retry
-from core.config import settings
 from tools.knowledge_base import (
     deep_wikipedia_retrieval,
     format_deep_context,
@@ -169,7 +168,7 @@ Map the key connections. Write 2-3 paragraphs of analysis, then output the pi_bo
 
     response = create_with_retry(
         client,
-        model=settings.ANTHROPIC_AI_MODEL,
+        model="claude-sonnet-4-6",
         max_tokens=1800,
         system=INVESTIGATOR_SYSTEM,
         messages=[{"role": "user", "content": prompt}],
