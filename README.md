@@ -20,7 +20,8 @@ Severus is a free, open-source AI-powered world history learning platform. Ask a
 300 million students worldwide have no access to quality history education. Severus is the infrastructure to change that — free, on any device, in any language.
 
 > [!NOTE]
-> The AI PI board feature requires your own Anthropic API key (free tier works). Add it via the **Add Key** button in the top bar. Your key never leaves your browser — it goes directly to Anthropic's API and is never sent to Severus servers. [See Security & Privacy.](#security--privacy)  
+> The AI PI board feature requires your own Anthropic API key (free tier works). Add it via the **Add Key** button in the top bar. Your key never leaves your browser — it goes directly to Anthropic's API and is never sent to Severus servers. [See Security & Privacy.](#security--privacy)
+> 
 > The AI Research feature required Anthropic and Gemini keys on the backend. Since, it's a self-sponsored project, at the moment, I cannot provide a key for use to power this feature (I have no money to sponsor everyone's trial or use of the feature). While it would work to provide your own api key, the key would be used on the backend and it's risky to do that due to trust.
 
 ---
